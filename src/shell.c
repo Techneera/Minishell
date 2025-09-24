@@ -12,7 +12,6 @@ int	main(int argc, char **argv, char **envp)
 		line = readline(PROMPT);
 		if (!line)
 			break ;
-		printf("%s", line);
 		free(line);
 		line = NULL;
 	}

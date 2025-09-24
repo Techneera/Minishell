@@ -1,6 +1,6 @@
 CC = cc
 
-CFLAGS = -Wall -Werror -Wextra -lreadline -Iinclude 
+CFLAGS = -Wall -Werror -Wextra -Iinclude 
 
 NAME = minishell
 #		DIRECTORIES		#
@@ -21,7 +21,7 @@ SRCS_PATH = $(pathsubst %, $(SRC_DIR)/%.c)
 all: $(NAME)
 
 $(NAME): $(OBJS)
-	$(CC) $(CFLAGS) $^ -o $(NAME)
+	$(CC) $(CFLAGS) -lreadline  $^ -o $(NAME)
 
 %.o:%.c
 	$(CC) $(CFLAGS) -c $< -o $@
