@@ -1,6 +1,6 @@
 CC = cc
 
-CFLAGS = -Wall -Werror -Wextra -Iinclude -Ilibft
+CFLAGS = -Wall -Werror -Wextra -g -Iinclude -Ilibft
 
 NAME = minishell
 #		DIRECTORIES		#

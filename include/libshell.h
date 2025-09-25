@@ -9,6 +9,7 @@
 # include <signal.h>
 # include <sys/types.h>
 # include <sys/wait.h>
+# include "libft.h"
 
 # define PROMPT            "minishell$> "
 # define TC_BLACK          "\001\033[30m\002"
@@ -51,10 +52,12 @@ typedef struct s_cmd
 	t_redir	*redirs;
 }	t_cmd;
 
+
 typedef enum e_node_type
 {
 	NODE_CMD,
-	NODE_PIPE
+	NODE_PIPE,
+	NODE_SEQUENCE // for the ';'
 }	t_node_type;
 
 typedef struct s_ast
@@ -65,4 +68,6 @@ typedef struct s_ast
 	struct s_ast	*right;
 }	t_ast;
 
+
+char	*ft_strtok(char *str, const char *delim);
 #endif
