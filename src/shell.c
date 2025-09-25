@@ -11,7 +11,10 @@ int	main(int argc, char **argv, char **envp)
 	{
 		line = readline(PROMPT);
 		if (!line)
+		{
+			printf("exit\n");
 			break ;
+		}
 		free(line);
 		line = NULL;
 	}
