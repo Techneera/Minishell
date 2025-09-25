@@ -1,6 +1,6 @@
 CC = cc
 
-CFLAGS = -Wall -Werror -Wextra -Iinclude 
+CFLAGS = -Wall -Werror -Wextra -Iinclude -Ilibft
 
 NAME = minishell
 #		DIRECTORIES		#
@@ -16,20 +16,26 @@ OBJS = $(SRCS:.c=.o)
 
 SRCS_PATH = $(pathsubst %, $(SRC_DIR)/%.c)
 
+LFT= libft/libft.a
 #		RULESET			#
 
 all: $(NAME)
 
-$(NAME): $(OBJS)
+$(NAME): $(OBJS) $(LFT)
 	$(CC) $(CFLAGS) -lreadline  $^ -o $(NAME)
+
+$(LFT):
+	$(MAKE) -C libft
 
 %.o:%.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
+	$(MAKE) -C libft clean
 	rm -rf $(OBJS)
 
 fclean: clean
+	$(MAKE) -C libft fclean
 	rm -rf $(NAME)
 
 re: fclean all
