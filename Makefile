@@ -11,7 +11,7 @@ UNIT_DIR = unit
 
 #		PATHS			#
 
-SRCS = src/shell.c src/ft_strtok.c
+SRCS = src/shell.c src/ft_strtok.c src/ft_token_utils.c
 OBJS = $(SRCS:.c=.o)
 
 SRCS_PATH = $(pathsubst %, $(SRC_DIR)/%.c)

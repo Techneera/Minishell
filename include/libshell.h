@@ -39,6 +39,20 @@ typedef enum e_label_redir
 	REDIR_HEREDOCK
 }	t_label_redir;
 
+typedef enum e_label_quote
+{
+	NONE,
+	SINGLE_QUOTES,
+	DOUBLE_QUOTES
+}	t_label_quote;
+
+typedef struct s_token
+{
+	struct s_token	*next;
+	t_label_quote	quote_label;
+	char			*str;
+}	t_token;
+
 typedef struct s_redir
 {
 	t_label_redir	label;
@@ -69,5 +83,12 @@ typedef struct s_ast
 }	t_ast;
 
 
-char	*ft_strtok(char *str, const char *delim);
+char		*ft_strtok(char *str, const char *delim);
+
+//---ft_token_ultils.c
+t_token		*create_token(char *str);
+int			token_add_back(t_token **token, char *str);
+void		ft_free_token(t_token **token);
+void		token_print(t_token *token);
+
 #endif
