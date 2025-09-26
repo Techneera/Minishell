@@ -84,7 +84,9 @@ typedef struct s_ast
 }	t_ast;
 
 
-char		*ft_strtok(char *str, const char *delim);
+//---ft_strtok.c
+char		*ft_strtok(char *str);
+char	*ft_tokenizer_quote(char *str);
 
 //---ft_token_ultils.c
 t_token		*create_token(char *str);
