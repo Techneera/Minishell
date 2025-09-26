@@ -43,7 +43,7 @@ void	fill_token(t_token **token, char *line)
 {
 	char	*str_pointer;
 
-	str_pointer = ft_strtok2(line);
+	str_pointer = ft_strtok(line);
 	if (token_add_back(token, str_pointer) == -1)
 	{
 		ft_free_token(token);
@@ -51,7 +51,7 @@ void	fill_token(t_token **token, char *line)
 	}
 	while (str_pointer)
 	{
-		str_pointer = ft_strtok2(NULL);
+		str_pointer = ft_strtok(NULL);
 		if (str_pointer && token_add_back(token, str_pointer) == -1)
 		{
 			ft_free_token(token);

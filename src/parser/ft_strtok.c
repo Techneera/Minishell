@@ -1,5 +1,7 @@
 #include "libshell.h"
 
+void	define_delim(char *internal_ptr, char delim[1]);
+
 char	*ft_strtok(char *str)
 {
 	static char	*internal_ptr = NULL;
