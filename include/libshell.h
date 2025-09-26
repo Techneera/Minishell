@@ -49,6 +49,7 @@ typedef enum e_label_quote
 typedef struct s_token
 {
 	struct s_token	*next;
+	struct s_token	*previus;
 	t_label_quote	quote_label;
 	char			*str;
 }	t_token;
