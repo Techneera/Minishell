@@ -67,12 +67,10 @@ typedef struct s_cmd
 	t_redir	*redirs;
 }	t_cmd;
 
-
 typedef enum e_node_type
 {
 	NODE_CMD,
 	NODE_PIPE,
-	NODE_SEQUENCE // for the ';'
 }	t_node_type;
 
 typedef struct s_ast
@@ -82,7 +80,6 @@ typedef struct s_ast
 	struct s_ast	*left;
 	struct s_ast	*right;
 }	t_ast;
-
 
 //---ft_strtok.c
 char		*ft_strtok(char *str);
