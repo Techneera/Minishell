@@ -1,4 +1,4 @@
-#include "libshell.c"
+#include "libshell.h"
 
 t_ast	*ft_ast_new_cmd(t_cmd *command)
 {

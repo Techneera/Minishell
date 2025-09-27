@@ -46,49 +46,49 @@ typedef enum e_label_quote
 	DOUBLE_QUOTES
 }	t_label_quote;
 
-typedef struct s_token
-{
-	struct s_token	*next;
-	struct s_token	*previus;
-	t_label_quote	quote_label;
-	char			*str;
-}	t_token;
-
-typedef struct s_redir
-{
-	t_label_redir	label;
-	char			*file_name;
-}	t_redir;
-
-typedef struct s_cmd
-{
-	char	**args;
-	int		redir_count;
-	t_redir	*redirs;
-}	t_cmd;
-
 typedef enum e_node_type
 {
 	NODE_CMD,
 	NODE_PIPE,
 }	t_node_type;
 
+typedef struct s_token
+{
+	char		*str;
+	t_label_quote	quote_label;
+	struct s_token	*next;
+	struct s_token	*previus;
+}	t_token;
+
+typedef struct s_redir
+{
+	t_label_redir	label;
+	char		*file_name;
+}	t_redir;
+
+typedef struct s_cmd
+{
+	char	**args;
+	int	redir_count;
+	t_redir	*redirs;
+}	t_cmd;
+
 typedef struct s_ast
 {
-	t_node_type		type;
-	t_cmd			*cmd;
+	t_node_type	type;
+	t_cmd		*cmd;
 	struct s_ast	*left;
 	struct s_ast	*right;
 }	t_ast;
 
 //---ft_strtok.c
-char		*ft_strtok(char *str);
+char	*ft_strtok(char *str);
 char	*ft_tokenizer_quote(char *str);
 
 //---ft_token_ultils.c
-t_token		*create_token(char *str);
-int			token_add_back(t_token **token, char *str);
-void		ft_free_token(t_token **token);
-void		token_print(t_token *token);
+t_token	*create_token(char *str);
+int	token_add_back(t_token **token, char *str);
+void	ft_free_token(t_token **token);
+void	token_print(t_token *token);
 
 #endif
