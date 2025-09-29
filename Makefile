@@ -18,8 +18,7 @@ TESTER_DIR = $(SRC_DIR)/test_module
 
 #		PARSER			#
 
-SRCS_PARSER =  ft_strtok.c ft_token_utils.c shell.c 
-# ft_ast.c
+SRCS_PARSER =  ft_strtok.c ft_token_utils.c shell.c ft_ast.c
 
 OBJS_PARSER = $(SRCS_PARSER:.c=.o)
 
@@ -50,7 +49,7 @@ $(OBJ_DIR)/%.o:$(PARSER_DIR)/%.c
 
 clean:
 	$(MAKE) -C libft clean
-	rm -rf $(OBJS)
+	rm -f $(PATH_OBJS_PARSER)
 
 fclean: clean
 	$(MAKE) -C libft fclean

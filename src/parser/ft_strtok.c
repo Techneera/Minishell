@@ -1,12 +1,12 @@
 #include "libshell.h"
 
-void	define_delim(char *internal_ptr, char delim[1]);
+void	define_delim(char *internal_ptr, char delim[2]);
 
 char	*ft_strtok(char *str)
 {
 	static char	*internal_ptr = NULL;
 	char		*token_start;
-	char		delim[1];
+	char		delim[2];
 
 	if (str != NULL)
 		internal_ptr = str;
@@ -31,7 +31,7 @@ char	*ft_strtok(char *str)
 	return (token_start);
 }
 
-void	define_delim(char *internal_ptr, char delim[1])
+void	define_delim(char *internal_ptr, char delim[2])
 {
 	*delim = ' ';
 	if (*internal_ptr == '\'')
