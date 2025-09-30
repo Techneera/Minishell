@@ -47,6 +47,9 @@ $(LFT):
 $(OBJ_DIR)/%.o:$(PARSER_DIR)/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
+$(OBJ_DIR):
+	@mkdir -p $@
+
 clean:
 	$(MAKE) -C libft clean
 	rm -f $(PATH_OBJS_PARSER)
