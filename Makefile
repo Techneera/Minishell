@@ -44,7 +44,7 @@ $(NAME): $(PATH_OBJS_PARSER) $(LFT)
 $(LFT):
 	$(MAKE) -C libft
 
-$(OBJ_DIR)/%.o:$(PARSER_DIR)/%.c
+$(OBJ_DIR)/%.o:$(PARSER_DIR)/%.c | $(OBJ_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 $(OBJ_DIR):
