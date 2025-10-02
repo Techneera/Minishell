@@ -8,12 +8,26 @@ void	init_pipe(int **pipe_fds, t_ast *ast_root);
 int main(int argc, char *argv[], char **envp)
 {
 	t_ast	*cmd = ft_cmd2();
-	int		*pipe_fds;
+	t_fds	*fds;
 
+	(void)argc;
+	(void)argv;
 	if (!cmd)
 		return (-1);
 	init_pipe(&pipe_fds, cmd);
 	execute_tree(cmd, NULL, envp);
+}
+
+void	create_fds(t_fds *fds, t_ast *ast_root)
+{
+	init_pipe(&fds->pipe_fds, ast_root);
+	init_fd_files(&fds->fd_files);
+	fds->file_id = 0;
+}
+
+void	init_fd_files(t_fds *fds)
+{
+	return ;
 }
 
 void	init_pipe(int **pipe_fds, t_ast *ast_root)
@@ -75,26 +89,23 @@ int	ft_max(int a, int b)
 	return (b);
 }
 
-int	execute_tree(t_ast *node, int fd_in[2], char **envp)
+int	execute_tree(t_ast *node, int **pipes, int i, char **envp)
 {
-	int	fd_out[2];
-
-	if (pipte(fd_out) == -1)
-		exit(1);
 	if (node == NULL)
-		return (0);	
+		return (0);
 	if (node->type == NODE_CMD)
 	{
-		return (execute_cmd(node->cmd, fd_in[2], fd_out[2], envp));
+		i = execute_cmd(node->cmd, fd_in[2], fd_out[2], envp);
+		i++;
 	}
 	else if (node->type == NODE_PIPE)
 	{
-		return (execute_pipe(node, envp));
+		i = execute_pipe(node, envp);
 	}
-	return (0);
+	return (i);
 }
 
-int	execute_cmd(t_ast *node, char **envp, int fd_in[2], int fd_out[2])
+int	execute_cmd(t_ast *node, int **pipes, int i, char **envp)
 {
 	char    *cmd_path; 
 	char    **args; 
@@ -102,22 +113,40 @@ int	execute_cmd(t_ast *node, char **envp, int fd_in[2], int fd_out[2])
 
 	if (!node)
 		return (0);
+	if (i == -1)
+		i == 0;
 	args = node->cmd->args;
 	if (!args)
 		exit(1);
 	cmd_path = get_command_path(args, envp);
+	if (cmd_path)
+		exit(1);
 	if (!init_pid(&pid)) 
 	    exit(1); 
 	if (pid == 0) 
 	{ 
-		if (!cmd_path || !(*args)) 
-			exit(1); 
-		if (node->cmd->redirs && node->cmd->redirs->label == REDIR_IN)
+		if (!node->cmd->redirs && i > 0)
 		{
-			
+			if (dup2(fds->pipes[i - 1][0], STDIN_FILENO) == -1)
+				exit(1);
 		}
-		if (dup2(fd_out[1], STDOUT_FILENO) == -1) 
-			exit(1);
+		if (node->cmd->redirs)
+		{
+			if (dup2(fds->file_fd[fds->file_id], STDIN_FILENO) == -1)
+				exit(1);
+			fds->file_id++;
+		}
+		if (!node->cmd->redirs && node->cmd->redir_count> 1 && i > 0)
+		{
+			if (dup2(fds->pipes[i][0], STDIN_FILENO) == -1)
+				exit(1);
+		}
+		if (node->cmd->redirs)
+		{
+			if (dup2(fds->file_fd[fds->file_id], STDIN_FILENO) == -1)
+				exit(1);
+			fds->file_id++;
+		}
 		//ft_closing_all(env); 
 		if (execve(cmd_path, args, envp) == -1) 
 			exit(1);
@@ -125,32 +154,11 @@ int	execute_cmd(t_ast *node, char **envp, int fd_in[2], int fd_out[2])
 	return (free_exit(args, cmd_path, 0, NULL), pid);
 }
 
-int execute_pipe(t_ast *node, char **envp)
+int execute_pipe(t_ast *node, int **pipes, int i, char **envp)
 {
-	int pipe_fds[2];
-	int status;
-
-	if (pipe(pipe_fds) == -1)
-		return (-1);
-	pid_t pid_left = fork();
-	if (pid_left == 0)
-	{
-		close(pipe_fds[0]);
-		dup2(pipe_fds[1], STDOUT_FILENO);
-		close(pipe_fds[1]);
-		exit(execute_tree(node->left, pipe_fds, envp));
-	}
-	pid_t pid_right = fork();
-	if (pid_right == 0)
-	{
-		close(pipe_fds[1]); 
-		dup2(pipe_fds[0], STDIN_FILENO);
-		close(pipe_fds[0]);
-		exit(execute_tree(node->right, pipe_fds, envp));
-	}
-	close(pipe_fds[0]);
-	close(pipe_fds[1]);
-	waitpid(pid_right, &status, 0);
-	waitpid(pid_left, &status, 0);
-	return (status);
+	if (node->left)
+		i = execute_tree(node, pipes, i, envp);
+	if (node->right)
+		i = execute_tree(node, pipes, i, envp);
+	return (i);
 }
