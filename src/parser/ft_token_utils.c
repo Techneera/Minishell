@@ -1,4 +1,3 @@
-
 #include "libshell.h"
 
 t_token	*create_token(char *str)
@@ -9,6 +8,7 @@ t_token	*create_token(char *str)
 	if (!token)
 		return (NULL);
 	token->str = str;
+	token->tok_label = EMPTY;
 	token->next = NULL;
 	token->previus = NULL;
 	return (token);	

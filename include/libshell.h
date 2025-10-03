@@ -3,6 +3,7 @@
 
 # include <unistd.h>
 # include <stdio.h>
+# include <stddef.h>
 # include <readline/readline.h>
 # include <readline/history.h>
 # include <stdlib.h>
@@ -39,26 +40,38 @@ typedef enum e_label_redir
 	REDIR_HEREDOCK
 }	t_label_redir;
 
-typedef enum e_label_quote
+typedef enum e_token_label
 {
-	NONE,
-	SINGLE_QUOTES,
-	DOUBLE_QUOTES
-}	t_label_quote;
+	TOKEN_WORD, // Literal alpha string ("ls", "-la", "infile.txt")
+	TOKEN_PIPE, // Pipe character
+	TOKEN_RIGHT_PAR; // Right parenthesis character
+	TOKEN_LEFT_PAR; // Left parenthesis character
+	TOKEN_REDIR_IN, // Redirection input character
+	TOKEN_REDIR_OUT, // Redirection output character
+	TOKEN_REDIR_APPEND, // Append character
+	TOKEN_REDIR_HEREDOC // Heredoc character
+	TOKEN_EOF, // End Of File
+	TOLEN_EMPTY
+}	t_token_label;
 
 typedef enum e_node_type
 {
-	NODE_CMD,
-	NODE_PIPE,
+	NODE_CMD, // Command type node
+	NODE_PIPE, // Pipe type node
 }	t_node_type;
 
 typedef struct s_token
 {
 	char		*str;
-	t_label_quote	quote_label;
-	struct s_token	*next;
-	struct s_token	*previus;
+	t_token_label	tok_label;
 }	t_token;
+
+typedef struct s_lexer
+{
+	const char	*lexeme;
+	size_t		pos;
+	size_t		len;
+}	t_lexer;
 
 typedef struct s_redir
 {
