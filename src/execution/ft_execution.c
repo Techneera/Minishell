@@ -11,18 +11,23 @@ int main(int argc, char *argv[], char **envp)
 	t_ast	*cmd = ft_cmd5();
 	t_fds	*fds;
 
+	fds = NULL;
 	(void)argc;
 	(void)argv;
 	(void)envp;
 	if (!cmd)
 		return (-1);
 	create_fds(&fds, cmd);
+	free_all((void **) fds->pipe_fds, number_of_cmds(cmd) - 1);
+	free_tree(cmd);
 	//execute_tree(cmd, NULL, envp);
 }
 
 void	create_fds(t_fds **fds, t_ast *ast_root)
 {
 	*fds = malloc(sizeof(t_fds));
+	if (!*fds)
+		exit(1);
 	(*fds)->file_id = 0;
 	(*fds)->n_files = 0;
 	init_pipe((*fds)->pipe_fds, ast_root);
@@ -42,15 +47,17 @@ void	init_pipe(int **pipe_fds, t_ast *ast_root)
 		pipe_fds = malloc(n_pipes * sizeof(int *));
 		if (!pipe_fds)
 			exit(1);
-	}
-	else
-	{
 		while (i < n_pipes)
 		{
 			pipe_fds[i] = malloc(2 * sizeof(int));
+			if (!pipe_fds[i])
+			{
+				free_all((void **) pipe_fds, n_pipes);
+				exit(1);
+			}
 			if(pipe(pipe_fds[i]) == -1)
 			{
-				free(*pipe_fds);
+				free_all((void **) pipe_fds, n_pipes);
 				exit(1);
 			}
 			i++;

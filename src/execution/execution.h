@@ -22,4 +22,9 @@ t_ast	*ft_cmd5();
 
 //---init_files
 void	number_of_redirs(t_fds **fds, t_ast *ast_root);
+
+//---exec_utils
+void	free_all(void **ptr, size_t rows);
+void	free_tree(t_ast *ast_root);
+
 #endif
