@@ -110,7 +110,6 @@ t_ast   *ft_cmd1()
 
 /*
 			cat file_in.txt | grep "keyword" | wc -l > file_out.txt
-			argv => [cmd1] [cmd2] [cmd3] [redirs]
 
                            [NODE_PIPE]
                               /     \
@@ -241,4 +240,144 @@ t_ast	*ft_cmd3()
 
 	// return ast_root;
 	return (ast_root);
+}
+
+#include <stdlib.h> 
+#include <string.h> 
+
+// (Assuming dup_args, t_cmd, t_redir, t_ast, and enums are defined)
+
+/*
+
+
+                  [NODE_CMD]
+                    `-- cmd: {
+                        args: {"./my_script.sh", NULL},
+                        redir_count: 4,
+                        redirs: [
+                          {label: REDIR_IN,     file_name: "in.txt"},
+                          {label: REDIR_OUT,    file_name: "err.log"}, // (Proxy for STDERR)
+                          {label: REDIR_APPEND, file_name: "hist.txt"},
+                          {label: REDIR_OUT,    file_name: "out.txt"}
+                        ]
+                      }
+*/
+
+t_ast	*ft_cmd4()
+{
+    int redir_count = 4;
+    
+    // --- 1. Command Arguments ---
+    char **args = dup_args((const char *[]){"./my_script.sh", NULL});
+
+    // --- 2. Redirection Array Allocation ---
+    t_redir *redirs_array = malloc(sizeof(t_redir) * redir_count);
+    if (!redirs_array) { /* Cleanup args */ return (NULL); }
+
+    // 3. Populate Redirection Structures (Order matters!)
+    
+    // Redir 1: < in.txt
+    redirs_array[0].label = REDIR_IN;
+    redirs_array[0].file_name = strdup("in.txt");
+
+    // Redir 2: 2> err.log (Uses REDIR_OUT; your executor must check '2' token)
+    redirs_array[1].label = REDIR_OUT;
+    redirs_array[1].file_name = strdup("err.log");
+
+    // Redir 3: >> hist.txt 
+    redirs_array[2].label = REDIR_APPEND;
+    redirs_array[2].file_name = strdup("hist.txt");
+
+    // Redir 4: > out.txt (This will overwrite the redirection from Redir 3 on FD 1)
+    redirs_array[3].label = REDIR_OUT;
+    redirs_array[3].file_name = strdup("out.txt");
+
+
+    // --- 4. Create t_cmd structure ---
+    t_cmd *cmd = malloc(sizeof(t_cmd));
+    if (!cmd) { /* Cleanup redirs_array */ return (NULL); }
+    cmd->args = args;
+    cmd->redir_count = redir_count;
+    cmd->redirs = redirs_array; // Array of 4 t_redir structs
+
+    // --- 5. Create Root AST Node ---
+    t_ast *ast_redir_root = malloc(sizeof(t_ast));
+    if (!ast_redir_root) { /* Cleanup cmd */ return (NULL); }
+    ast_redir_root->type = NODE_CMD;
+    ast_redir_root->cmd = cmd;
+    ast_redir_root->left = NULL;
+    ast_redir_root->right = NULL;
+
+    return (ast_redir_root);
+}
+
+/*
+		cat < file1.txt | grep "pattern" >> log.txt | sort -r | uniq > final.out
+
+                          [NODE_PIPE] (Outer Root Pipe)
+                             /     \
+                            /       \
+                  [NODE_PIPE] (Mid Pipe) [NODE_CMD]  <-- 'uniq > final.out'
+                     /     \             `-- cmd: {
+                    /       \                args: {"uniq", NULL},
+          [NODE_PIPE] (Inner Pipe)  [NODE_CMD]      redir_count: 1,
+             /     \              `-- cmd: {         redirs: [ {label: REDIR_OUT, file_name: "final.out"} ]
+            /       \                 args: {"grep", "pattern", NULL},
+   [NODE_CMD]      [NODE_CMD]          redir_count: 1,
+     `-- cmd:        `-- cmd:             redirs: [ {label: REDIR_APPEND, file_name: "log.txt"} ]
+         {args: {"cat", NULL},
+          redir_count: 1,
+          redirs: [ {label: REDIR_IN, file_name: "file1.txt"} ]
+         }
+             {args: {"sort", "-r", NULL}, ...}
+
+*/
+
+t_ast	*ft_cmd5()
+{
+    // --- C1: cat < file1.txt ---
+    char **args_c1 = dup_args((const char *[]){"cat", NULL});
+    t_redir *redir_c1 = malloc(sizeof(t_redir));
+    redir_c1->label = REDIR_IN; redir_c1->file_name = strdup("file1.txt");
+    t_cmd *c1 = malloc(sizeof(t_cmd)); c1->args = args_c1; c1->redir_count = 1; c1->redirs = redir_c1;
+    t_ast *ast_c1 = malloc(sizeof(t_ast)); ast_c1->type = NODE_CMD; ast_c1->cmd = c1; ast_c1->left = NULL; ast_c1->right = NULL;
+
+    // --- C2: grep "pattern" >> log.txt ---
+    char **args_c2 = dup_args((const char *[]){"grep", "pattern", NULL});
+    t_redir *redir_c2 = malloc(sizeof(t_redir));
+    redir_c2->label = REDIR_APPEND; redir_c2->file_name = strdup("log.txt");
+    t_cmd *c2 = malloc(sizeof(t_cmd)); c2->args = args_c2; c2->redir_count = 1; c2->redirs = redir_c2;
+    t_ast *ast_c2 = malloc(sizeof(t_ast)); ast_c2->type = NODE_CMD; ast_c2->cmd = c2; ast_c2->left = NULL; ast_c2->right = NULL;
+
+    // --- C3: sort -r ---
+    char **args_c3 = dup_args((const char *[]){"sort", "-r", NULL});
+    t_cmd *c3 = malloc(sizeof(t_cmd)); c3->args = args_c3; c3->redir_count = 0; c3->redirs = NULL;
+    t_ast *ast_c3 = malloc(sizeof(t_ast)); ast_c3->type = NODE_CMD; ast_c3->cmd = c3; ast_c3->left = NULL; ast_c3->right = NULL;
+
+    // --- C4: uniq > final.out ---
+    char **args_c4 = dup_args((const char *[]){"uniq", NULL});
+    t_redir *redir_c4 = malloc(sizeof(t_redir));
+    redir_c4->label = REDIR_OUT; redir_c4->file_name = strdup("final.out");
+    t_cmd *c4 = malloc(sizeof(t_cmd)); c4->args = args_c4; c4->redir_count = 1; c4->redirs = redir_c4;
+    t_ast *ast_c4 = malloc(sizeof(t_ast)); ast_c4->type = NODE_CMD; ast_c4->cmd = c4; ast_c4->left = NULL; ast_c4->right = NULL;
+
+    // --- P1 (Inner Pipe): C1 | C2 ---
+    t_ast *ast_pipe_inner = malloc(sizeof(t_ast));
+    ast_pipe_inner->type = NODE_PIPE; ast_pipe_inner->cmd = NULL;
+    ast_pipe_inner->left = ast_c1;
+    ast_pipe_inner->right = ast_c2;
+
+    // --- P2 (Mid Pipe): P1 | C3 ---
+    t_ast *ast_pipe_mid = malloc(sizeof(t_ast));
+    ast_pipe_mid->type = NODE_PIPE; ast_pipe_mid->cmd = NULL;
+    ast_pipe_mid->left = ast_pipe_inner;
+    ast_pipe_mid->right = ast_c3;
+
+    // --- P3 (Outer Root Pipe): P2 | C4 ---
+    t_ast *ast_root = malloc(sizeof(t_ast));
+    ast_root->type = NODE_PIPE; ast_root->cmd = NULL;
+    ast_root->left = ast_pipe_mid;
+    ast_root->right = ast_c4;
+
+    return (ast_root);
 }
