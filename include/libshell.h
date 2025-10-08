@@ -4,6 +4,7 @@
 # include <unistd.h>
 # include <stdio.h>
 # include <stddef.h>
+# include <stdbool.h>
 # include <readline/readline.h>
 # include <readline/history.h>
 # include <stdlib.h>
@@ -29,8 +30,6 @@
 # define TC_BRIGHT_MAGENTA "\001\033[95m\002"
 # define TC_BRIGHT_CYAN    "\001\033[96m\002"
 # define TC_BRIGHT_WHITE   "\001\033[97m\002"
-# define TRUE 1
-# define FALSE 0
 
 typedef enum e_label_redir
 {
@@ -42,6 +41,7 @@ typedef enum e_label_redir
 
 typedef enum e_token_label
 {
+	TOKEN_EMPTY,
 	TOKEN_WORD, // Literal alpha string ("ls", "-la", "infile.txt")
 	TOKEN_PIPE, // Pipe character
 	TOKEN_RIGHT_PAR; // Right parenthesis character
@@ -50,8 +50,7 @@ typedef enum e_token_label
 	TOKEN_REDIR_OUT, // Redirection output character
 	TOKEN_REDIR_APPEND, // Append character
 	TOKEN_REDIR_HEREDOC // Heredoc character
-	TOKEN_EOF, // End Of File
-	TOLEN_EMPTY
+	TOKEN_EOF // End Of File
 }	t_token_label;
 
 typedef enum e_node_type
@@ -68,7 +67,7 @@ typedef struct s_token
 
 typedef struct s_lexer
 {
-	const char	*lexeme;
+	const char	*input;
 	size_t		pos;
 	size_t		len;
 }	t_lexer;
