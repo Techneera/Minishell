@@ -2,7 +2,7 @@
 
 int	number_of_cmds(t_ast *ast_root);
 // int	execute_tree(t_ast *node, int fd_in[2], char **envp);
-void	init_pipe(int **pipe_fds, t_ast *ast_root);
+void	init_pipe(int ***pipe_fds, t_ast *ast_root);
 void	create_fds(t_fds **fds, t_ast *ast_root);
 //void	execute_cmd(int *pipe_fd, int pos);
 
@@ -19,6 +19,7 @@ int main(int argc, char *argv[], char **envp)
 		return (-1);
 	create_fds(&fds, cmd);
 	free_all((void **) fds->pipe_fds, number_of_cmds(cmd) - 1);
+	free(fds);
 	free_tree(cmd);
 	//execute_tree(cmd, NULL, envp);
 }
@@ -30,12 +31,12 @@ void	create_fds(t_fds **fds, t_ast *ast_root)
 		exit(1);
 	(*fds)->file_id = 0;
 	(*fds)->n_files = 0;
-	init_pipe((*fds)->pipe_fds, ast_root);
+	init_pipe(&((*fds)->pipe_fds), ast_root);
 	number_of_redirs(fds, ast_root);
 	printf("%d", (*fds)->n_files);
 }
 
-void	init_pipe(int **pipe_fds, t_ast *ast_root)
+void	init_pipe(int ***pipe_fds, t_ast *ast_root)
 {
 	int	n_pipes;
 	int	i;
@@ -44,20 +45,20 @@ void	init_pipe(int **pipe_fds, t_ast *ast_root)
 	n_pipes = number_of_cmds(ast_root) - 1;
 	if (n_pipes > 0)
 	{
-		pipe_fds = malloc(n_pipes * sizeof(int *));
-		if (!pipe_fds)
+		*pipe_fds = malloc(n_pipes * sizeof(int *));
+		if (!*pipe_fds)
 			exit(1);
 		while (i < n_pipes)
 		{
-			pipe_fds[i] = malloc(2 * sizeof(int));
-			if (!pipe_fds[i])
+			(*pipe_fds)[i] = malloc(2 * sizeof(int));
+			if (!(*pipe_fds)[i])
 			{
-				free_all((void **) pipe_fds, n_pipes);
+				free_all((void **) *pipe_fds, n_pipes);
 				exit(1);
 			}
-			if(pipe(pipe_fds[i]) == -1)
+			if(pipe((*pipe_fds)[i]) == -1)
 			{
-				free_all((void **) pipe_fds, n_pipes);
+				free_all((void **) *pipe_fds, n_pipes);
 				exit(1);
 			}
 			i++;
