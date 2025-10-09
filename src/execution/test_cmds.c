@@ -321,15 +321,14 @@ t_ast	*ft_cmd4()
                      /     \             `-- cmd: {
                     /       \                args: {"uniq", NULL},
           [NODE_PIPE] (Inner Pipe)  [NODE_CMD]      redir_count: 1,
-             /     \              `-- cmd: {         redirs: [ {label: REDIR_OUT, file_name: "final.out"} ]
-            /       \                 args: {"grep", "pattern", NULL},
-   [NODE_CMD]      [NODE_CMD]          redir_count: 1,
-     `-- cmd:        `-- cmd:             redirs: [ {label: REDIR_APPEND, file_name: "log.txt"} ]
-         {args: {"cat", NULL},
-          redir_count: 1,
-          redirs: [ {label: REDIR_IN, file_name: "file1.txt"} ]
-         }
-             {args: {"sort", "-r", NULL}, ...}
+             /     \             sort `         -- cmd: {         redirs: [ {label: REDIR_OUT, file_name: "final.out"} ]
+            /       \                
+   [NODE_CMD]      [NODE_CMD]        
+     `-- cmd:        `-- cmd:args: {"grep", "pattern", NULL},
+{args: {"cat", NULL},        redir_count: 1,
+redir_count: 1,              redirs: [ {label: REDIR_APPEND, file_name: "log.txt"} ]
+redirs: [ {label: REDIR_IN, file_name: "file1.txt"} ]
+}
 
 */
 
