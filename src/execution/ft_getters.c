@@ -1,6 +1,6 @@
 #include "execution.h"
 
-void	message_error(char	*str, char *file, char **env, int type);
+void	message_error(char	*str, char *file, int type);
 
 
 void	ft_free_all(char **str)
@@ -19,12 +19,9 @@ void	ft_free_all(char **str)
 	str = NULL;
 }
 
-void	message_error(char	*str, char *file, char **env, int type)
+void	message_error(char	*str, char *file, int type)
 {
-	char	*shell;
-
-	shell = get_shell(env);
-	ft_putstr_fd(shell, 2);
+	ft_putstr_fd("minishell", 2);
 	if (type)
 	{
 		ft_putstr_fd(str, 2);
@@ -37,8 +34,6 @@ void	message_error(char	*str, char *file, char **env, int type)
 		ft_putstr_fd(str, 2);
 	}
 	ft_putstr_fd("\n\0", 2);
-	if (shell)
-		free(shell);
 }
 
 char	*get_shell(char **env)

@@ -20,6 +20,7 @@ t_ast	*ft_cmd2();
 t_ast	*ft_cmd3();
 t_ast	*ft_cmd4();
 t_ast	*ft_cmd5();
+t_ast	*ft_cmd6();
 
 //---init_files
 void	number_of_redirs(t_fds **fds, t_ast *ast_root);
@@ -34,5 +35,5 @@ int	ft_arraylen(void **ptr);
 char	*get_command_path(char **arg, char **env);
 char	**get_paths(char **env);
 char	*get_shell(char **env);
-void	message_error(char	*str, char *file, char **env, int type);
+void	message_error(char	*str, char *file, int type);
 #endif

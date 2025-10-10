@@ -23,20 +23,20 @@ int	fill_fd_file(t_fds **fds, t_ast *ast_root, int i, char **env)
 			if (access(ast_root->cmd->redirs->file_name, F_OK) != 0)
 			{
 				(*fds)->fd_files[i] = -1;
-				message_error(": no such file or directory: ", ast_root->cmd->redirs->file_name, env, 0);
+				message_error(": no such file or directory: ", ast_root->cmd->redirs->file_name, 0);
 			}
 			else
 			{
 				(*fds)->fd_files[i] = open(ast_root->cmd->redirs->file_name, O_RDONLY);
 				if ((*fds)->fd_files[i] == -1)
-					message_error(": Permission denied", ast_root->cmd->redirs->file_name, env, 0);
+					message_error(": Permission denied", ast_root->cmd->redirs->file_name, 0);
 			}
 		}
 		else
 		{
 			(*fds)->fd_files[i] = open(ast_root->cmd->redirs->file_name, O_WRONLY | O_CREAT | O_TRUNC, 0671);
 			if ((*fds)->fd_files[i] == -1)
-				message_error(": Permission denied", ast_root->cmd->redirs->file_name, env, 0);
+				message_error(": Permission denied", ast_root->cmd->redirs->file_name, 0);
 		}
 		return (i + 1);
 	}

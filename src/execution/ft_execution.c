@@ -10,7 +10,7 @@ void	ft_closing_all(t_fds **fds);
 
 int main(int argc, char *argv[], char **envp)
 {
-	t_ast	*cmd = ft_cmd2();
+	t_ast	*cmd = ft_cmd6();
 	t_fds	*fds;
 
 	fds = NULL;
@@ -119,6 +119,7 @@ int	execute_tree(t_ast *node, t_fds **fds, int i, char **envp)
 	if (node->type == NODE_CMD)
 	{
 		i = execute_cmd(node, fds, i, envp);
+		(*fds)->file_id += node->cmd->redir_count;
 		i++;
 	}
 	else if (node->type == NODE_PIPE)
@@ -173,6 +174,7 @@ int	execute_cmd(t_ast *node, t_fds **fds, int i, char **envp)
 			{
 				if (dup2((*fds)->fd_files[(*fds)->file_id], STDOUT_FILENO) == -1)
 					exit(1);
+				(*fds)->file_id++;
 			}
 			r++;
 		}
