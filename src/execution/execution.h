@@ -4,7 +4,6 @@
 #include "../../include/libshell.h"
 #include "libft.h"
 
-
 typedef struct s_fds
 {
 	int	**pipe_fds;
@@ -21,19 +20,20 @@ t_ast	*ft_cmd3();
 t_ast	*ft_cmd4();
 t_ast	*ft_cmd5();
 t_ast	*ft_cmd6();
+t_ast	*ft_cmd7();
+t_ast	*ft_cmd8();
 
 //---init_files
 void	number_of_redirs(t_fds **fds, t_ast *ast_root);
-int	fill_fd_file(t_fds **fds, t_ast *ast_root, int i, char **env);
+int		fill_fd_file(t_fds **fds, t_ast *ast_root, int i);
 
 //---exec_utils
 void	free_all(void **ptr, size_t rows);
 void	free_tree(t_ast *ast_root);
-int	ft_arraylen(void **ptr);
+int		ft_arraylen(void **ptr);
 
 //---ft_getters
 char	*get_command_path(char **arg, char **env);
 char	**get_paths(char **env);
-char	*get_shell(char **env);
 void	message_error(char	*str, char *file, int type);
 #endif

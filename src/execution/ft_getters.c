@@ -36,31 +36,6 @@ void	message_error(char	*str, char *file, int type)
 	ft_putstr_fd("\n\0", 2);
 }
 
-char	*get_shell(char **env)
-{
-	char	**str;
-	char	*shell;
-	int		i;
-
-	i = -1;
-	while (env && env[++i])
-	{
-		if (ft_strncmp(env[i], "SHELL=", 6) == 0)
-			break ;
-	}
-	if (env && env[i])
-	{
-		str = ft_split(*(env + i), '/');
-		i = -1;
-		while (str && str[++i])
-			;
-		shell = ft_strdup(str[i - 1]);
-		ft_free_all(str);
-		return (shell);
-	}
-	return (NULL);
-}
-
 char	**get_paths(char **env)
 {
 	char	**paths;

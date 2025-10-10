@@ -10,7 +10,7 @@ void	ft_closing_all(t_fds **fds);
 
 int main(int argc, char *argv[], char **envp)
 {
-	t_ast	*cmd = ft_cmd6();
+	t_ast	*cmd = ft_cmd8();
 	t_fds	*fds;
 
 	fds = NULL;
@@ -43,7 +43,7 @@ void	create_fds(t_fds **fds, t_ast *ast_root)
 		if (!(*fds)->fd_files)
 			exit(1);
 	}
-	fill_fd_file(fds, ast_root, 0, NULL);
+	fill_fd_file(fds, ast_root, 0);
 }
 
 void	init_pipe(t_fds **fds, int ***pipe_fds, t_ast *ast_root)
