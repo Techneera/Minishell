@@ -4,7 +4,8 @@ PATH_LIB = ../../include
 PATH_LFT = ../../libft
 
 CFLAGS = -Wall -Werror -Wextra -g -I$(PATH_LIB) -I$(PATH_LFT)
-SRC = ft_execution.c test_cmds.c  init_files.c exec_utils.c #ft_getters.c
+SRC = ft_execution.c test_cmds.c  init_files.c exec_utils.c ft_getters.c
+LIBRARIES = -L$(PATH_LFT) -lft
 OBJS = $(SRC:.c=.o)
 
 NAME = exec
@@ -13,7 +14,7 @@ all: $(NAME)
 
 $(NAME): $(OBJS)
 	$(MAKE) -C $(PATH_LFT)
-	$(CC) $(CFLAGS) $^ -o $(NAME)
+	$(CC) $(CFLAGS) $^ $(LIBRARIES) -o $(NAME)
 
 
 %.o: %.c

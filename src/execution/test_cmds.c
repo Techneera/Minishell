@@ -109,7 +109,7 @@ t_ast   *ft_cmd1()
 }
 
 /*
-			cat file_in.txt | grep "keyword" | wc -l > file_out.txt
+			cat file_in.txt | grep "a" | wc -l > file_out.txt
 
                            [NODE_PIPE]
                               /     \
@@ -136,7 +136,7 @@ t_ast   *ft_cmd2()
     ast_c1->type = NODE_CMD; ast_c1->cmd = c1; ast_c1->left = NULL; ast_c1->right = NULL;
 
     // --- Command 2 (C2): grep "keyword" ---
-    const char *args_literal2[] = {"grep", "keyword", NULL};
+    const char *args_literal2[] = {"grep", "a", NULL};
     char **args_c2 = dup_args(args_literal2); // SAFE ALLOCATION
     t_cmd *c2 = malloc(sizeof(t_cmd));
     if (!c2) { /* Cleanup... */ return (NULL); }

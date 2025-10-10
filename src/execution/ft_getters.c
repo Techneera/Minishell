@@ -2,23 +2,21 @@
 
 void	message_error(char	*str, char *file, char **env, int type);
 
-void	get_fd_file(int fd_file[2], char *read_file,
-			char *write_file, char **env)
+
+void	ft_free_all(char **str)
 {
-	if (access(read_file, F_OK) != 0)
+	int	i;
+
+	i = -1;
+	if (!str)
+		return ;
+	while (str && str[++i])
 	{
-		fd_file[0] = -1;
-		message_error(": no such file or directory: ", read_file, env, 0);
+		free(str[i]);
+		str[i] = NULL;
 	}
-	else
-	{
-		fd_file[0] = open(read_file, O_RDONLY);
-		if (fd_file[0] == -1)
-			message_error(": Permission denied", read_file, env, 0);
-	}
-	fd_file[1] = open(write_file, O_WRONLY | O_CREAT | O_TRUNC, 0671);
-	if (fd_file[1] == -1)
-		message_error(": Permission denied", write_file, env, 0);
+	free(str);
+	str = NULL;
 }
 
 void	message_error(char	*str, char *file, char **env, int type)
