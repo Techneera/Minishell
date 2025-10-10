@@ -7,7 +7,7 @@ void	free_all(void **ptr, size_t rows)
 	i = 0;
 	if (!ptr)
 		return ;
-	while (i  < rows)
+	while (i < rows)
 	{
 		free(ptr[i]);
 		ptr[i] = NULL;
@@ -37,7 +37,8 @@ void	free_tree(t_ast *ast_root)
 	free_tree(ast_root->right);
 	if (ast_root->cmd)
 	{
-		free_all((void **) ast_root->cmd->args, ft_arraylen((void **) ast_root->cmd->args));
+		free_all((void **) ast_root->cmd->args,
+			ft_arraylen((void **) ast_root->cmd->args));
 		if (ast_root->cmd->redirs)
 		{
 			if (ast_root->cmd->redirs->file_name)
