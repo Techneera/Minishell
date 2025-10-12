@@ -10,7 +10,7 @@ void	ft_closing_all(t_fds **fds);
 
 int main(int argc, char *argv[], char **envp)
 {
-	t_ast	*cmd = ft_cmd8();
+	t_ast	*cmd = ft_cmd5();
 	t_fds	*fds;
 
 	fds = NULL;
