@@ -4,7 +4,7 @@ PATH_LIB = ../../include
 PATH_LFT = ../../libft
 
 CFLAGS = -Wall -Werror -Wextra -g -I$(PATH_LIB) -I$(PATH_LFT)
-SRC = ft_execution.c test_cmds.c  init_files.c exec_utils.c ft_getters.c
+SRC = ft_execution.c test_cmds.c  init_files.c exec_utils.c ft_getters.c ft_here_doc.c add_libft.c
 LIBRARIES = -L$(PATH_LFT) -lft
 OBJS = $(SRC:.c=.o)
 

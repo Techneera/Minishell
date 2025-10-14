@@ -572,3 +572,67 @@ t_ast   *ft_cmd8()
 
     return (ast_root);
 }
+
+/*
+        cat << END | sort -r | uniq | head -n 5
+
+                          [NODE_PIPE] (Outer Root Pipe)
+                             /     \
+                            /       \
+                  [NODE_PIPE] (Mid Pipe) [NODE_CMD]  <-- 'head -n 5' (No redirs)
+                     /     \             `-- cmd: {args: {"head", "-n", "5", NULL}, ...}
+                    /       \
+          [NODE_PIPE] (Inner Pipe)  [NODE_CMD]  <-- 'uniq' (No redirs)
+             /     \              `-- cmd: {args: {"uniq", NULL}, ...}
+            /       \
+   [NODE_CMD]      [NODE_CMD]
+     `-- cmd:        `-- cmd: {args: {"sort", "-r", NULL}, ...}
+         {args: {"cat", NULL},
+          redir_count: 1,
+          redirs: [ {label: REDIR_IN, file_name: "file_list.txt"} ]
+         }
+*/
+t_ast   *ft_cmd9()
+{
+    // --- C1: cat < file_list.txt (Input Redir) ---
+    char **args_c1 = dup_args((const char *[]){"cat", NULL});
+    t_redir *redir_c1 = malloc(sizeof(t_redir));
+    redir_c1->label = REDIR_HEREDOCK; redir_c1->file_name = strdup("END");
+    t_cmd *c1 = malloc(sizeof(t_cmd)); c1->args = args_c1; c1->redir_count = 1; c1->redirs = redir_c1;
+    t_ast *ast_c1 = malloc(sizeof(t_ast)); ast_c1->type = NODE_CMD; ast_c1->cmd = c1; ast_c1->left = NULL; ast_c1->right = NULL;
+
+    // --- C2: sort -r (No Redir) ---
+    char **args_c2 = dup_args((const char *[]){"sort", "-r", NULL});
+    t_cmd *c2 = malloc(sizeof(t_cmd)); c2->args = args_c2; c2->redir_count = 0; c2->redirs = NULL;
+    t_ast *ast_c2 = malloc(sizeof(t_ast)); ast_c2->type = NODE_CMD; ast_c2->cmd = c2; ast_c2->left = NULL; ast_c2->right = NULL;
+
+    // --- C3: uniq (No Redir) ---
+    char **args_c3 = dup_args((const char *[]){"uniq", NULL});
+    t_cmd *c3 = malloc(sizeof(t_cmd)); c3->args = args_c3; c3->redir_count = 0; c3->redirs = NULL;
+    t_ast *ast_c3 = malloc(sizeof(t_ast)); ast_c3->type = NODE_CMD; ast_c3->cmd = c3; ast_c3->left = NULL; ast_c3->right = NULL;
+
+    // --- C4: head -n 5 (No Redir) ---
+    char **args_c4 = dup_args((const char *[]){"head", "-n", "5", NULL});
+    t_cmd *c4 = malloc(sizeof(t_cmd)); c4->args = args_c4; c4->redir_count = 0; c4->redirs = NULL;
+    t_ast *ast_c4 = malloc(sizeof(t_ast)); ast_c4->type = NODE_CMD; ast_c4->cmd = c4; ast_c4->left = NULL; ast_c4->right = NULL;
+
+    // --- P1 (Inner Pipe): C1 | C2 ---
+    t_ast *ast_pipe_inner = malloc(sizeof(t_ast));
+    ast_pipe_inner->type = NODE_PIPE; ast_pipe_inner->cmd = NULL;
+    ast_pipe_inner->left = ast_c1;
+    ast_pipe_inner->right = ast_c2;
+
+    // --- P2 (Mid Pipe): P1 | C3 ---
+    t_ast *ast_pipe_mid = malloc(sizeof(t_ast));
+    ast_pipe_mid->type = NODE_PIPE; ast_pipe_mid->cmd = NULL;
+    ast_pipe_mid->left = ast_pipe_inner;
+    ast_pipe_mid->right = ast_c3;
+
+    // --- P3 (Outer Root Pipe): P2 | C4 ---
+    t_ast *ast_root = malloc(sizeof(t_ast));
+    ast_root->type = NODE_PIPE; ast_root->cmd = NULL;
+    ast_root->left = ast_pipe_mid;
+    ast_root->right = ast_c4;
+
+    return (ast_root);
+}

@@ -1,16 +1,16 @@
 #include "execution.h"
 
-int	number_of_cmds(t_ast *ast_root);
-int execute_pipe(t_ast *node, t_fds **fds, int i, char **envp);
+int		number_of_cmds(t_ast *ast_root);
+int		execute_pipe(t_ast *node, t_fds **fds, int i, char **envp);
 void	create_fds(t_fds **fds, t_ast *ast_root);
 int		execute_tree(t_ast *node, t_fds **fds, int i, char **envp);
-int	execute_cmd(t_ast *node, t_fds **fds, int i, char **envp);
+int		execute_cmd(t_ast *node, t_fds **fds, int i, char **envp);
 void	init_pipe(t_fds **fds, int ***pipe_fds, t_ast *ast_root);
 void	ft_closing_all(t_fds **fds);
 
 int main(int argc, char *argv[], char **envp)
 {
-	t_ast	*cmd = ft_cmd5();
+	t_ast	*cmd = ft_cmd9();
 	t_fds	*fds;
 
 	fds = NULL;
@@ -103,13 +103,6 @@ int init_pid(pid_t *pid)
 	return (1);
 }
 
-int	ft_max(int a, int b)
-{
-	if (a >= b)
-		return (a);
-	return (b);
-}
-
 int	execute_tree(t_ast *node, t_fds **fds, int i, char **envp)
 {
 	
@@ -131,9 +124,10 @@ int	execute_tree(t_ast *node, t_fds **fds, int i, char **envp)
 
 int	execute_cmd(t_ast *node, t_fds **fds, int i, char **envp)
 {
-	char	*cmd_path; 
-	char	**args; 
+	char	*cmd_path;
+	char	**args;
 	pid_t	pid;
+	int fd_heredoc;
 
 	if (!node)
 		return (i);
@@ -145,9 +139,9 @@ int	execute_cmd(t_ast *node, t_fds **fds, int i, char **envp)
 	cmd_path = get_command_path(args, envp);
 	if (!cmd_path)
 		exit(1);
-	if (!init_pid(&pid)) 
-	    exit(1); 
-	if (pid == 0) 
+	if (!init_pid(&pid))
+	    exit(1);
+	if (pid == 0)
 	{
 		int r = 0;
 
@@ -163,6 +157,14 @@ int	execute_cmd(t_ast *node, t_fds **fds, int i, char **envp)
 		}
 		while (r < node->cmd->redir_count)
 		{
+			if (node->cmd->redirs[r].label == REDIR_HEREDOCK)
+			{
+				fd_heredoc = here_doc(node->cmd->redirs[r].file_name);
+				if (dup2(fd_heredoc, STDIN_FILENO) == -1)
+					exit(1);
+				if (fd_heredoc != -1)
+					close(fd_heredoc);
+			}
 			if (node->cmd->redirs[r].label == REDIR_IN)
 			{
 				if (dup2((*fds)->fd_files[(*fds)->file_id], STDIN_FILENO) == -1)
@@ -178,7 +180,7 @@ int	execute_cmd(t_ast *node, t_fds **fds, int i, char **envp)
 			}
 			r++;
 		}
-		ft_closing_all(fds); 
+		ft_closing_all(fds);
 		execve(cmd_path, args, envp);
 		perror("execve");
 		exit(1);
@@ -190,7 +192,7 @@ int	execute_cmd(t_ast *node, t_fds **fds, int i, char **envp)
 
 void ft_closing_all(t_fds **fds)
 {
-	int i;	
+	int	i;
 	if (!fds || !*fds)
 		return ;	
 	i = 0;

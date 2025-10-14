@@ -22,6 +22,7 @@ t_ast	*ft_cmd5();
 t_ast	*ft_cmd6();
 t_ast	*ft_cmd7();
 t_ast	*ft_cmd8();
+t_ast	*ft_cmd9();
 
 //---init_files
 void	number_of_redirs(t_fds **fds, t_ast *ast_root);
@@ -36,4 +37,10 @@ int		ft_arraylen(void **ptr);
 char	*get_command_path(char **arg, char **env);
 char	**get_paths(char **env);
 void	message_error(char	*str, char *file, int type);
+
+//---add_libft
+int	ft_max(int a, int b);
+
+//---ft_here_doc
+int	here_doc(char *lim);
 #endif
