@@ -41,11 +41,13 @@ typedef enum e_label_redir
 
 typedef enum e_token_label
 {
-	TOKEN_EMPTY,
+	TOKEN_ERROR,
 	TOKEN_WORD, // Literal alpha string ("ls", "-la", "infile.txt")
 	TOKEN_PIPE, // Pipe character
-	TOKEN_RIGHT_PAR; // Right parenthesis character
-	TOKEN_LEFT_PAR; // Left parenthesis character
+	TOKEN_AND,
+	TOKEN_OR,
+	TOKEN_RIGHT_PAR, // Right parenthesis character
+	TOKEN_LEFT_PAR, // Left parenthesis character
 	TOKEN_REDIR_IN, // Redirection input character
 	TOKEN_REDIR_OUT, // Redirection output character
 	TOKEN_REDIR_APPEND, // Append character
