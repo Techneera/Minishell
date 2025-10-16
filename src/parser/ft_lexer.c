@@ -3,7 +3,7 @@
 static
 int	ft_ismeta(int c)
 {
-    return (c == '|' | c == '&' | c == '<' | c == '>' | c == '(' | c == ')');
+    return (c == '|' || c == '&' || c == '<' ||  c == '>' ||  c == '(' ||  c == ')');
 }
 
 t_lexer	*ft_state_lexer(const char *line)
@@ -95,7 +95,7 @@ t_token	*ft_which_redir(t_lexer *l)
     else if (l->input[l->pos] == '>')
     {
 	l->pos++;
-	return (create_token(TOKEN_REDIR_OUT, ft_strdup("<")));
+	return (create_token(TOKEN_REDIR_OUT, ft_strdup(">")));
     }
     else if (l->pos + 1 < l->len && l->input[l->pos + 1] == '<')
     {
@@ -118,25 +118,29 @@ t_token	*ft_which_redir(t_lexer *l)
 
 t_token	*ft_handle_word(t_lexer *l)
 {
-    int	in_quotes;
-    int	start;
-    int	i;
+    int		start;
+    char	in_quotes;
 
     start = l->pos;
-    in_quotes = 0;
-    i = 0;
-    while(i < l->len)
+    in_quotes = '\0';
+    while(l->pos < l->len)
     {
 	if (in_quotes)
 	{
-	    //ignore operators and continue
+	    if (l->input[l->pos] == in_quotes)
+		in_quotes = '\0';
 	}
 	else
 	{
-	    //check for operators or whitespace
-	    //if op or ws -- end word
-	    if (ft_ismeta(l->input[l->pos]) || l->input[l->pos] == ' ')
-	    //else continue
+	    if (l->input[l->pos] == '\'' || l->input[l->pos] == '\"')
+		in_quotes = l->input[l->pos];
+	    else if (ft_ismeta(l->input[l->pos]) || l->input[l->pos] == ' ')
+		    break;
 	}
+	l->pos++;
     }
+    if (in_quotes)
+	return (create_token(TOKEN_ERROR, ft_strdup("Unclosed word.")));
+    else
+	return (create_token(TOKEN_WORD, ft_substr(l->input, start, l->pos - start)));
 }
