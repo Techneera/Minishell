@@ -1,16 +1,18 @@
 #include "execution.h"
 
 int		number_of_cmds(t_ast *ast_root);
+int		number_of_pipes(t_ast *ast_root);
 int		execute_pipe(t_ast *node, t_fds **fds, int i, char **envp);
 void	create_fds(t_fds **fds, t_ast *ast_root);
 int		execute_tree(t_ast *node, t_fds **fds, int i, char **envp);
 int		execute_cmd(t_ast *node, t_fds **fds, int i, char **envp);
 void	init_pipe(t_fds **fds, int ***pipe_fds, t_ast *ast_root);
 void	ft_closing_all(t_fds **fds);
+void	init_heredoc(t_fds **fds)
 
-int main(int argc, char *argv[], char **envp)
+int	main(int argc, char *argv[], char **envp)
 {
-	t_ast	*cmd = ft_cmd9();
+	t_ast	*cmd = ft_bash();
 	t_fds	*fds;
 
 	fds = NULL;
@@ -20,13 +22,45 @@ int main(int argc, char *argv[], char **envp)
 	if (!cmd)
 		return (-1);
 	create_fds(&fds, cmd);
+	init_heredoc(&fds, t_ast &cmd, -1);
 	execute_tree(cmd, &fds, -1, envp);
-	ft_closing_all(&fds); 
+	ft_closing_all(&fds);
 	while (waitpid(-1, NULL, 0) > 0)
 		;
 	free_all((void **) fds->pipe_fds, number_of_cmds(cmd) - 1);
 	free(fds);
-	//free_tree(cmd);
+	free_tree(cmd);
+}
+
+void	init_heredoc(t_fds **fds, t_ast **node, int i)
+{
+	int	y;
+
+	y = 0;
+	if (node->left)
+		init_heredoc(fds, node->left);
+	if (node->right)
+		init_heredoc(fds, node->right);
+	if (!node->cmd && !node->cmd->redirs)
+		return ;
+	i++;
+	while (y < node->cmd->redir_count)
+	{
+		if (node->cmd->redirs[y].label == REDIR_HEREDOCK)
+		{
+			if (fds->pipe_fds[y][0] != -1)
+			{
+				close(fds->pipe_fds[y][0]);
+				fds->pipe_fds[y][0] = -1;
+			}
+			if (fds->pipe_fds[y][1] != -1)
+			{
+				close(fds->pipe_fds[y][1]);
+				fds->pipe_fds[y][1] = -1;
+			}
+			fds->pipe_fds[y] = here_doc(node->cmd->redirs[y].file_name);
+		}
+	}
 }
 
 void	create_fds(t_fds **fds, t_ast *ast_root)
@@ -52,7 +86,7 @@ void	init_pipe(t_fds **fds, int ***pipe_fds, t_ast *ast_root)
 	int	i;
 
 	i = 0;
-	n_pipes = number_of_cmds(ast_root) - 1;
+	n_pipes = number_of_pipes(ast_root) - 1;
 	(*fds)->n_pipes = n_pipes;
 	if (n_pipes > 0)
 	{
@@ -75,6 +109,63 @@ void	init_pipe(t_fds **fds, int ***pipe_fds, t_ast *ast_root)
 			i++;
 		}
 	}
+}
+
+int	number_of_cmds(t_ast *ast_root)
+{
+	int		depth_left;
+	int		depth_right;
+
+	if (!ast_root)
+		return (0);
+	depth_left = number_of_cmds(ast_root->left);
+	depth_right = number_of_cmds(ast_root->right);
+	if (ast_root->type == NODE_CMD)
+		return (1 + depth_left + depth_right);
+	else
+		return (depth_left + depth_right);
+}
+
+int	number_of_pipes(t_ast *ast_root)
+{
+	int		depth_left;
+	int		depth_right;
+	int		i;
+
+
+	i = 1;
+	if (!ast_root)
+		return (0);
+	depth_left = number_of_cmds(ast_root->left);
+	depth_right = number_of_cmds(ast_root->right);
+	if (ast_root->type == NODE_CMD)
+	{
+		if (ast_root->cmd && ast_root->cmd->redirs &&
+				ast_root->cmd->redirs->label == REDIR_HEREDOCK)
+			i++;
+		return (i + depth_left + depth_right);
+	}
+	else
+		return (depth_left + depth_right);
+}
+
+int	number_of_heredocks(t_ast *ast_root)
+{
+	int		depth_left;
+	int		depth_right;
+	int		i;
+	int		y;
+
+	i = 0;
+	y = 0;
+	if (!ast_root)
+		return (0);
+	depth_left = number_of_heredocks(ast_root->left);
+	depth_right = number_of_heredocks((ast_root->right);
+	if (ast_root->cmd && ast_root->redir)
+		return (1 + depth_left + depth_right);
+	else
+		return (depth_left + depth_right);
 }
 
 int	number_of_cmds(t_ast *ast_root)
@@ -159,11 +250,8 @@ int	execute_cmd(t_ast *node, t_fds **fds, int i, char **envp)
 		{
 			if (node->cmd->redirs[r].label == REDIR_HEREDOCK)
 			{
-				fd_heredoc = here_doc(node->cmd->redirs[r].file_name);
-				if (dup2(fd_heredoc, STDIN_FILENO) == -1)
+				if (dup2(i, STDIN_FILENO) == -1)
 					exit(1);
-				if (fd_heredoc != -1)
-					close(fd_heredoc);
 			}
 			if (node->cmd->redirs[r].label == REDIR_IN)
 			{

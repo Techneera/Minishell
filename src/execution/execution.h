@@ -23,6 +23,8 @@ t_ast	*ft_cmd6();
 t_ast	*ft_cmd7();
 t_ast	*ft_cmd8();
 t_ast	*ft_cmd9();
+t_ast	*ft_bash();
+
 
 //---init_files
 void	number_of_redirs(t_fds **fds, t_ast *ast_root);

@@ -636,3 +636,27 @@ t_ast   *ft_cmd9()
 
     return (ast_root);
 }
+
+t_ast   *ft_bash()
+{
+    // --- Command 1: cat README.md ---
+    const char *args_literal1[] = {"bash", NULL};
+    char **args_cmd1 = dup_args(args_literal1); // Dynamically allocate args
+
+    t_cmd *cmd1 = malloc(sizeof(t_cmd));
+    if (!cmd1) return (NULL);
+    cmd1->args = args_cmd1;
+    cmd1->redir_count = 0;
+    cmd1->redirs = NULL;
+
+    t_ast *ast_cmd1 = malloc(sizeof(t_ast));
+    if (!ast_cmd1) { /* Cleanup... */ return (NULL); }
+    ast_cmd1->type = NODE_CMD;
+    ast_cmd1->cmd = cmd1;
+    ast_cmd1->left = NULL;
+    ast_cmd1->right = NULL;
+
+    // --- Root: NODE_PIPE ---
+    t_ast *ast_pipe_root = ast_cmd1;
+    return (ast_pipe_root);
+}
