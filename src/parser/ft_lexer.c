@@ -115,6 +115,28 @@ t_token	*ft_which_redir(t_lexer *l)
     else
 	return (create_token(TOKEN_ERROR, ft_strdup("minishell: syntax error near unexpected token `<'")));
 }
-/*
-t_token	*ft_handle_word()
-*/
+
+t_token	*ft_handle_word(t_lexer *l)
+{
+    int	in_quotes;
+    int	start;
+    int	i;
+
+    start = l->pos;
+    in_quotes = 0;
+    i = 0;
+    while(i < l->len)
+    {
+	if (in_quotes)
+	{
+	    //ignore operators and continue
+	}
+	else
+	{
+	    //check for operators or whitespace
+	    //if op or ws -- end word
+	    if (ft_ismeta(l->input[l->pos]) || l->input[l->pos] == ' ')
+	    //else continue
+	}
+    }
+}
