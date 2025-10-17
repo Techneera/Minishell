@@ -1,4 +1,5 @@
 #include "libshell.h"
+#include "lexer.h"
 
 static
 int	ft_ismeta(int c)
@@ -143,4 +144,32 @@ t_token	*ft_handle_word(t_lexer *l)
 	return (create_token(TOKEN_ERROR, ft_strdup("Unclosed word.")));
     else
 	return (create_token(TOKEN_WORD, ft_substr(l->input, start, l->pos - start)));
+}
+
+t_token	*create_token(t_token_label t_label, char *str)
+{
+    
+}
+
+char	*ft_get_unquoted_str(t_lexer *l)
+{
+    int		start;
+    char	in_quotes;
+
+    start = l->pos;
+    in_quotes = '\0';
+    while (l->pos < l->len)
+    {
+	if (in_quotes)
+	{
+	    if (l->input[l->pos] == in_quotes)
+		in_quotes = '\0';
+	}
+	else
+	{
+	    if (l->input[l->pos] == '\'' || l->input[l->pos] == '\"')
+		in_quotes = l->input[l->pos];
+	}
+	l->pos++;
+    }
 }
