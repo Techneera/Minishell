@@ -252,13 +252,13 @@ t_ast	*ft_cmd3()
 
                   [NODE_CMD]
                     `-- cmd: {
-                        args: {"./my_script.sh", NULL},
+                        args: {"cat", NULL},
                         redir_count: 4,
                         redirs: [
                           {label: REDIR_IN,     file_name: "in.txt"},
                           {label: REDIR_OUT,    file_name: "err.log"}, // (Proxy for STDERR)
-                          {label: REDIR_APPEND, file_name: "hist.txt"},
-                          {label: REDIR_OUT,    file_name: "out.txt"}
+                          {label: REDIR_HEREDOCK, file_name: "END"},
+                          {label: REDIR_HEREDOCK,    file_name: "EOF"}
                         ]
                       }
 */
@@ -268,7 +268,7 @@ t_ast	*ft_cmd4()
     int redir_count = 4;
     
     // --- 1. Command Arguments ---
-    char **args = dup_args((const char *[]){"./my_script.sh", NULL});
+    char **args = dup_args((const char *[]){"cat", NULL});
 
     // --- 2. Redirection Array Allocation ---
     t_redir *redirs_array = malloc(sizeof(t_redir) * redir_count);
@@ -285,12 +285,12 @@ t_ast	*ft_cmd4()
     redirs_array[1].file_name = strdup("err.log");
 
     // Redir 3: >> hist.txt 
-    redirs_array[2].label = REDIR_APPEND;
-    redirs_array[2].file_name = strdup("hist.txt");
+    redirs_array[2].label =  REDIR_HEREDOCK;
+    redirs_array[2].file_name = strdup("END");
 
     // Redir 4: > out.txt (This will overwrite the redirection from Redir 3 on FD 1)
-    redirs_array[3].label = REDIR_OUT;
-    redirs_array[3].file_name = strdup("out.txt");
+    redirs_array[3].label = REDIR_HEREDOCK;
+    redirs_array[3].file_name = strdup("EOF");
 
 
     // --- 4. Create t_cmd structure ---

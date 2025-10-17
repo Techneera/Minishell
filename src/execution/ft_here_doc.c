@@ -11,15 +11,12 @@ void	make_lim(char **new_lim, char *lim)
 		exit(1);
 }
 
-int	here_doc(char *lim)
+void	here_doc(char *lim, int *fd)
 {
 	char	*str;
 	char	*line;
 	char	*new_lim;
-	int		fd[2];
 
-	if (pipe(fd) == -1)
-		exit(1);
 	str = NULL;
 	line = NULL;
 	make_lim(&new_lim, lim);
@@ -36,7 +33,8 @@ int	here_doc(char *lim)
 		free(str);
 		ft_printf("> ");
 	}
-	ft_putstr_fd(line, fd[1]);
+	if (line)
+		ft_putstr_fd(line, fd[1]);
 	if (str)
 		free(str);
 	if (line)
@@ -45,7 +43,6 @@ int	here_doc(char *lim)
 		free(new_lim);
 	close(fd[1]);
 	fd[1] = -1;
-	return (fd[0]);
 }
 
 static char	*my_strjoin(char **s1, char *s2)

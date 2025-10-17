@@ -8,11 +8,13 @@ int		execute_tree(t_ast *node, t_fds **fds, int i, char **envp);
 int		execute_cmd(t_ast *node, t_fds **fds, int i, char **envp);
 void	init_pipe(t_fds **fds, int ***pipe_fds, t_ast *ast_root);
 void	ft_closing_all(t_fds **fds);
-void	init_heredoc(t_fds **fds)
+void	init_heredoc(t_fds **fds, t_ast *node);
+void	fill_heredoc(t_fds **fds, t_ast *node, int i);
+int	number_of_heredocks(t_ast *ast_root);
 
 int	main(int argc, char *argv[], char **envp)
 {
-	t_ast	*cmd = ft_bash();
+	t_ast	*cmd = ft_cmd4();
 	t_fds	*fds;
 
 	fds = NULL;
@@ -22,25 +24,59 @@ int	main(int argc, char *argv[], char **envp)
 	if (!cmd)
 		return (-1);
 	create_fds(&fds, cmd);
-	init_heredoc(&fds, t_ast &cmd, -1);
 	execute_tree(cmd, &fds, -1, envp);
 	ft_closing_all(&fds);
 	while (waitpid(-1, NULL, 0) > 0)
 		;
 	free_all((void **) fds->pipe_fds, number_of_cmds(cmd) - 1);
 	free(fds);
-	free_tree(cmd);
+	//free_tree(cmd);
 }
 
-void	init_heredoc(t_fds **fds, t_ast **node, int i)
+void	init_heredoc(t_fds **fds, t_ast *node)
+{
+	int	n_pipes;
+	int	i;
+
+	i = 0;
+	n_pipes = number_of_heredocks(node);
+	(*fds)->n_docs = n_pipes;
+	(*fds)->doc_id = 0;
+	if (n_pipes > 0)
+	{
+		(*fds)->heredoc_fds = malloc(n_pipes * sizeof(int *));
+		if (!(*fds)->heredoc_fds)
+			exit(1);
+		while (i < n_pipes)
+		{
+			(*fds)->heredoc_fds[i] = malloc(2 * sizeof(int));
+			if (!(*fds)->heredoc_fds[i])
+			{
+				free_all((void **) (*fds)->heredoc_fds, n_pipes);
+				exit(1);
+			}
+			if(pipe((*fds)->heredoc_fds[i]) == -1)
+			{
+				free_all((void **) (*fds)->heredoc_fds, n_pipes);
+				exit(1);
+			}
+			i++;
+		}
+		fill_heredoc(fds, node, 0);
+	}
+}
+
+void	fill_heredoc(t_fds **fds, t_ast *node, int i)
 {
 	int	y;
+	int	r;
 
 	y = 0;
+	r = 0;
 	if (node->left)
-		init_heredoc(fds, node->left);
+		fill_heredoc(fds, node->left, i);
 	if (node->right)
-		init_heredoc(fds, node->right);
+		fill_heredoc(fds, node->right, i);
 	if (!node->cmd && !node->cmd->redirs)
 		return ;
 	i++;
@@ -48,18 +84,10 @@ void	init_heredoc(t_fds **fds, t_ast **node, int i)
 	{
 		if (node->cmd->redirs[y].label == REDIR_HEREDOCK)
 		{
-			if (fds->pipe_fds[y][0] != -1)
-			{
-				close(fds->pipe_fds[y][0]);
-				fds->pipe_fds[y][0] = -1;
-			}
-			if (fds->pipe_fds[y][1] != -1)
-			{
-				close(fds->pipe_fds[y][1]);
-				fds->pipe_fds[y][1] = -1;
-			}
-			fds->pipe_fds[y] = here_doc(node->cmd->redirs[y].file_name);
+			here_doc(node->cmd->redirs[y].file_name, (*fds)->heredoc_fds[r]);
+			r++;
 		}
+		y++;
 	}
 }
 
@@ -77,6 +105,7 @@ void	create_fds(t_fds **fds, t_ast *ast_root)
 		if (!(*fds)->fd_files)
 			exit(1);
 	}
+	init_heredoc(fds, ast_root);
 	fill_fd_file(fds, ast_root, 0);
 }
 
@@ -86,7 +115,7 @@ void	init_pipe(t_fds **fds, int ***pipe_fds, t_ast *ast_root)
 	int	i;
 
 	i = 0;
-	n_pipes = number_of_pipes(ast_root) - 1;
+	n_pipes = number_of_cmds(ast_root) - 1;
 	(*fds)->n_pipes = n_pipes;
 	if (n_pipes > 0)
 	{
@@ -126,6 +155,33 @@ int	number_of_cmds(t_ast *ast_root)
 		return (depth_left + depth_right);
 }
 
+int	number_of_heredocks(t_ast *ast_root)
+{
+	int		depth_left;
+	int		depth_right;
+	int		i;
+	int		n;
+
+	i = 0;
+	n = 0;
+	if (!ast_root)
+		return (0);
+	depth_left = number_of_heredocks(ast_root->left);
+	depth_right = number_of_heredocks(ast_root->right);
+	if (ast_root->cmd)
+	{
+		while (i < ast_root->cmd->redir_count)
+		{
+			if (ast_root->cmd->redirs[i].label == REDIR_HEREDOCK)
+				n++;
+			i++;
+		}
+		return (n + depth_left + depth_right);
+	}
+	else
+		return (depth_left + depth_right);
+}
+
 int	number_of_pipes(t_ast *ast_root)
 {
 	int		depth_left;
@@ -145,40 +201,6 @@ int	number_of_pipes(t_ast *ast_root)
 			i++;
 		return (i + depth_left + depth_right);
 	}
-	else
-		return (depth_left + depth_right);
-}
-
-int	number_of_heredocks(t_ast *ast_root)
-{
-	int		depth_left;
-	int		depth_right;
-	int		i;
-	int		y;
-
-	i = 0;
-	y = 0;
-	if (!ast_root)
-		return (0);
-	depth_left = number_of_heredocks(ast_root->left);
-	depth_right = number_of_heredocks((ast_root->right);
-	if (ast_root->cmd && ast_root->redir)
-		return (1 + depth_left + depth_right);
-	else
-		return (depth_left + depth_right);
-}
-
-int	number_of_cmds(t_ast *ast_root)
-{
-	int		depth_left;
-	int		depth_right;
-
-	if (!ast_root)
-		return (0);
-	depth_left = number_of_cmds(ast_root->left);
-	depth_right = number_of_cmds(ast_root->right);
-	if (ast_root->type == NODE_CMD)
-		return (1 + depth_left + depth_right);
 	else
 		return (depth_left + depth_right);
 }
@@ -218,7 +240,6 @@ int	execute_cmd(t_ast *node, t_fds **fds, int i, char **envp)
 	char	*cmd_path;
 	char	**args;
 	pid_t	pid;
-	int fd_heredoc;
 
 	if (!node)
 		return (i);
@@ -250,20 +271,24 @@ int	execute_cmd(t_ast *node, t_fds **fds, int i, char **envp)
 		{
 			if (node->cmd->redirs[r].label == REDIR_HEREDOCK)
 			{
-				if (dup2(i, STDIN_FILENO) == -1)
-					exit(1);
+				if ((*fds)->heredoc_fds[(*fds)->doc_id][0] != -1 && 
+					dup2((*fds)->heredoc_fds[(*fds)->doc_id][0], STDIN_FILENO) == -1)
+					perror("dup on REDIR_DOC");
+				(*fds)->doc_id++;
 			}
 			if (node->cmd->redirs[r].label == REDIR_IN)
 			{
-				if (dup2((*fds)->fd_files[(*fds)->file_id], STDIN_FILENO) == -1)
-					exit(1);
+				if ((*fds)->fd_files[(*fds)->file_id] != -1 && 
+					dup2((*fds)->fd_files[(*fds)->file_id], STDIN_FILENO) == -1)
+					perror("dup on REDIR_IN");
 				(*fds)->file_id++;
 			}
 			else if (node->cmd->redirs[r].label == REDIR_OUT
 				|| node->cmd->redirs[r].label == REDIR_APPEND)
 			{
-				if (dup2((*fds)->fd_files[(*fds)->file_id], STDOUT_FILENO) == -1)
-					exit(1);
+				if ((*fds)->fd_files[(*fds)->file_id] != -1 && 
+				dup2((*fds)->fd_files[(*fds)->file_id], STDOUT_FILENO) == -1)
+					perror("dup on REDIR_OUT");
 				(*fds)->file_id++;
 			}
 			r++;
@@ -297,6 +322,24 @@ void ft_closing_all(t_fds **fds)
 			{
 				close((*fds)->pipe_fds[i][1]);
 				(*fds)->pipe_fds[i][1] = -1;
+			}
+		}
+		i++;
+	}
+	i = 0;
+	while (i < (*fds)->n_docs)
+	{
+		if ((*fds)->heredoc_fds && (*fds)->heredoc_fds[i])
+		{
+			if ((*fds)->heredoc_fds[i][0] != -1)
+			{
+				close((*fds)->heredoc_fds[i][0]);
+				(*fds)->heredoc_fds[i][0] = -1;
+			}
+			if ((*fds)->heredoc_fds[i][1] != -1)
+			{
+				close((*fds)->heredoc_fds[i][1]);
+				(*fds)->heredoc_fds[i][1] = -1;
 			}
 		}
 		i++;

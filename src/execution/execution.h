@@ -7,10 +7,13 @@
 typedef struct s_fds
 {
 	int	**pipe_fds;
+	int	**heredoc_fds;
 	int	*fd_files;
 	int	file_id;
+	int	doc_id;
 	int	n_files;
 	int	n_pipes;
+	int	n_docs;
 }	t_fds;
 
 //---test_cmds
@@ -44,5 +47,5 @@ void	message_error(char	*str, char *file, int type);
 int	ft_max(int a, int b);
 
 //---ft_here_doc
-int	here_doc(char *lim);
+void	here_doc(char *lim, int *fd);
 #endif
