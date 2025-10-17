@@ -51,7 +51,7 @@ typedef enum e_token_label
 	TOKEN_REDIR_IN, // Redirection input character
 	TOKEN_REDIR_OUT, // Redirection output character
 	TOKEN_REDIR_APPEND, // Append character
-	TOKEN_REDIR_HEREDOC // Heredoc character
+	TOKEN_REDIR_HEREDOC, // Heredoc character
 	TOKEN_EOF // End Of File
 }	t_token_label;
 
@@ -100,7 +100,7 @@ char	*ft_strtok(char *str);
 char	*ft_tokenizer_quote(char *str);
 
 //---ft_token_ultils.c
-t_token	*create_token(char *str);
+t_token	*create_token(t_token_label t_label, char *str);
 int	token_add_back(t_token **token, char *str);
 void	ft_free_token(t_token **token);
 void	token_print(t_token *token);
