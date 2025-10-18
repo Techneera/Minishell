@@ -1,61 +1,75 @@
 #include "libshell.h"
+#include "lexer.h"
 
-void	main_loop(t_token **token);
-void	fill_token(t_token **token, char *line);
+void	loop(void);
+void	ft_tokens_constructor(t_lexer **lex, t_token **head);
+void	free_all(char *line, t_lexer *lex, t_token **head);
 
 int	main(int argc, char **argv, char **envp)
 {
-	t_token	*token;
-
-	token = NULL;
-	main_loop(&token);
 	(void)argc;
 	(void)argv;
 	(void)envp;
+	loop();
+	return (0);
 }
 
-void	main_loop(t_token **token)
+void	loop(void)
 {
 	char	*line;
+	t_lexer	*lex;
+	t_token	*head;
 
 	line = NULL;
+	lex = NULL;
 	while(1)
 	{
+		head = NULL;
 		line = readline(PROMPT);
-		if (!line)
+		if (!line || !ft_strcmp(line, "exit"))
+			break ;
+		lex = ft_state_lexer(line);
+		if (!lex)
 		{
-			printf("exit\n");
+			free(line);
 			break ;
 		}
-		fill_token(token, line);
-		token_print(*token);
-		ft_free_token(token);
+		ft_tokens_constructor(&lex, &head);
+		free_all(line, lex, &head);
+	}
+	free_all(line, NULL, &head);
+}
+
+void	free_all(char *line, t_lexer *lex, t_token **head)
+{
+	if (line)
+	{
 		free(line);
 		line = NULL;
 	}
-	if (*token)
-		ft_free_token(token);
-	if (line)
-		free(line);
+	if (lex)
+	{
+		free_lexer(lex);
+		lex = NULL;
+	}
+	if (head)
+	{
+		free_token_lst(head, &free_token);
+		head = NULL;
+	}
 }
 
-void	fill_token(t_token **token, char *line)
+void	ft_tokens_constructor(t_lexer **lex, t_token **head)
 {
-	char	*str_pointer;
+	t_token	*tmp;
 
-	str_pointer = ft_strtok(line);
-	if (token_add_back(token, str_pointer) == -1)
+	tmp = get_next_token(*lex);
+	if (!tmp)
+		return ;
+	while(tmp->tok_label != TOKEN_EOF && tmp->tok_label != TOKEN_ERROR)
 	{
-		ft_free_token(token);
-		exit(1);
+		add_token_back(head, tmp);
+		tmp = get_next_token(*lex);
 	}
-	while (str_pointer)
-	{
-		str_pointer = ft_strtok(NULL);
-		if (str_pointer && token_add_back(token, str_pointer) == -1)
-		{
-			ft_free_token(token);
-			exit(1);
-		}
-	}
+	add_token_back(head, tmp);
 }

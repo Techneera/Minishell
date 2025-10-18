@@ -8,13 +8,20 @@ SRC_LEX = ft_lexer.c
 LIBRARIES = -L$(PATH_LFT) -lft
 OBJS = $(SRC_LEX:.c=.o)
 
-NAME = lexer_unit
+NAME = shell
+
+UNIT = lexer_unit
 
 all: $(NAME)
 
 $(NAME): $(OBJS)
 	$(MAKE) -C $(PATH_LFT)
+	$(CC) $(CFLAGS) shell.c $^ $(LIBRARIES) -lreadline -o $(NAME)
+
+$(UNIT): $(OBJS)
+	$(MAKE) -C $(PATH_LFT)
 	$(CC) $(CFLAGS) unit.c $^ $(LIBRARIES) -o $(NAME)
+
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
@@ -25,7 +32,8 @@ clean:
 
 fclean: clean
 	$(MAKE) -C $(PATH_LFT) fclean
-	rm -rf $(NAME)
+	@rm -rf $(UNIT)
+	@rm -rf $(NAME)
 
 re: fclean all
 

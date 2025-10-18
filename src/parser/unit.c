@@ -114,7 +114,7 @@ int main(void)
         {TOKEN_PIPE, "|"},
         {TOKEN_WORD, "wc"},
         {TOKEN_WORD, "-l"},
-        {TOKEN_REDIR_OUT, ">"},  // This test will FAIL if you haven't fixed the bug!
+        {TOKEN_REDIR_OUT, ">"},
         {TOKEN_WORD, "out.txt"}
     };
     pass_count += run_test(test2_input, test2, 8);
