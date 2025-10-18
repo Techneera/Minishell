@@ -65,6 +65,7 @@ typedef struct s_token
 {
 	char		*str;
 	t_token_label	tok_label;
+	struct s_token	*next;
 }	t_token;
 
 typedef struct s_lexer

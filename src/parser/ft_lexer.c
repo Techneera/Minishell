@@ -158,17 +158,88 @@ t_token	*create_token(t_token_label tok_label, char *str)
     }
     t->str = str;
     t->tok_label = tok_label;
+    t->next = NULL;
     return (t);
+}
+
+void	add_token_back(t_token **tok_lst, t_token *new)
+{
+    t_token	*ptr;
+
+    if (!*tok_lst && new)
+    {
+	*tok_lst = new;
+	return ;
+    }
+    ptr = *tok_lst;
+    if (!new)
+	return ;
+    while (ptr->next)
+	ptr = ptr->next;
+    ptr->next = new;
+}
+
+void	free_token_lst(t_token **tok_lst, void (*del)(t_token *))
+{
+    t_token	*ptr;
+
+    if (!tok_lst)
+	return ;
+    while (*tok_lst)
+    {
+	ptr = (*tok_lst)->next;
+	del(*tok_lst);
+	*tok_lst = ptr;
+    }
+    *tok_lst = NULL;
 }
 
 void	free_token(t_token *t)
 {
+    if (!t)
+	return ;
     free(t->str);
     free(t);
+    t = NULL;
+}
+
+void	free_lexer(t_lexer *l)
+{
+    if (!l)
+	return ;
+    free(l);
+    l = NULL;
 }
 
 char	*ft_get_unquoted_str(t_lexer *l)
 {
-    free((void *)l->input);
-    return (NULL);
+    int   start;
+    char  *raw_delim;
+    char  *final_delim;
+    int   len;
+
+    start = l->pos;
+    // Scan for the end of the delimiter word (ends at space or metachar)
+    while (l->pos < l->len && !ft_ismeta(l->input[l->pos]) && !ft_isspace(l->input[l->pos]))
+        l->pos++;
+    // Extract the raw word (e.g., "EOF" or 'EOF')
+    raw_delim = ft_substr(l->input, start, l->pos - start);
+    if (!raw_delim)
+        return (NULL);
+    len = ft_strlen(raw_delim);
+    // Check for matching quotes and strip them
+    if (len >= 2 && (raw_delim[0] == '\'' && raw_delim[len - 1] == '\''))
+    {
+        final_delim = ft_substr(raw_delim, 1, len - 2);
+        free(raw_delim);
+        return (final_delim);
+    }
+    if (len >= 2 && (raw_delim[0] == '\"' && raw_delim[len - 1] == '\"'))
+    {
+        final_delim = ft_substr(raw_delim, 1, len - 2);
+        free(raw_delim);
+        return (final_delim);
+    }
+    // If no quotes, return the raw delimiter
+    return (raw_delim);
 }
