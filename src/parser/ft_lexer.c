@@ -7,11 +7,11 @@ int	ft_ismeta(int c)
     return (c == '|' || c == '&' || c == '<' ||  c == '>' ||  c == '(' ||  c == ')');
 }
 
-t_lexer	*ft_state_lexer(const char *line)
+t_lexer	*ft_state_lexer(char *line)
 {
     t_lexer	*ptr;
 
-    ptr = (l_lexer *)ft_calloc(1, sizeof(t_lexer));
+    ptr = (t_lexer *)ft_calloc(1, sizeof(t_lexer));
     if (!ptr)
 	return (NULL);
     ptr->input = line;
@@ -146,30 +146,29 @@ t_token	*ft_handle_word(t_lexer *l)
 	return (create_token(TOKEN_WORD, ft_substr(l->input, start, l->pos - start)));
 }
 
-t_token	*create_token(t_token_label t_label, char *str)
+t_token	*create_token(t_token_label tok_label, char *str)
 {
-    
+    t_token	*t;
+
+    t = (t_token *)ft_calloc(1, sizeof(t_token));
+    if (!t)
+    {
+        free(str);
+	return (NULL);
+    }
+    t->str = str;
+    t->tok_label = tok_label;
+    return (t);
+}
+
+void	free_token(t_token *t)
+{
+    free(t->str);
+    free(t);
 }
 
 char	*ft_get_unquoted_str(t_lexer *l)
 {
-    int		start;
-    char	in_quotes;
-
-    start = l->pos;
-    in_quotes = '\0';
-    while (l->pos < l->len)
-    {
-	if (in_quotes)
-	{
-	    if (l->input[l->pos] == in_quotes)
-		in_quotes = '\0';
-	}
-	else
-	{
-	    if (l->input[l->pos] == '\'' || l->input[l->pos] == '\"')
-		in_quotes = l->input[l->pos];
-	}
-	l->pos++;
-    }
+    free((void *)l->input);
+    return (NULL);
 }

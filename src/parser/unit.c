@@ -1,16 +1,26 @@
 #include "libshell.h"
+#include "lexer.h"
+#include <stdio.h>
 
 int	main(void)
 {
-    char	str01[] = "ls -la";
-    char	str02[] = "echo \"hello world\"";
-    char	str03[] = "cat * | grep Makefile";
-    char	str04[] = "ls > outfile.txt";
-    char	str05[] = "wc < banana";
-    char	str06[] = "";
-    char	str07[] = "ls -la";
-    char	str08[] = "ls -la";
-    char	str09[] = "ls -la";
-    char	str10[] = "ls -la";
-    char	str11[] = "ls -la";
+    char	*strs[] = {"ls -la", "echo \'hello\'", NULL};
+    int		i;
+    t_lexer	*l;
+
+    i = 0;
+    l = NULL;
+    while (strs[i])
+    {
+	l = ft_state_lexer(ft_strdup(strs[i]));
+	if (!l)
+	    return (-1);
+	printf("%s\n", l->input);
+	printf("%ld\n", l->pos);
+	printf("%ld\n", l->len);
+	free(l->input);
+	free(l);
+	i++;
+    }
+    return (0);
 }

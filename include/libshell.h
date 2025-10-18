@@ -69,7 +69,7 @@ typedef struct s_token
 
 typedef struct s_lexer
 {
-	const char	*input;
+	char	*input;
 	size_t		pos;
 	size_t		len;
 }	t_lexer;
@@ -100,7 +100,7 @@ char	*ft_strtok(char *str);
 char	*ft_tokenizer_quote(char *str);
 
 //---ft_token_ultils.c
-t_token	*create_token(t_token_label t_label, char *str);
+t_token	*create_token(t_token_label tok_label, char *str);
 int	token_add_back(t_token **token, char *str);
 void	ft_free_token(t_token **token);
 void	token_print(t_token *token);
