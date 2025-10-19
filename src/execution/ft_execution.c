@@ -14,7 +14,7 @@ int	number_of_heredocks(t_ast *ast_root);
 
 int	main(int argc, char *argv[], char **envp)
 {
-	t_ast	*cmd = ft_cmd4();
+	t_ast	*cmd = ft_cmd1();
 	t_fds	*fds;
 
 	fds = NULL;
@@ -29,8 +29,10 @@ int	main(int argc, char *argv[], char **envp)
 	while (waitpid(-1, NULL, 0) > 0)
 		;
 	free_all((void **) fds->pipe_fds, number_of_cmds(cmd) - 1);
+	free_all((void **) fds->heredoc_fds, fds->n_docs);
+	free(fds->fd_files);
 	free(fds);
-	//free_tree(cmd);
+	free_tree(cmd);
 }
 
 void	init_heredoc(t_fds **fds, t_ast *node)
@@ -42,6 +44,7 @@ void	init_heredoc(t_fds **fds, t_ast *node)
 	n_pipes = number_of_heredocks(node);
 	(*fds)->n_docs = n_pipes;
 	(*fds)->doc_id = 0;
+	(*fds)->heredoc_fds = NULL;
 	if (n_pipes > 0)
 	{
 		(*fds)->heredoc_fds = malloc(n_pipes * sizeof(int *));
@@ -94,6 +97,8 @@ void	fill_heredoc(t_fds **fds, t_ast *node, int i)
 void	create_fds(t_fds **fds, t_ast *ast_root)
 {
 	*fds = malloc(sizeof(t_fds));
+	(*fds)->n_files = 0;
+	(*fds)->pipe_fds = 0;
 	if (!*fds)
 		exit(1);
 	(*fds)->file_id = 0;
@@ -298,7 +303,6 @@ int	execute_cmd(t_ast *node, t_fds **fds, int i, char **envp)
 		perror("execve");
 		exit(1);
 	}
-	free_all((void **)args, ft_arraylen((void **)args));
 	free(cmd_path);
 	return (i);
 }
