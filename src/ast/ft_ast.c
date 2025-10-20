@@ -1,22 +1,22 @@
 #include "libshell.h"
 
-t_ast	*ft_ast_new_cmd(t_cmd *command)
+t_ast	*ft_ast_new_cmd(t_cmd *cmd)
 {
-	t_ast	*new_command;
+	t_ast	*new_cmd;
 
-	if (!command)
+	if (!cmd)
 		return (NULL);
-	new_command = (t_ast *)ft_calloc(1, sizeof(t_ast));
-	if (!new_command)
+	new_cmd= (t_ast *)ft_calloc(1, sizeof(t_ast));
+	if (!new_cmd)
 		return (NULL);
-	new_command->type = NODE_CMD;
-	new_command->cmd = command;
-	new_command->left = NULL;
-	new_command->right = NULL;
+	new_cmd->type = NODE_CMD;
+	new_cmd->cmd = command;
+	new_cmd->left = NULL;
+	new_cmd->right = NULL;
 	return (new_command);
 }
 
-t_ast	*ft_ast_new_pipe(t_ast *left_subtree, t_ast *right_subtree)
+t_ast	*ft_ast_new_pipe(t_ast *l, t_ast *r)
 {
 	t_ast	*new_pipe;
 
@@ -25,9 +25,15 @@ t_ast	*ft_ast_new_pipe(t_ast *left_subtree, t_ast *right_subtree)
 		return (NULL);
 	new_pipe->type = NODE_PIPE;
 	new_pipe->cmd = NULL;
-	new_pipe->left = left_subtree;
-	new_pipe->right = right_subtree;
+	new_pipe->left = l;
+	new_pipe->right = r;
 	return (new_pipe);
 }
 
-//t_cmd	*ft_generate_command()
+t_cmd	*ft_create_cmd(t_lexer *l)
+{
+    return (NULL);
+}
+/*
+t_cmd	*ft_generate_command()
+*/
