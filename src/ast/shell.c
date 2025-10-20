@@ -4,6 +4,7 @@
 void	loop(void);
 void	ft_tokens_constructor(t_lexer **lex, t_token **head);
 void	free_all(char *line, t_lexer *lex, t_token **head);
+void	print_tokens(t_token *head);
 
 int	main(int argc, char **argv, char **envp)
 {
@@ -35,6 +36,7 @@ void	loop(void)
 			break ;
 		}
 		ft_tokens_constructor(&lex, &head);
+		print_tokens(head);
 		free_all(line, lex, &head);
 	}
 	free_all(line, NULL, &head);
@@ -72,4 +74,18 @@ void	ft_tokens_constructor(t_lexer **lex, t_token **head)
 		tmp = get_next_token(*lex);
 	}
 	add_token_back(head, tmp);
+}
+
+void	print_tokens(t_token *head)
+{
+	t_token	*ptr;
+
+	if (!head)
+		return ;
+	ptr = head;
+	while (ptr)
+	{
+		printf("%d, %s\n", ptr->tok_label, ptr->str);
+		ptr = ptr->next;
+	}
 }

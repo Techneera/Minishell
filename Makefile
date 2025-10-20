@@ -4,55 +4,74 @@ CFLAGS = -Wall -Werror -Wextra -g -Iinclude -Ilibft
 
 NAME = minishell
 
-#		DIRECTORIES		#
-
 UNIT = unit_test
+
+#		---DIRECTORIES---		#
 
 SRC_DIR = src
 
-OBJ_DIR = $(SRC_DIR)/obj
+OBJS_DIR = $(SRC_DIR)/obj
 
-PARSER_DIR = $(SRC_DIR)/parser
+AST_DIR = $(SRC_DIR)/ast
+
+LEXER_DIR = $(SRC_DIR)/lexer
 
 TESTER_DIR = $(SRC_DIR)/test_module
 
-#		PARSER			#
+#		---PARSER---			#
 
-SRCS_PARSER =  ft_strtok.c ft_token_utils.c shell.c ft_ast.c
+SRCS_AST=  ft_ast.c
 
-OBJS_PARSER = $(SRCS_PARSER:.c=.o)
+OBJS_AST = $(SRCS_PARSER:.c=.o)
 
-PATH_SRCS_PARSER = $(patsubst %,$(PARSER_DIR)/%,$(SRCS_PARSER))
+PATH_SRCS_AST = $(patsubst %,$(AST_DIR)/%,$(SRCS_AST))
 
-PATH_OBJS_PARSER = $(patsubst %,$(OBJ_DIR)/%,$(OBJS_PARSER))
+PATH_OBJS_AST = $(patsubst %,$(OBJS_DIR)/%,$(OBJS_AST))
 
-#		TESTER			#
+#		---LEXER---			#
+
+SRCS_LEXER = ft_lexer.c
+
+OBJS_LEXER = $(SRCS_LEXER:.c=.o)
+
+PATH_SRCS_LEXER = $(patsubst %,$(LEXER_DIR)/%,$(SRCS_LEXER))
+
+PATH_OBJS_LEXER = $(patsubst %,$(OBJS_DIR)/%,$(OBJS_LEXER))
+
+#		---TESTER---			#
+
+SRCS_TESTER = unit.c
+
+OBJS_TESTER = $(SRCS_LEXER:.c=.o)
 
 PATH_TESTER = $(patsubst %,$(TESTER_DIR)/%,$(SRCS_TESTER))
 
-#		STATIC LIBRARIES			#
+#		---STATIC LIBRARIES---		#
 
 LFT = libft/libft.a
 
-#		RULESET			#
+#		---RULESET---			#
 
 all: $(NAME)
 
-$(NAME): $(PATH_OBJS_PARSER) $(LFT)
-	$(CC) $(CFLAGS) -lreadline  $^ -o $(NAME)
+unit: $(PATH_OBJS_LEXER) $(LFT)
+	$(CC) $(CFLAGS)  $(PATH_TESTER) $^ -o $(UNIT)
+
+$(NAME): $(PATH_OBJS_LEXER) $(LFT)
+	$(CC) $(CFLAGS) -lreadline $(PATH_TESTER) $^ -o $(NAME)
 
 $(LFT):
 	$(MAKE) -C libft
 
-$(OBJ_DIR)/%.o:$(PARSER_DIR)/%.c | $(OBJ_DIR)
+$(OBJS_DIR)/%.o:$(LEXER_DIR)/%.c | $(OBJS_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(OBJ_DIR):
+$(OBJS_DIR):
 	@mkdir -p $@
 
 clean:
 	$(MAKE) -C libft clean
-	rm -f $(PATH_OBJS_PARSER)
+	rm -rf $(OBJS_DIR)
 
 fclean: clean
 	$(MAKE) -C libft fclean
@@ -60,4 +79,4 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all clean fclea re
+.PHONY: all clean fclean re unit
