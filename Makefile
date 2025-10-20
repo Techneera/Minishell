@@ -58,7 +58,7 @@ unit: $(PATH_OBJS_LEXER) $(LFT)
 	$(CC) $(CFLAGS)  $(PATH_TESTER) $^ -o $(UNIT)
 
 $(NAME): $(PATH_OBJS_LEXER) $(LFT)
-	$(CC) $(CFLAGS) -lreadline $(PATH_TESTER) $^ -o $(NAME)
+	$(CC) $(CFLAGS) -lreadline src/test_module/shell.c $^ -o $(NAME)
 
 $(LFT):
 	$(MAKE) -C libft
@@ -79,4 +79,7 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all clean fclean re unit
+vgr: all
+	valgrind --leak-check=full --show-leak-kinds=all --suppressions=./readline.supp ./$(NAME)
+
+.PHONY: all clean fclean re unit vgr
