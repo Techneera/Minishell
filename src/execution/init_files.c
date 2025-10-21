@@ -41,6 +41,8 @@ int	fill_fd_file(t_fds **fds, t_ast *ast_root, int i)
 		{
 			if (open_files(fds, ast_root, i + r, j))
 				r++;
+			else
+				break ;
 			j++;
 		}
 		return (i + r + 1);
@@ -64,14 +66,18 @@ static int	create_redir_in(t_fds **fds, t_ast *ast_root, int i, int r)
 		(*fds)->fd_files[i] = -1;
 		message_error(": no such file or directory: ",
 			ast_root->cmd->redirs[r].file_name, 0);
+		return (0);
 	}
 	else
 	{
 		(*fds)->fd_files[i] = open(ast_root->cmd->redirs[r].file_name,
 				O_RDONLY);
 		if ((*fds)->fd_files[i] == -1)
+		{
 			message_error(": Permission denied",
 				ast_root->cmd->redirs->file_name, 0);
+			return (0);
+		}
 	}
 	return (1);
 }
@@ -85,7 +91,11 @@ static int	create_redir_out(t_fds **fds, t_ast *ast_root, int i, int r)
 		(*fds)->fd_files[i] = open(ast_root->cmd->redirs[r].file_name,
 					O_WRONLY | O_CREAT | O_APPEND, 0671);
 	if ((*fds)->fd_files[i] == -1)
+	{
 		message_error(": Permission denied",
 			ast_root->cmd->redirs[r].file_name, 0);
+		return (0);
+	}
+		
 	return (1);
 }

@@ -14,7 +14,7 @@ int	number_of_heredocks(t_ast *ast_root);
 
 int	main(int argc, char *argv[], char **envp)
 {
-	t_ast	*cmd = ft_cmd8();
+	t_ast	*cmd = ft_cmd4();
 	t_fds	*fds;
 
 	fds = NULL;
