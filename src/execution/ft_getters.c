@@ -2,7 +2,6 @@
 
 void	message_error(char	*str, char *file, int type);
 
-
 void	ft_free_all(char **str)
 {
 	int	i;
@@ -50,7 +49,7 @@ char	**get_paths(char **env)
 	{
 		paths = ft_split(env[i], '=');
 		paths2 = ft_split(paths[1], ':');
-		ft_free_all(paths);
+		free_all((void **) paths, ft_arraylen((void **) paths));
 		return (paths2);
 	}
 	return (NULL);

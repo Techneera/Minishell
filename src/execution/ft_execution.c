@@ -14,7 +14,7 @@ int	number_of_heredocks(t_ast *ast_root);
 
 int	main(int argc, char *argv[], char **envp)
 {
-	t_ast	*cmd = ft_cmd1();
+	t_ast	*cmd = ft_cmd8();
 	t_fds	*fds;
 
 	fds = NULL;
@@ -283,9 +283,8 @@ int	execute_cmd(t_ast *node, t_fds **fds, int i, char **envp)
 			}
 			if (node->cmd->redirs[r].label == REDIR_IN)
 			{
-				if ((*fds)->fd_files[(*fds)->file_id] != -1 && 
-					dup2((*fds)->fd_files[(*fds)->file_id], STDIN_FILENO) == -1)
-					perror("dup on REDIR_IN");
+				if (dup2((*fds)->fd_files[(*fds)->file_id], STDIN_FILENO) == -1)
+						exit(1);
 				(*fds)->file_id++;
 			}
 			else if (node->cmd->redirs[r].label == REDIR_OUT

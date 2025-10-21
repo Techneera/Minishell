@@ -1,7 +1,7 @@
 #include "execution.h"
 
 static char	*my_strjoin(char **s1, char *s2);
-
+static void	reciving_string(char **str, char **line, char *new_lim);
 
 void	make_lim(char **new_lim, char *lim)
 {
@@ -20,19 +20,7 @@ void	here_doc(char *lim, int *fd)
 	str = NULL;
 	line = NULL;
 	make_lim(&new_lim, lim);
-	ft_printf("> ");
-	while (1)
-	{
-		str = get_next_line (0);
-		if (!(str && ft_strncmp(str, new_lim, ft_max(
-				ft_strlen(str), ft_strlen(new_lim))) != 0))
-			break ;
-		line = my_strjoin(&line, str);
-		if (!line)
-			exit(1);
-		free(str);
-		ft_printf("> ");
-	}
+	reciving_string(&str, &line, new_lim);
 	if (line)
 		ft_putstr_fd(line, fd[1]);
 	if (str)
@@ -43,6 +31,24 @@ void	here_doc(char *lim, int *fd)
 		free(new_lim);
 	close(fd[1]);
 	fd[1] = -1;
+}
+
+static
+void	reciving_string(char **str, char **line, char *new_lim)
+{
+	ft_printf("> ");
+	while (1)
+	{
+		(*str) = get_next_line (0);
+		if (!(str && ft_strncmp((*str), new_lim, ft_max(
+						ft_strlen((*str)), ft_strlen(new_lim))) != 0))
+			break ;
+		(*line) = my_strjoin(line, (*str));
+		if (!line)
+			exit(1);
+		free((*str));
+		ft_printf("> ");
+	}
 }
 
 static char	*my_strjoin(char **s1, char *s2)

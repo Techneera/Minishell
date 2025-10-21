@@ -45,7 +45,8 @@ void	free_tree(t_ast *ast_root)
 		while (ast_root->cmd->redir_count-- > 0)
 		{
 			if (ast_root->cmd->redirs[ast_root->cmd->redir_count].file_name)
-				free(ast_root->cmd->redirs[ast_root->cmd->redir_count].file_name);
+				free(ast_root->cmd
+					->redirs[ast_root->cmd->redir_count].file_name);
 		}
 		free(ast_root->cmd->redirs);
 		free(ast_root->cmd);
