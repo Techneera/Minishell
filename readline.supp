@@ -1,4 +1,4 @@
-{ 
+{
     leak readline
     Memcheck:Leak
     ...
@@ -10,3 +10,4 @@
     ...
     fun:add_history
 }
+

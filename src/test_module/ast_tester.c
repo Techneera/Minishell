@@ -1,13 +1,14 @@
 #include "libshell.h"
 
-int	main(int argc, char **argv)
+void	test_node_create(void)
 {
-    if (argc < 2)
-    {
-	ft_printf("Wrong number of arguments./nUsage: ./ast_tester arg1 arg2 arg3 ..."
-	return (-1);
-    }
-    void(argc);
-    void(argv);
+    t_cmd	*cmd01;
+    t_ast	*p;
+
+    p = ft_ast_new_cmd(cmd01);
+}
+int	main(void)
+{
+    test_node_create();
     return (0);
 }

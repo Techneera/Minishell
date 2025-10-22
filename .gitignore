@@ -63,3 +63,4 @@ minishell
 # test files
 unit_test
 *.txt
+shell
