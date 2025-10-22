@@ -96,6 +96,7 @@ typedef struct s_ast
 {
 	t_cmd			*cmd;
 	t_node_type		type;
+	struct s_ast	*parent;
 	struct s_ast	*left;
 	struct s_ast	*right;
 }	t_ast;
