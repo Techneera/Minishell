@@ -3,12 +3,16 @@
 
 # include <unistd.h>
 # include <stdio.h>
+# include <stddef.h>
+# include <stdbool.h>
+# include <errno.h>
 # include <readline/readline.h>
 # include <readline/history.h>
 # include <stdlib.h>
 # include <signal.h>
 # include <sys/types.h>
 # include <sys/wait.h>
+# include "libft.h"
 
 # define PROMPT            "minishell$> "
 # define TC_BLACK          "\001\033[30m\002"
@@ -27,21 +31,58 @@
 # define TC_BRIGHT_MAGENTA "\001\033[95m\002"
 # define TC_BRIGHT_CYAN    "\001\033[96m\002"
 # define TC_BRIGHT_WHITE   "\001\033[97m\002"
-# define TRUE 1
-# define FALSE 0
 
 typedef enum e_label_redir
 {
+	REDIR_NONE,
 	REDIR_IN,
 	REDIR_OUT,
 	REDIR_APPEND,
 	REDIR_HEREDOCK
 }	t_label_redir;
 
+typedef enum e_token_label
+{
+	TOKEN_ERROR,
+	TOKEN_WORD, // Literal alpha string ("ls", "-la", "infile.txt")
+	TOKEN_PIPE, // Pipe character
+	TOKEN_AND,
+	TOKEN_OR,
+	TOKEN_RIGHT_PAR, // Right parenthesis character
+	TOKEN_LEFT_PAR, // Left parenthesis character
+	TOKEN_REDIR_IN, // Redirection input character
+	TOKEN_REDIR_OUT, // Redirection output character
+	TOKEN_REDIR_APPEND, // Append character
+	TOKEN_REDIR_HEREDOC, // Heredoc character
+	TOKEN_EOF // End Of File
+}	t_token_label;
+
+typedef enum e_node_type
+{
+	NODE_EMPTY,
+	NODE_CMD, // Command type node
+	NODE_PIPE, // Pipe type node
+}	t_node_type;
+
+typedef struct s_token
+{
+	char			*str;
+	t_token_label	tok_label;
+	struct s_token	*next;
+}	t_token;
+
+typedef struct s_lexer
+{
+	char		*input;
+	size_t		pos;
+	size_t		len;
+}	t_lexer;
+
 typedef struct s_redir
 {
-	t_label_redir	label;
 	char			*file_name;
+	t_label_redir	label;
+	struct s_redir	*next;
 }	t_redir;
 
 typedef struct s_cmd
@@ -51,18 +92,22 @@ typedef struct s_cmd
 	t_redir	*redirs;
 }	t_cmd;
 
-typedef enum e_node_type
-{
-	NODE_CMD,
-	NODE_PIPE
-}	t_node_type;
-
 typedef struct s_ast
 {
-	t_node_type		type;
 	t_cmd			*cmd;
+	t_node_type		type;
 	struct s_ast	*left;
 	struct s_ast	*right;
 }	t_ast;
+
+//---ft_strtok.c
+char	*ft_strtok(char *str);
+char	*ft_tokenizer_quote(char *str);
+
+//---ft_token_ultils.c
+t_token	*create_token(t_token_label tok_label, char *str);
+int	token_add_back(t_token **token, char *str);
+void	ft_free_token(t_token **token);
+void	token_print(t_token *token);
 
 #endif

@@ -53,3 +53,17 @@ dkms.conf
 
 # debug information files
 *.dwo
+
+# vstrash
+.vscode/*
+
+# program executable
+minishell
+
+# test files
+unit_test
+*.txt
+shell
+exec_test
+ast_test
+exec
