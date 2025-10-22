@@ -20,8 +20,6 @@ t_cmd	*ft_create_cmd(void)
 {
 	t_cmd	*new_cmd;
 
-	if (!l)
-		return (NULL);
 	new_cmd = (t_cmd *)ft_calloc(1, sizeof(t_cmd));
 	if (!new_cmd)
 		return (NULL);
@@ -31,17 +29,14 @@ t_cmd	*ft_create_cmd(void)
     return (new_cmd);
 }
 
-t_redir	*ft_create_redir(void)
+t_redir	*ft_create_redir(t_label_redir label, char *str)
 {
 	t_redir	*r;
 
 	r = (t_redir *)ft_calloc(1, sizeof(t_redir));
 	if (!r)
 		return (NULL);
-	r->label = 0;
-	r->file_name = NULL;
+	r->label = label;
+	r->file_name = str;
 	return (r);
 }
-/*
-t_cmd	*ft_generate_command()
-*/
