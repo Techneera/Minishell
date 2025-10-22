@@ -11,6 +11,7 @@ t_ast	*ft_ast_node(t_cmd *cmd)
 		return (NULL);
 	new_node->type = NODE_EMPTY;
 	new_node->cmd = cmd;
+	new_node->parent = NULL;
 	new_node->left = NULL;
 	new_node->right = NULL;
 	return (new_node);
