@@ -6,6 +6,8 @@ NAME = minishell
 
 UNIT = unit_test
 
+EXEC = exec_test
+
 #		---DIRECTORIES---		#
 
 SRC_DIR = src
@@ -18,6 +20,8 @@ LEXER_DIR = $(SRC_DIR)/lexer
 
 TESTER_DIR = $(SRC_DIR)/test_module
 
+EXEC_DIR = $(SRC_DIR)/execution
+
 #		---PARSER---			#
 
 SRCS_AST=  ft_ast.c
@@ -26,7 +30,7 @@ OBJS_AST = $(SRCS_PARSER:.c=.o)
 
 PATH_SRCS_AST = $(patsubst %,$(AST_DIR)/%,$(SRCS_AST))
 
-PATH_OBJS_AST = $(patsubst %,$(OBJS_DIR)/%,$(OBJS_AST))
+PATH_OBJS_AST = $(patsubst %,$(OBJS_DIR)/parser/%,$(OBJS_AST))
 
 #		---LEXER---			#
 
@@ -36,7 +40,17 @@ OBJS_LEXER = $(SRCS_LEXER:.c=.o)
 
 PATH_SRCS_LEXER = $(patsubst %,$(LEXER_DIR)/%,$(SRCS_LEXER))
 
-PATH_OBJS_LEXER = $(patsubst %,$(OBJS_DIR)/%,$(OBJS_LEXER))
+PATH_OBJS_LEXER = $(patsubst %,$(OBJS_DIR)/lexer/%,$(OBJS_LEXER))
+
+#		---EXECUTION---			#
+
+SRCS_EXEC = ft_execution.c test_cmds.c  init_files.c exec_utils.c ft_getters.c ft_here_doc.c add_libft.c
+
+OBJS_EXEC = $(SRCS_EXEC:.c=.o)
+
+PATH_SRCS_EXEC = $(patsubst %,$(EXEC_DIR)/%,$(SRCS_EXEC))
+
+PATH_OBJS_EXEC = $(patsubst %,$(OBJS_DIR)/execution/%,$(OBJS_EXEC))
 
 #		---TESTER---			#
 
@@ -57,16 +71,28 @@ all: $(NAME)
 unit: $(PATH_OBJS_LEXER) $(LFT)
 	$(CC) $(CFLAGS)  $(PATH_TESTER) $^ -o $(UNIT)
 
+exec: $(PATH_OBJS_EXEC) $(LFT)
+	$(CC) $(CFLAGS) $(TESTER_DIR)/exec_main.c  $^ -o $(EXEC)
+
 $(NAME): $(PATH_OBJS_LEXER) $(LFT)
 	$(CC) $(CFLAGS) -lreadline src/test_module/shell.c $^ -o $(NAME)
 
 $(LFT):
 	$(MAKE) -C libft
 
-$(OBJS_DIR)/%.o:$(LEXER_DIR)/%.c | $(OBJS_DIR)
+$(OBJS_DIR)/lexer/%.o:$(LEXER_DIR)/%.c | $(OBJS_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(OBJS_DIR):
+$(OBJS_DIR)/execution/%.o:$(EXEC_DIR)/%.c | $(OBJS_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(OBJS_DIR):$(OBJS_DIR)/lexer $(OBJS_DIR)/execution
+	@mkdir -p $@
+
+$(OBJS_DIR)/lexer: $(OBJS_DIR)
+	@mkdir -p $@
+
+$(OBJS_DIR)/execution: $(OBJS_DIR)
 	@mkdir -p $@
 
 clean:
@@ -76,10 +102,11 @@ clean:
 fclean: clean
 	$(MAKE) -C libft fclean
 	rm -rf $(NAME)
+	rm -rf $(EXEC)
 
 re: fclean all
 
 vgr: all
 	valgrind --leak-check=full --show-leak-kinds=all --suppressions=./readline.supp ./$(NAME)
 
-.PHONY: all clean fclean re unit vgr
+.PHONY: all clean fclean re unit vgr exec

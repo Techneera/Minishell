@@ -1,8 +1,7 @@
 #ifndef EXECUTION_H
 # define EXECUTION_H
 
-#include "../../include/libshell.h"
-#include "libft.h"
+#include "libshell.h"
 
 typedef struct s_fds
 {
@@ -48,4 +47,17 @@ int	ft_max(int a, int b);
 
 //---ft_here_doc
 void	here_doc(char *lim, int *fd);
+
+//		ft_execution
+int		number_of_cmds(t_ast *ast_root);
+int		number_of_pipes(t_ast *ast_root);
+int		execute_pipe(t_ast *node, t_fds **fds, int i, char **envp);
+void	create_fds(t_fds **fds, t_ast *ast_root);
+int		execute_tree(t_ast *node, t_fds **fds, int i, char **envp);
+int		execute_cmd(t_ast *node, t_fds **fds, int i, char **envp);
+void	init_pipe(t_fds **fds, int ***pipe_fds, t_ast *ast_root);
+void	ft_closing_all(t_fds **fds);
+void	init_heredoc(t_fds **fds, t_ast *node);
+void	fill_heredoc(t_fds **fds, t_ast *node, int i);
+int		number_of_heredocks(t_ast *ast_root);
 #endif
