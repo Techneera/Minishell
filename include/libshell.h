@@ -33,6 +33,7 @@
 
 typedef enum e_label_redir
 {
+	REDIR_NONE,
 	REDIR_IN,
 	REDIR_OUT,
 	REDIR_APPEND,
@@ -57,6 +58,7 @@ typedef enum e_token_label
 
 typedef enum e_node_type
 {
+	NODE_EMPTY,
 	NODE_CMD, // Command type node
 	NODE_PIPE, // Pipe type node
 }	t_node_type;

@@ -1,38 +1,46 @@
 #include "libshell.h"
 
-t_ast	*ft_ast_new_cmd(t_cmd *cmd)
+t_ast	*ft_ast_node(t_cmd *cmd)
 {
-	t_ast	*new_cmd;
+	t_ast	*new_node;
 
 	if (!cmd)
 		return (NULL);
-	new_cmd= (t_ast *)ft_calloc(1, sizeof(t_ast));
+	new_node= (t_ast *)ft_calloc(1, sizeof(t_ast));
+	if (!new_node)
+		return (NULL);
+	new_node->type = NODE_EMPTY;
+	new_node->cmd = cmd;
+	new_node->left = NULL;
+	new_node->right = NULL;
+	return (new_node);
+}
+
+t_cmd	*ft_create_cmd(void)
+{
+	t_cmd	*new_cmd;
+
+	if (!l)
+		return (NULL);
+	new_cmd = (t_cmd *)ft_calloc(1, sizeof(t_cmd));
 	if (!new_cmd)
 		return (NULL);
-	new_cmd->type = NODE_CMD;
-	new_cmd->cmd = command;
-	new_cmd->left = NULL;
-	new_cmd->right = NULL;
-	return (new_command);
+	new_cmd->args = NULL;
+	new_cmd->redir_count = 0;
+	new_cmd->redirs = NULL;
+    return (new_cmd);
 }
 
-t_ast	*ft_ast_new_pipe(t_ast *l, t_ast *r)
+t_redir	*ft_create_redir(void)
 {
-	t_ast	*new_pipe;
+	t_redir	*r;
 
-	new_pipe = (t_ast *)ft_calloc(1, sizeof(t_ast));
-	if (!new_pipe)
+	r = (t_redir *)ft_calloc(1, sizeof(t_redir));
+	if (!r)
 		return (NULL);
-	new_pipe->type = NODE_PIPE;
-	new_pipe->cmd = NULL;
-	new_pipe->left = l;
-	new_pipe->right = r;
-	return (new_pipe);
-}
-
-t_cmd	*ft_create_cmd(t_lexer *l)
-{
-    return (NULL);
+	r->label = 0;
+	r->file_name = NULL;
+	return (r);
 }
 /*
 t_cmd	*ft_generate_command()
