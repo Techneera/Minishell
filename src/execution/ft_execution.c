@@ -231,8 +231,6 @@ int	execute_cmd(t_ast *node, t_fds **fds, int i, char **envp)
 	if (!args)
 		exit(1);
 	cmd_path = get_command_path(args, envp);
-	if (!cmd_path)
-		exit(1);
 	if (!init_pid(&pid))
 	    exit(1);
 	if (pid == 0)
@@ -275,6 +273,8 @@ int	execute_cmd(t_ast *node, t_fds **fds, int i, char **envp)
 			r++;
 		}
 		ft_closing_all(fds);
+		if (!cmd_path)
+			exit(CMD_NOT_FOUND);
 		execve(cmd_path, args, envp);
 		perror("execve");
 		exit(1);

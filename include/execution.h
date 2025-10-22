@@ -1,6 +1,8 @@
 #ifndef EXECUTION_H
 # define EXECUTION_H
 
+# define CMD_NOT_FOUND 127
+
 #include "libshell.h"
 
 typedef struct s_fds
@@ -26,6 +28,7 @@ t_ast	*ft_cmd7();
 t_ast	*ft_cmd8();
 t_ast	*ft_cmd9();
 t_ast	*ft_bash();
+t_ast	*fail_cmd();
 
 
 //---init_files

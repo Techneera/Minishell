@@ -1,18 +1,5 @@
 #include "execution.h"
 
-/*
-                        [NODE_PIPE]
-                            /       \
-                           /         \
-                  [NODE_CMD]          [NODE_CMD]
-                    `-- cmd:            `-- cmd: {
-                        {args: {"cat", "README.md", NULL}, ...}
-                                              args: {"grep", "minishell", NULL},
-                                              redir_count: 1,
-                                              redirs: { {label: REDIR_OUT, file_name: "output.txt"} }
-                                            }
-*/
-
 #include <stdlib.h> // For malloc, free, NULL
 #include <string.h> // For strdup
 
@@ -52,6 +39,87 @@ static char **dup_args(const char **args_literal)
     new_args[count] = NULL; // Null-terminate the new array
     return (new_args);
 }
+
+// (Assuming dup_args, t_cmd, t_redir, t_ast, and enums are defined)
+
+/*
+
+
+                  [NODE_CMD]
+                    `-- cmd: {
+                        args: {"banana", NULL},
+                        redir_count: 4,
+                        redirs: [
+                          {label: REDIR_IN,     file_name: "in.txt"},
+                          {label: REDIR_OUT,    file_name: "err.log"}, // (Proxy for STDERR)
+                          {label: REDIR_HEREDOCK, file_name: "END"},
+                          {label: REDIR_HEREDOCK,    file_name: "EOF"}
+                        ]
+                      }
+*/
+
+
+t_ast	*fail_cmd()
+{
+    int redir_count = 0;
+    
+    // --- 1. Command Arguments ---
+    char **args = dup_args((const char *[]){"banana", NULL});
+
+    // --- 2. Redirection Array Allocation ---
+//    t_redir *redirs_array = malloc(sizeof(t_redir) * redir_count);
+//    if (!redirs_array) { /* Cleanup args */ return (NULL); }
+//
+//    // 3. Populate Redirection Structures (Order matters!)
+//    
+//    // Redir 1: < in.txt
+//    redirs_array[0].label = REDIR_IN;
+//    redirs_array[0].file_name = strdup("in.txt");
+//
+//    // Redir 2: 2> err.log (Uses REDIR_OUT; your executor must check '2' token)
+//    redirs_array[1].label = REDIR_OUT;
+//    redirs_array[1].file_name = strdup("err.log");
+//
+//    // Redir 3: >> hist.txt 
+//    redirs_array[2].label =  REDIR_HEREDOCK;
+//    redirs_array[2].file_name = strdup("END");
+//
+//    // Redir 4: > out.txt (This will overwrite the redirection from Redir 3 on FD 1)
+//    redirs_array[3].label = REDIR_HEREDOCK;
+//    redirs_array[3].file_name = strdup("EOF");
+
+
+    // --- 4. Create t_cmd structure ---
+    t_cmd *cmd = malloc(sizeof(t_cmd));
+    if (!cmd) { /* Cleanup redirs_array */ return (NULL); }
+    cmd->args = args;
+    cmd->redir_count = redir_count;
+    cmd->redirs = NULL; // Array of 4 t_redir structs
+
+    // --- 5. Create Root AST Node ---
+    t_ast *ast_redir_root = malloc(sizeof(t_ast));
+    if (!ast_redir_root) { /* Cleanup cmd */ return (NULL); }
+    ast_redir_root->type = NODE_CMD;
+    ast_redir_root->cmd = cmd;
+    ast_redir_root->left = NULL;
+    ast_redir_root->right = NULL;
+
+    return (ast_redir_root);
+}
+
+/*
+                        [NODE_PIPE]
+                            /       \
+                           /         \
+                  [NODE_CMD]          [NODE_CMD]
+                    `-- cmd:            `-- cmd: {
+                        {args: {"cat", "README.md", NULL}, ...}
+                                              args: {"grep", "minishell", NULL},
+                                              redir_count: 1,
+                                              redirs: { {label: REDIR_OUT, file_name: "output.txt"} }
+                                            }
+*/
+
 
 t_ast   *ft_cmd1()
 {
