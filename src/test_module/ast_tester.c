@@ -9,6 +9,14 @@
 # define ANSI_COLOR_CYAN    "\x1b[36m"
 # define ANSI_COLOR_RESET   "\x1b[0m"
 
+typedef struct s_node
+{
+	int				num;
+	struct s_node	*parent;
+	struct s_node	*left;
+	struct s_node	*right;
+}	t_node;
+
 static
 void	test_ast_node(void)
 {
@@ -33,6 +41,7 @@ void	test_ast_node(void)
 
 	assert(root->type == NODE_EMPTY);
 	assert(root->cmd != NULL);
+	assert(root->parent == NULL);
 	assert(root->left == NULL);
 	assert(root->right == NULL);
 
@@ -43,14 +52,54 @@ void	test_ast_node(void)
 	ft_free_node(root);
 }
 
+t_node	*create_node(int n)
+{
+	t_node	*new;
+
+	new = calloc(1, sizeof(t_node));
+	if (!new)
+		return (NULL);
+	new->num = n;
+	new->parent = NULL;
+	new->left = NULL;
+	new->right = NULL;
+	return (new);
+}
+
+void	add_node(t_node **root, t_node *node)
+{
+	if (!node)
+		return ;
+	if (node->num < (*root)->num)
+	{
+		if ((*root)->left == NULL)
+			(*root)->left = node;
+		else
+			add_node(&(*root)->left, node);
+	}
+	else
+	{
+		if ((*root)->right == NULL)
+			(*root)->right = node;
+		else
+			add_node(&(*root)->right, node);
+	}
+}
+
 static
 void	test_tree(void)
 {
-	return ;
+	int		arr[8] = {2, 7, 3, 1, 9, 4, 5, 8};
+	t_node	*root;
+
+	root = create_node(arr[0]);
+	for(int i = 1; i < 8; i++)
+		add_node(&root, create_node(arr[i]));
 }
 
 int	main(void)
 {
     test_ast_node();
+	test_tree();
     return (0);
 }
