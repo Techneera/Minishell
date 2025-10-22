@@ -5,6 +5,7 @@
 # include <stdio.h>
 # include <stddef.h>
 # include <stdbool.h>
+# include <errno.h>
 # include <readline/readline.h>
 # include <readline/history.h>
 # include <stdlib.h>
@@ -65,35 +66,36 @@ typedef enum e_node_type
 
 typedef struct s_token
 {
-	char		*str;
+	char			*str;
 	t_token_label	tok_label;
 	struct s_token	*next;
 }	t_token;
 
 typedef struct s_lexer
 {
-	char	*input;
+	char		*input;
 	size_t		pos;
 	size_t		len;
 }	t_lexer;
 
 typedef struct s_redir
 {
+	char			*file_name;
 	t_label_redir	label;
-	char		*file_name;
+	struct s_redir	*next;
 }	t_redir;
 
 typedef struct s_cmd
 {
 	char	**args;
-	int	redir_count;
+	int		redir_count;
 	t_redir	*redirs;
 }	t_cmd;
 
 typedef struct s_ast
 {
-	t_node_type	type;
-	t_cmd		*cmd;
+	t_cmd			*cmd;
+	t_node_type		type;
 	struct s_ast	*left;
 	struct s_ast	*right;
 }	t_ast;
