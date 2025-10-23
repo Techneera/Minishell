@@ -87,6 +87,18 @@ void	add_node(t_node **root, t_node *node)
 }
 
 static
+void	traversal(t_node *root)
+{
+	if (!root)
+		return ;
+	if (root->left)
+		traversal(root->left);
+	if (root->right)
+		traversal(root->right);
+	printf("%d\n", root->num);
+}
+
+static
 void	test_tree(void)
 {
 	int		arr[8] = {2, 7, 3, 1, 9, 4, 5, 8};
@@ -95,6 +107,7 @@ void	test_tree(void)
 	root = create_node(arr[0]);
 	for(int i = 1; i < 8; i++)
 		add_node(&root, create_node(arr[i]));
+	traversal(root);
 }
 
 int	main(void)
