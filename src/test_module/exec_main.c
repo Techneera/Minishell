@@ -1,11 +1,14 @@
 #include "execution.h"
 
-int	g_signal;
 
 int	main(int argc, char *argv[], char **envp)
 {
 	t_ast	*cmd = fail_cmd();
 	t_fds	*fds;
+	int		child_status;
+	int	g_signal;
+	int	i;
+
 
 	fds = NULL;
 	(void)argc;
@@ -21,9 +24,12 @@ int	main(int argc, char *argv[], char **envp)
 	free(fds->fd_files);
 	free(fds);
 	free_tree(cmd);
-	while(waitpid(-1, &g_signal, 0) > 0)
-		;
-	if (WIFEXITED(g_signal))
-		return (WEXITSTATUS(g_signal));
-	return (EXIT_SUCCESS);
+	i = 0;
+	while(waitpid(fds->c_pids[i], &child_status, 0) > 0)
+	{
+		if (WIFEXITED(child_status))
+			g_signal = WEXITSTATUS(child_status);
+		i++;
+	}
+	return(g_signal);
 }

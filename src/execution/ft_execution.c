@@ -87,6 +87,9 @@ void	create_fds(t_fds **fds, t_ast *ast_root)
 		if (!(*fds)->fd_files)
 			exit(1);
 	}
+	(*fds)->c_pids = ft_calloc((*fds)->n_pipes + 2, sizeof(int));
+	if (!(*fds)->c_pids)
+		exit(1);
 	init_heredoc(fds, ast_root);
 	fill_fd_file(fds, ast_root, 0);
 }
@@ -187,9 +190,18 @@ int	number_of_pipes(t_ast *ast_root)
 		return (depth_left + depth_right);
 }
 
-int init_pid(pid_t *pid)
+int init_pid(pid_t *pid, t_fds **fds)
 {
+	int	i;
+
+	i = 0;
 	*pid = fork();
+	if (*pid != 0)
+	{
+		while ((*fds)->c_pids[i])
+			i++;
+		(*fds)->c_pids[i] = *pid;
+	}
 	if (*pid == -1)
 	{
 		perror("fork");
@@ -231,7 +243,7 @@ int	execute_cmd(t_ast *node, t_fds **fds, int i, char **envp)
 	if (!args)
 		exit(1);
 	cmd_path = get_command_path(args, envp);
-	if (!init_pid(&pid))
+	if (!init_pid(&pid, fds))
 	    exit(1);
 	if (pid == 0)
 	{
@@ -273,10 +285,14 @@ int	execute_cmd(t_ast *node, t_fds **fds, int i, char **envp)
 			r++;
 		}
 		ft_closing_all(fds);
-		if (!cmd_path)
-			exit(CMD_NOT_FOUND);
+
 		execve(cmd_path, args, envp);
 		perror("execve");
+		if (!cmd_path)
+		{
+			free(cmd_path);
+			exit(CMD_NOT_FOUND);
+		}
 		exit(1);
 	}
 	free(cmd_path);

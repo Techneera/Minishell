@@ -10,6 +10,7 @@ typedef struct s_fds
 	int	**pipe_fds;
 	int	**heredoc_fds;
 	int	*fd_files;
+	int	*c_pids;
 	int	file_id;
 	int	doc_id;
 	int	n_files;
