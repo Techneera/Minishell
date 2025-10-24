@@ -244,18 +244,36 @@ char	*ft_get_unquoted_str(t_lexer *l)
     return (raw_delim);
 }
 
-void	ft_tokens_constructor(t_token **head, char *input)
+void	ft_tokens_constructor(t_lexer **lex, t_token **head)
 {
-	t_lexer	*l;
-	t_token	*token;
+	t_token	*tmp;
 
-	l = ft_state_lexer(input);
-	if (!l)
+	tmp = get_next_token(*lex);
+	if (!tmp)
 		return ;
-	token = get_next_token(l);
-	while (token->tok_label != TOKEN_EOF)
+	while(tmp->tok_label != TOKEN_EOF && tmp->tok_label != TOKEN_ERROR)
 	{
-		add_token_back(head, token);
-		token = get_next_token(l);
+		add_token_back(head, tmp);
+		tmp = get_next_token(*lex);
+	}
+	add_token_back(head, tmp);
+}
+
+void	free_all(char *line, t_lexer *lex, t_token **head)
+{
+	if (line)
+	{
+		free(line);
+		line = NULL;
+	}
+	if (lex)
+	{
+		free_lexer(lex);
+		lex = NULL;
+	}
+	if (head)
+	{
+		free_token_lst(head, &free_token);
+		head = NULL;
 	}
 }
