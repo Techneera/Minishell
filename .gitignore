@@ -64,3 +64,6 @@ minishell
 unit_test
 *.txt
 shell
+exec_test
+ast_test
+exec
