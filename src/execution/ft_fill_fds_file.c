@@ -4,29 +4,9 @@ static int	open_files(t_fds **fds, t_ast *ast_root, int i, int r);
 static int	create_redir_in(t_fds **fds, t_ast *ast_root, int i, int r);
 static int	create_redir_out(t_fds **fds, t_ast *ast_root, int i, int r);
 
-void	number_of_redirs(t_fds **fds, t_ast *ast_root)
-{
-	int	i;
-
-	i = 0;
-	if (!ast_root)
-		return ;
-	number_of_redirs(fds, ast_root->left);
-	number_of_redirs(fds, ast_root->right);
-	if (ast_root->type == NODE_CMD)
-	{
-		while (i < ast_root->cmd->redir_count)
-		{
-			if (ast_root->cmd->redirs[i].label != REDIR_HEREDOCK)
-				(*fds)->n_files++;
-			i++;
-		}
-	}
-}
-
 int	fill_fd_file(t_fds **fds, t_ast *ast_root, int i)
 {
-	int j;
+	int	j;
 	int	r;
 
 	r = 0;
@@ -89,13 +69,12 @@ static int	create_redir_out(t_fds **fds, t_ast *ast_root, int i, int r)
 				O_WRONLY | O_CREAT | O_TRUNC, 0671);
 	else
 		(*fds)->fd_files[i] = open(ast_root->cmd->redirs[r].file_name,
-					O_WRONLY | O_CREAT | O_APPEND, 0671);
+				O_WRONLY | O_CREAT | O_APPEND, 0671);
 	if ((*fds)->fd_files[i] == -1)
 	{
 		message_error(": Permission denied",
 			ast_root->cmd->redirs[r].file_name, 0);
 		return (0);
 	}
-		
 	return (1);
 }
