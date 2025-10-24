@@ -113,6 +113,7 @@ clean:
 fclean: clean
 	$(MAKE) -C libft fclean
 	rm -rf $(NAME)
+	rm -rf $(UNIT)
 	rm -rf $(EXEC)
 	rm -rf $(AST_NAME)
 
