@@ -62,6 +62,9 @@ typedef enum e_node_type
 	NODE_EMPTY,
 	NODE_CMD, // Command type node
 	NODE_PIPE, // Pipe type node
+	NODE_SUBSHELL, // Collection of tokens
+	NODE_AND, // '&&' type node
+	NODE_OR // '||' type node
 }	t_node_type;
 
 typedef struct s_token
