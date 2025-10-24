@@ -1,23 +1,55 @@
-#include "libshell.h"
+#include "ast.h"
 
-t_ast	*ft_ast_node(t_cmd *cmd)
+t_ast	*ft_ast_node_command(t_cmd *cmd)
 {
 	t_ast	*new_node;
 
 	if (!cmd)
 		return (NULL);
-	new_node= (t_ast *)ft_calloc(1, sizeof(t_ast));
+	new_node = (t_ast *)ft_calloc(1, sizeof(t_ast));
 	if (!new_node)
 		return (NULL);
-	new_node->type = NODE_EMPTY;
+	new_node->type = NODE_CMD;
 	new_node->cmd = cmd;
-	new_node->parent = NULL;
+	new_node->body = NULL;
 	new_node->left = NULL;
 	new_node->right = NULL;
 	return (new_node);
 }
 
-t_cmd	*ft_create_cmd(char	**av, t_redir *redirs, int count)
+t_ast	*ft_ast_generic_node(t_token *token)
+{
+	t_ast	*new_node;
+
+	new_node = (t_ast *)ft_calloc(1, sizeof(t_ast));
+	if (!new_node)
+		return (NULL);
+	new_node->type = ft_which_token();
+	new_node->cmd = NULL;
+	new_node->left = NULL;
+	new_node->right = NULL;
+	return (new_node);
+}
+
+t_ast	*ft_init_parser(t_lexer *l)
+{
+	t_ast	*new;
+
+	new = (t_ast *)ft_calloc(1, sizeof(t_ast));
+	if (!new)
+		return (NULL);
+	new->lex = l;
+	new->next_token = get_next_token(l);
+}
+
+t_ast	*ft_parser_input(t_lexer *l)
+{
+	t_ast	*node;
+
+	node = ft_init_node(l);
+}
+
+t_cmd	*ft_create_command(char	**av, t_redir *redirs, int count)
 {
 	t_cmd	*new_cmd;
 
@@ -42,9 +74,24 @@ t_redir	*ft_create_redir(t_label_redir label, char *str)
 	return (r);
 }
 
+t_parser	*ft_init_parser(t_lexer *lex, t_token *)
+{
+	t_parser	*new;
+
+	new = (t_parser *)ft_calloc(1, sizeof(t_parser));
+	if (!new)
+		return (NULL);
+	new->lex = NULL;
+	new->next_token = NULL;
+	new->peek = NULL;
+	return (new);
+}
+
 void	ft_free_cmd(t_cmd *cmd)
 {
-	int	i = 0;
+	int	i;
+
+	i = 0;
 	while (cmd->args[i])
 	{
 		free(cmd->args[i]);

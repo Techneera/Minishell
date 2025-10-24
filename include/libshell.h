@@ -99,19 +99,9 @@ typedef struct s_ast
 {
 	t_cmd			*cmd;
 	t_node_type		type;
-	struct s_ast	*parent;
+	struct s_ast	*body;
 	struct s_ast	*left;
 	struct s_ast	*right;
 }	t_ast;
-
-//---ft_strtok.c
-char	*ft_strtok(char *str);
-char	*ft_tokenizer_quote(char *str);
-
-//---ft_token_ultils.c
-t_token	*create_token(t_token_label tok_label, char *str);
-int	token_add_back(t_token **token, char *str);
-void	ft_free_token(t_token **token);
-void	token_print(t_token *token);
 
 #endif

@@ -9,14 +9,6 @@
 # define ANSI_COLOR_CYAN    "\x1b[36m"
 # define ANSI_COLOR_RESET   "\x1b[0m"
 
-typedef struct s_node
-{
-	int				num;
-	struct s_node	*parent;
-	struct s_node	*left;
-	struct s_node	*right;
-}	t_node;
-
 static
 void	test_ast_node(void)
 {
@@ -45,74 +37,57 @@ void	test_ast_node(void)
 	assert(root->left == NULL);
 	assert(root->right == NULL);
 
-    printf(ANSI_COLOR_MAGENTA "Node created\t\t");
+    printf(ANSI_COLOR_MAGENTA "Create Node\t\t");
     printf(ANSI_COLOR_GREEN "{OK}");
     printf(ANSI_COLOR_RESET "\n");
 
 	ft_free_node(root);
 }
 
-t_node	*create_node(int n)
-{
-	t_node	*new;
-
-	new = calloc(1, sizeof(t_node));
-	if (!new)
-		return (NULL);
-	new->num = n;
-	new->parent = NULL;
-	new->left = NULL;
-	new->right = NULL;
-	return (new);
-}
-
-void	add_node(t_node **root, t_node *node)
-{
-	if (!node)
-		return ;
-	if (node->num < (*root)->num)
-	{
-		if ((*root)->left == NULL)
-			(*root)->left = node;
-		else
-			add_node(&(*root)->left, node);
-	}
-	else
-	{
-		if ((*root)->right == NULL)
-			(*root)->right = node;
-		else
-			add_node(&(*root)->right, node);
-	}
-}
-
 static
-void	traversal(t_node *root)
+int	run_node_command_test(char *input, t_lexer *exp, int exp_num)
 {
-	if (!root)
-		return ;
-	if (root->left)
-		traversal(root->left);
-	if (root->right)
-		traversal(root->right);
-	printf("%d\n", root->num);
-}
+	t_lexer	*lexer;
+	t_token	*head;
+	t_token	*token;
+	int		i;
 
-static
-void	test_tree(void)
-{
-	int		arr[8] = {2, 7, 3, 1, 9, 4, 5, 8};
-	t_node	*root;
+	lexer = ft_state_lexer(input);
+	if (!lexer)
+	{
+		fprintf("[FAIL] Lexer initialization failed.\n\n");
+		return (0);
+	}
 
-	root = create_node(arr[0]);
-	for(int i = 1; i < 8; i++)
-		add_node(&root, create_node(arr[i]));
-	traversal(root);
+	i = 0;
+	while (i < num_expected)
+	{
+		token = get_next_token(lexer);
+		if (!token)
+		{
+			printf("[FAIL] Token %d: get_next_token() returned NULL unexpectedly.\n\n", i);
+			free_lexer(lexer);
+			return (0);
+		}
+		add_token_back(&head, token);
+	}
+	ft_ast_generic_node();
+    printf(ANSI_COLOR_MAGENTA "Create Command\t\t");
+    printf(ANSI_COLOR_GREEN "{OK}");
+    printf(ANSI_COLOR_RESET "\n");
 }
 
 int	main(void)
 {
+	char	*inp = "ls -l | grep a";
+	t_lexer	expected_lexer[] = {
+		{TOKEN_WORD, "ls"}, 
+		{TOKEN_WORD, "-l"}, 
+		{TOKEN_PIPE, "|"}, 
+		{TOKEN_WORD, "grep"}, 
+		{TOKEN_WORD, "a"}};
+
     test_ast_node();
-	test_tree();
+	run_node_command_test(inp, expected_lexer, 5);
     return (0);
 }
