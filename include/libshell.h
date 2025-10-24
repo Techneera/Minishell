@@ -81,6 +81,13 @@ typedef struct s_lexer
 	size_t		len;
 }	t_lexer;
 
+typedef struct s_parser
+{
+	t_lexer	*lex;
+	t_token	*current_token;
+	t_token	*peek;
+}	t_parser;
+
 typedef struct s_redir
 {
 	char			*file_name;

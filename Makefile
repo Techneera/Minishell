@@ -76,7 +76,7 @@ unit: $(PATH_OBJS_LEXER) $(LFT)
 exec: $(PATH_OBJS_EXEC) $(LFT)
 	$(CC) $(CFLAGS) $(TESTER_DIR)/exec_main.c $^ -o $(EXEC)
 
-$(AST_NAME): $(PATH_OBJS_AST) $(LFT)
+$(AST_NAME): $(PATH_OBJS_AST) $(PATH_OBJS_LEXER) $(LFT)
 	$(CC) $(CFLAGS) $(TESTER_DIR)/ast_tester.c $^ -o $@
 
 $(NAME): $(PATH_OBJS_LEXER) $(LFT)

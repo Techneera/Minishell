@@ -1,4 +1,5 @@
 #include "ast.h"
+#include "lexer.h"
 
 t_ast	*ft_ast_node_command(t_cmd *cmd)
 {
@@ -17,36 +18,51 @@ t_ast	*ft_ast_node_command(t_cmd *cmd)
 	return (new_node);
 }
 
-t_ast	*ft_ast_generic_node(t_token *token)
+t_ast	*ft_ast_generic_node(t_node_type type)
 {
 	t_ast	*new_node;
 
 	new_node = (t_ast *)ft_calloc(1, sizeof(t_ast));
 	if (!new_node)
 		return (NULL);
-	new_node->type = ft_which_token();
+	new_node->type = type;
 	new_node->cmd = NULL;
 	new_node->left = NULL;
 	new_node->right = NULL;
 	return (new_node);
 }
 
-t_ast	*ft_init_parser(t_lexer *l)
+t_parser	*ft_init_parser(t_lexer *l)
 {
-	t_ast	*new;
+	t_parser	*parser;
 
-	new = (t_ast *)ft_calloc(1, sizeof(t_ast));
-	if (!new)
+	parser = (t_parser *)ft_calloc(1, sizeof(t_parser));
+	if (!parser)
 		return (NULL);
-	new->lex = l;
-	new->next_token = get_next_token(l);
+	parser->lex = l;
+	parser->current_token = get_next_token(l);
+	if (!parser->current_token)
+	{
+		free(parser);
+		return (NULL);
+	}
+	parser->peek = get_next_token(l);
+	if (!parser->peek)
+	{
+		free(parser->current_token);
+		free(parser);
+		return (NULL);
+	}
+	return (parser);
 }
 
-t_ast	*ft_parser_input(t_lexer *l)
+void	ft_parser_iter(t_parser *parser)
 {
-	t_ast	*node;
-
-	node = ft_init_node(l);
+	if (parser->current_token->tok_label == TOKEN_EOF)
+		return ;
+	free_token(parser->current_token);
+	parser->current_token = parser->peek;
+	parser->peek = get_next_token(parser->lex);
 }
 
 t_cmd	*ft_create_command(char	**av, t_redir *redirs, int count)
@@ -62,7 +78,7 @@ t_cmd	*ft_create_command(char	**av, t_redir *redirs, int count)
 	return (new_cmd);
 }
 
-t_redir	*ft_create_redir(t_label_redir label, char *str)
+t_redir	*ft_create_redir_lst(t_label_redir label, char *str)
 {
 	t_redir	*r;
 
@@ -74,38 +90,53 @@ t_redir	*ft_create_redir(t_label_redir label, char *str)
 	return (r);
 }
 
-t_parser	*ft_init_parser(t_lexer *lex, t_token *)
+void	ft_free_redir_lst(t_redir *redir)
 {
-	t_parser	*new;
+	t_redir	*tmp;
 
-	new = (t_parser *)ft_calloc(1, sizeof(t_parser));
-	if (!new)
-		return (NULL);
-	new->lex = NULL;
-	new->next_token = NULL;
-	new->peek = NULL;
-	return (new);
+	if (!redir)
+		return ;
+	while (redir)
+	{
+		tmp = redir->next;
+		free(redir->file_name);
+		free(redir);
+		redir = tmp;
+	}
+}
+
+void	ft_free_array(char **arr)
+{
+	int	i;
+
+	if (!arr)
+		return ;
+	i = 0;
+	while (arr[i])
+		free(arr[i++]);
+	free(arr);
 }
 
 void	ft_free_cmd(t_cmd *cmd)
 {
-	int	i;
-
-	i = 0;
-	while (cmd->args[i])
-	{
-		free(cmd->args[i]);
-		i++;
-	}
-	free(cmd->args);
-	free(cmd->redirs);
+	if (!cmd)
+		return ;
+	ft_free_array(cmd->args);
+	ft_free_redir_lst(cmd->redirs);
 	free(cmd);
 }
 
-void	ft_free_node(t_ast *root)
+void	ft_free_ast(t_ast *root)
 {
-	free(root->left);
-	free(root->right);
+	if (!root)
+		return ;
+	if (root->type == NODE_AND || root->type == NODE_PIPE || root->type == NODE_OR)
+	{
+		ft_free_ast(root->left);
+		ft_free_ast(root->right);
+	}
+	else if (root->type == NODE_SUBSHELL)
+		ft_free_ast(root->body);
 	ft_free_cmd(root->cmd);
 	free(root);
 }
