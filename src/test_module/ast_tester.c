@@ -38,6 +38,7 @@ void	test_parser(char *input)
 	}
 	free(parser->lex);
 	free_token(parser->current_token);
+	free_token(parser->peek);
 	free(parser);
 }
 
