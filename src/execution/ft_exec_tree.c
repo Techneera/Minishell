@@ -1,7 +1,10 @@
 #include "execution.h"
 
-static int	execute_cmd(t_ast *node, t_fds **fds, int i, char **envp);
 static int	execute_pipe(t_ast *node, t_fds **fds, int i, char **envp);
+static int	execute_cmd(t_ast *node, t_fds **fds, int i, char **envp);
+static int	execute_and(t_ast *node, t_fds **fds, int i, char **envp);
+static int	execute_or(t_ast *node, t_fds **fds, int i, char **envp);
+static int	execute_subshell(t_ast *node, t_fds **fds, int i, char **envp);
 
 int	ft_exec_tree(t_ast *node, t_fds **fds, int i, char **envp)
 {
@@ -14,8 +17,14 @@ int	ft_exec_tree(t_ast *node, t_fds **fds, int i, char **envp)
 		(*fds)->file_id += node->cmd->redir_count;
 		i++;
 	}
-	else if (node->type == NODE_PIPE)
+	else if (node->type == NODE_PIPE || node->type == NODE_SUBSHELL)
 		i = execute_pipe(node, fds, i, envp);
+	else if (node->type == NODE_AND)
+		i = execute_and(node, fds, i, envp);
+	else if (node->type == NODE_OR)
+		i = execute_or(node, fds, i, envp);
+	else if (node->type == NODE_SUBSHELL)
+		i = execute_subshell(node, fds, i, envp);
 	return (i);
 }
 
@@ -42,4 +51,17 @@ static int	execute_cmd(t_ast *node, t_fds **fds, int i, char **envp)
 	if (pid == 0)
 		ft_child_process(node, fds, i, envp);
 	return (i);
+}
+
+static int	execute_and(t_ast *node, t_fds **fds, int i, char **envp)
+{
+	//	In AND the shell gonna wait for each cmd
+	//	files, redirs, etc only will occur when the previus cmd is right
+	//	So is not to create on beggin.
+}
+
+static int	execute_or(t_ast *node, t_fds **fds, int i, char **envp)
+{
+	//	OR is similar to AND, the differences is if previus cmd fail
+	//	you still run your
 }

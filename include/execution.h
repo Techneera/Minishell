@@ -29,7 +29,7 @@ t_ast	*ft_cmd7();
 t_ast	*ft_cmd8();
 t_ast	*ft_cmd9();
 t_ast	*ft_bash();
-t_ast	*fail_cmd();
+t_ast	*bonus_cmd();
 
 
 //---init_files
