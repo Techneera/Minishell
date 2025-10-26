@@ -1,10 +1,7 @@
 #include "execution.h"
 
-#include <stdlib.h> // For malloc, free, NULL
-#include <string.h> // For strdup
-
-// (t_cmd, t_redir, t_ast, and enum definitions go here)
-// ... (Assuming your definitions from before are present)
+#include <stdlib.h>
+#include <string.h>
 
 // Helper function to count arguments
 static int count_args(const char **args_literal)
@@ -36,81 +33,67 @@ static char **dup_args(const char **args_literal)
             return (NULL);
         }
     }
-    new_args[count] = NULL; // Null-terminate the new array
+    new_args[count] = NULL;
     return (new_args);
+}
+
+// Helper to create a NODE_CMD (for simpler code, matching your structure)
+t_ast *new_cmd_node(char **args) {
+    t_cmd *cmd = malloc(sizeof(t_cmd));
+    if (!cmd) return (NULL);
+    cmd->args = args;
+    cmd->redir_count = 0;
+    cmd->redirs = NULL;
+
+    t_ast *node = malloc(sizeof(t_ast));
+    if (!node) { free(cmd); return (NULL); }
+    node->type = NODE_CMD;
+    node->body = (struct s_ast *)cmd; // Use body for CMD content
+    node->left = NULL;
+    node->right = NULL;
+    return (node);
+}
+
+// Helper to create an operator node (NODE_PIPE, NODE_AND, NODE_OR)
+t_ast *new_op_node(t_node_type type, t_ast *left, t_ast *right) {
+    t_ast *node = malloc(sizeof(t_ast));
+    if (!node) return (NULL);
+    node->type = type;
+    node->body = NULL;
+    node->left = left;
+    node->right = right;
+    return (node);
 }
 
 // (Assuming dup_args, t_cmd, t_redir, t_ast, and enums are defined)
 
 /*
 
-
-                        [NODE_PIPE]
-                            /       \
-                           /         \
-                  [NODE_CMD]          [NODE_CMD]
-                    `-- cmd:            `-- cmd: {
-                        {args: {"cat", "README.md", NULL}, ...}
-                                              args: {"banana", NULL},
-                                              redir_count: 1,
-                                              redirs: { {label: REDIR_OUT, file_name: "output.txt"} }
-                                            }
+                banana frita && ls | ls || echo oi
+                            [NODE_OR] (Root Operator: ||)
+                              /     \
+                             /       \
+                   [NODE_AND]        [NODE_CMD]
+                      /     \         `-- echo oi
+                     /       \
+           [NODE_CMD]    [NODE_PIPE]
+             `-- banana     /     \
+                           /       \
+                     [NODE_CMD]  [NODE_CMD]
+                      `-- ls      `-- ls
 */
 
 
-t_ast	*fail_cmd()
+t_ast	*bonus_cmd()
 {
-    // --- Command 1: cat README.md ---
-    const char *args_literal1[] = {"cat", "README.md", NULL};
-    char **args_cmd1 = dup_args(args_literal1); // Dynamically allocate args
-
-    t_cmd *cmd1 = malloc(sizeof(t_cmd));
-    if (!cmd1) return (NULL);
-    cmd1->args = args_cmd1;
-    cmd1->redir_count = 0;
-    cmd1->redirs = NULL;
-
-    // --- Command 2: grep "minishell" > output.txt ---
-    const char *args_literal2[] = {"banana", NULL};
-    char **args_cmd2 = dup_args(args_literal2); // Dynamically allocate args
-    
-    // Redirection
-    t_redir *redir2 = malloc(sizeof(t_redir));
-    if (!redir2) { /* Cleanup cmd1 structures... */ return (NULL); }
-    redir2->label = REDIR_OUT;
-    // strdup is correct here to duplicate "output.txt"
-    redir2->file_name = strdup("output.txt"); 
-    
-    t_cmd *cmd2 = malloc(sizeof(t_cmd));
-    if (!cmd2) { /* Cleanup... */ return (NULL); }
-    cmd2->args = args_cmd2;
-    cmd2->redir_count = 1;
-    cmd2->redirs = redir2;
-    
-    // --- AST Nodes ---
-    t_ast *ast_cmd1 = malloc(sizeof(t_ast));
-    if (!ast_cmd1) { /* Cleanup... */ return (NULL); }
-    ast_cmd1->type = NODE_CMD;
-    ast_cmd1->cmd = cmd1;
-    ast_cmd1->left = NULL;
-    ast_cmd1->right = NULL;
-    
-    t_ast *ast_cmd2 = malloc(sizeof(t_ast));
-    if (!ast_cmd2) { /* Cleanup... */ return (NULL); }
-    ast_cmd2->type = NODE_CMD;
-    ast_cmd2->cmd = cmd2;
-    ast_cmd2->left = NULL;
-    ast_cmd2->right = NULL;
-    
-    // --- Root: NODE_PIPE ---
-    t_ast *ast_pipe_root = malloc(sizeof(t_ast));
-    if (!ast_pipe_root) { /* Cleanup... */ return (NULL); }
-    ast_pipe_root->type = NODE_PIPE;
-    ast_pipe_root->cmd = NULL;
-    ast_pipe_root->left = ast_cmd1;
-    ast_pipe_root->right = ast_cmd2;
-
-    return (ast_pipe_root);
+    t_ast *ast_c1 = new_cmd_node(dup_args((const char *[]){"banana", "frita",NULL}));
+    t_ast *ast_c2 = new_cmd_node(dup_args((const char *[]){"ls", NULL}));
+    t_ast *ast_c3 = new_cmd_node(dup_args((const char *[]){"ls", NULL}));
+    t_ast *ast_pipe = new_op_node(NODE_PIPE, ast_c2, ast_c3);
+    t_ast *ast_and = new_op_node(NODE_AND, ast_c1, ast_pipe);
+    t_ast *ast_c4 = new_cmd_node(dup_args((const char *[]){"echo", "oi", NULL}));
+    t_ast *ast_root = new_op_node(NODE_OR, ast_and, ast_c4);
+    return (ast_root);
 }
 
 /*
