@@ -26,7 +26,7 @@ EXEC_DIR = $(SRC_DIR)/execution
 
 #		---AST---				#
 
-SRCS_AST=  ft_ast.c
+SRCS_AST=  ft_ast.c core.c guards.c
 
 OBJS_AST = $(SRCS_AST:.c=.o)
 

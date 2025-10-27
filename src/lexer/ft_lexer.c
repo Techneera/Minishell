@@ -134,9 +134,9 @@ t_token	*ft_handle_word(t_lexer *l)
 		else
 		{
 		    if (l->input[l->pos] == '\'' || l->input[l->pos] == '\"')
-			in_quotes = l->input[l->pos];
+				in_quotes = l->input[l->pos];
 		    else if (ft_ismeta(l->input[l->pos]) || l->input[l->pos] == ' ')
-			    break;
+				break;
 		}
 		l->pos++;
     }

@@ -11,7 +11,7 @@ t_redir		*ft_create_redir_lst(t_label_redir label, char *str);
 void		ft_parser_iter(t_parser *parser);
 
 t_ast		*ft_parser(t_lexer *l);
-//t_ast		*ft_parse_and_or(t_parser *parser);
+t_ast		*ft_parse_and_or(t_parser *parser);
 
 void		ft_free_redir_lst(t_redir *redir);
 void		ft_free_array(char **arr);
