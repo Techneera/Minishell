@@ -50,15 +50,52 @@ static int	execute_cmd(t_ast *node, t_fds **fds, int i, char **envp)
 	return (i);
 }
 
-// static int	execute_and(t_ast *node, t_fds **fds, int i, char **envp)
-// {
-// 	//	In AND the shell gonna wait for each cmd
-// 	//	files, redirs, etc only will occur when the previus cmd is right
-// 	//	So is not to create on beggin.
-// }
+static void	execute_and(t_ast *node, t_fds **fds, int i, char **envp)
+{
+	pid_t pid;
 
-// static int	execute_or(t_ast *node, t_fds **fds, int i, char **envp)
-// {
-// 	//	OR is similar to AND, the differences is if previus cmd fail
-// 	//	you still run your
-// }
+	if (node == NULL)
+		return ;
+
+	execute_and(node->left, fds, i, envp);
+	execute_and(node->right, fds, i,envp);
+	if (node->type == NODE_CMD)
+	{
+		pid = fork();
+		if (pid == -1)
+		{
+			perror("fork ERROR");
+			exit(1);
+		}
+		if (pid == 0)
+			ft_execute_cmd();
+		waitpid(pid, &child_status, 0);
+		if (WIFEXITED(child_status) && WEXITSTATUS(child_status) != 1)
+			return ;
+	}
+}
+
+static int	execute_or(t_ast *node, t_fds **fds, int i, char **envp)
+{
+	pid_t pid;
+
+	if (node == NULL)
+		return ;
+
+	execute_and(node->left, fds, i, envp);
+	execute_and(node->right, fds, i,envp);
+	if (node->type == NODE_CMD)
+	{
+		pid = fork();
+		if (pid == -1)
+		{
+			perror("fork ERROR");
+			exit(1);
+		}
+		if (pid == 0)
+			ft_execute_cmd();
+		waitpid(pid, &child_status, 0);
+		if (WIFEXITED(child_status) && WEXITSTATUS(child_status) == 1)
+			return ;
+	}
+}

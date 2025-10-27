@@ -1,10 +1,10 @@
 #include "execution.h"
 
+
 int	main(int argc, char *argv[], char **envp)
 {
 	t_ast	*cmd = ft_cmd4();
 	t_fds	*fds;
-	int		child_status;
 	int	g_signal;
 	int	i;
 
