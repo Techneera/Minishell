@@ -5,6 +5,8 @@
 
 #include "libshell.h"
 
+extern int child_status;
+
 typedef struct s_get
 {
 	int	n_files;
