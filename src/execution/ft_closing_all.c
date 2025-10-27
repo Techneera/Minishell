@@ -18,7 +18,7 @@ static void	closing_pipes(t_fds **fds)
 	int	i;
 
 	i = 0;
-	while (i < (*fds)->n_pipes)
+	while (i < (*fds)->get.n_pipes)
 	{
 		if ((*fds)->pipe_fds && (*fds)->pipe_fds[i])
 		{
@@ -42,7 +42,7 @@ static void	closing_docs(t_fds **fds)
 	int	i;
 
 	i = 0;
-	while (i < (*fds)->n_docs)
+	while (i < (*fds)->get.n_docs)
 	{
 		if ((*fds)->heredoc_fds && (*fds)->heredoc_fds[i])
 		{
@@ -66,7 +66,7 @@ static void	closing_files(t_fds **fds)
 	int	i;
 
 	i = 0;
-	while (i < (*fds)->n_files)
+	while (i < (*fds)->get.n_files)
 	{
 		if ((*fds)->fd_files)
 		{
