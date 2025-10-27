@@ -14,11 +14,11 @@ int	main(int argc, char *argv[], char **envp)
 	(void)envp;
 	if (!cmd)
 		return (-1);
-	create_fds(&fds, cmd);
+	ft_create_fds(&fds, cmd);
 	ft_exec_tree(cmd, &fds, -1, envp);
 	ft_closing_all(&fds);
 	free_all((void **) fds->pipe_fds, number_of_cmds(cmd) - 1);
-	free_all((void **) fds->heredoc_fds, fds->n_docs);
+	free_all((void **) fds->heredoc_fds, fds->get.n_docs);
 	free(fds->fd_files);
 	free(fds);
 	free_tree(cmd);

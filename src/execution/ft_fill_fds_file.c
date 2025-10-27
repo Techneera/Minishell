@@ -13,6 +13,8 @@ int	fill_fd_file(t_fds **fds, t_ast *ast_root, int i)
 	j = 0;
 	if (!ast_root)
 		return (i);
+	if (ast_root->type == NODE_AND || ast_root -> type == NODE_OR)
+		return (i);
 	i = fill_fd_file(fds, ast_root->left, i);
 	i = fill_fd_file(fds, ast_root->right, i);
 	if (ast_root->cmd && ast_root->cmd->redirs)

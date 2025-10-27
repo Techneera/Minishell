@@ -14,7 +14,7 @@ void	number_of_redirs(t_fds **fds, t_ast *ast_root)
 		while (i < ast_root->cmd->redir_count)
 		{
 			if (ast_root->cmd->redirs[i].label != REDIR_HEREDOCK)
-				(*fds)->n_files++;
+				(*fds)->get.n_files++;
 			i++;
 		}
 	}

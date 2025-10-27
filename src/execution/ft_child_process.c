@@ -26,12 +26,12 @@ void	ft_child_process(t_ast *node, t_fds **fds, int i, char **envp)
 
 static void	apply_std_dup(t_fds **fds, int i)
 {
-	if (i > 0 && (*fds)->n_pipes > 0)
+	if (i > 0 && (*fds)->get.n_pipes > 0)
 	{
 		if (dup2((*fds)->pipe_fds[i - 1][0], STDIN_FILENO) == -1)
 			exit(1);
 	}
-	if (i < (*fds)->n_pipes)
+	if (i < (*fds)->get.n_pipes)
 	{
 		if (dup2((*fds)->pipe_fds[i][1], STDOUT_FILENO) == -1)
 			exit(1);
@@ -48,17 +48,17 @@ static void	apply_redirs_dup(t_ast *node, t_fds **fds)
 		heredoc_dup(node, fds, r);
 		if (node->cmd->redirs[r].label == REDIR_IN)
 		{
-			if (dup2((*fds)->fd_files[(*fds)->file_id], STDIN_FILENO) == -1)
+			if (dup2((*fds)->fd_files[(*fds)->pos.file_id], STDIN_FILENO) == -1)
 				exit(1);
-			(*fds)->file_id++;
+			(*fds)->pos.file_id++;
 		}
 		else if (node->cmd->redirs[r].label == REDIR_OUT
 			|| node->cmd->redirs[r].label == REDIR_APPEND)
 		{
-			if ((*fds)->fd_files[(*fds)->file_id] != -1
-				&& dup2((*fds)->fd_files[(*fds)->file_id], STDOUT_FILENO) == -1)
+			if ((*fds)->fd_files[(*fds)->pos.file_id] != -1
+				&& dup2((*fds)->fd_files[(*fds)->pos.file_id], STDOUT_FILENO) == -1)
 				perror("dup on REDIR_OUT");
-			(*fds)->file_id++;
+			(*fds)->pos.file_id++;
 		}
 		r++;
 	}
@@ -68,9 +68,9 @@ static void	heredoc_dup(t_ast *node, t_fds **fds, int r)
 {
 	if (node->cmd->redirs[r].label == REDIR_HEREDOCK)
 	{
-		if ((*fds)->heredoc_fds[(*fds)->doc_id][0] != -1
-		&& dup2((*fds)->heredoc_fds[(*fds)->doc_id][0], STDIN_FILENO) == -1)
+		if ((*fds)->heredoc_fds[(*fds)->pos.doc_id][0] != -1
+		&& dup2((*fds)->heredoc_fds[(*fds)->pos.doc_id][0], STDIN_FILENO) == -1)
 			perror("dup on REDIR_DOC");
-		(*fds)->doc_id++;
+		(*fds)->pos.doc_id++;
 	}
 }
