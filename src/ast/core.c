@@ -143,10 +143,10 @@ char	**ft_parse_args(t_parser *parser)
 	return (args_ret);
 }
 
-char	**ft_lst_to_args(t_lst **head, int size)
+char	**ft_lst_to_args(t_list **head, int size)
 {
 	char	**ret;
-	t_lst	*tmp;
+	t_list	*tmp;
 	int		i;
 
 	ret = (char **)ft_calloc(size + 1, sizeof(char *));
@@ -170,7 +170,7 @@ int	ft_isredir(t_parser *parser)
 	return (parser->current_token->tok_label == TOKEN_REDIR_IN || \
 			parser->current_token->tok_label == TOKEN_REDIR_OUT || \
 			parser->current_token->tok_label == TOKEN_REDIR_APPEND || \
-			parser->current_token->tok_label == TOKEN_REDIR_HEREDOCK);
+			parser->current_token->tok_label == TOKEN_REDIR_HEREDOC);
 }
 
 int	ft_handle_redirects(t_parser *parser, t_redir **head_redir)
@@ -187,11 +187,11 @@ int	ft_handle_redirects(t_parser *parser, t_redir **head_redir)
 				new_redir = ft_create_redir_lst(REDIR_OUT, ft_strdup(parser->peek->str));
 			else if (parser->current_token->tok_label == TOKEN_REDIR_APPEND)
 				new_redir = ft_create_redir_lst(REDIR_APPEND, ft_strdup(parser->peek->str));
-			else if (parser->current_token->tok_label == TOKEN_REDIR_HEREDOCK)
+			else if (parser->current_token->tok_label == TOKEN_REDIR_HEREDOC)
 				new_redir = ft_create_redir_lst(REDIR_HEREDOCK, ft_strdup(parser->peek->str));
 		}
 		else
-			return (fprintf(stderr, "Syntax error near token \`%s\"", parser->current_token->str), ft_redirs_clear(head_redir), false);
+			return (fprintf(stderr, "Syntax error near token"), ft_redirs_clear(head_redir), false);
 		if (!new_redir)
 			return (ft_redirs_clear(head_redir), false);
 		ft_redirs_addback(head_redir, new_redir);
@@ -201,8 +201,8 @@ int	ft_handle_redirects(t_parser *parser, t_redir **head_redir)
 	return (true);
 }
 
-t_ast	*ft_parse_subshell(parser)
+t_ast	*ft_parse_subshell(t_parser *parser)
 {
-	fprintf("%s\n", parser->current_token->str);
+	fprintf(stdout, "%s\n", parser->current_token->str);
 	return (NULL);
 }

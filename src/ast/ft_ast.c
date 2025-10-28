@@ -92,7 +92,7 @@ t_redir	*ft_create_redir_lst(t_label_redir label, char *str)
 	return (r);
 }
 
-t_redir	*ft_redirs_addback(t_redir **head, t_redir *new)
+void	ft_redirs_addback(t_redir **head, t_redir *new)
 {
 	t_redir	*ptr;
 

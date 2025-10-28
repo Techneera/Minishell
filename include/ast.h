@@ -12,11 +12,14 @@ void		ft_parser_iter(t_parser *parser);
 
 t_ast		*ft_parser(t_lexer *l);
 t_ast		*ft_parse_and_or(t_parser *parser);
+t_ast		*ft_parse_pipeline(t_parser *parser);
 t_ast		*ft_parse_grain_with_redirs(t_parser *parser);
+t_ast		*ft_parse_node_command(t_parser *parser);
+t_ast		*ft_parse_subshell(t_parser *parser);
 char		**ft_parse_args(t_parser *parser);
-char		**ft_lst_to_args(t_lst **head, int size);
+char		**ft_lst_to_args(t_list **head, int size);
 int			ft_handle_redirects(t_parser *parser, t_redir **head_redir);
-t_redir		*ft_redirs_addback(t_redir **head, t_redir *new);
+void		ft_redirs_addback(t_redir **head, t_redir *new);
 
 void		ft_redirs_clear(t_redir **redirs);
 void		ft_free_redir_lst(t_redir *redir);
