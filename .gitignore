@@ -67,3 +67,4 @@ shell
 exec_test
 ast_test
 exec
+test_parser

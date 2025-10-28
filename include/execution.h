@@ -1,6 +1,8 @@
 #ifndef EXECUTION_H
 # define EXECUTION_H
 
+# define CMD_NOT_FOUND 127
+
 #include "libshell.h"
 
 typedef struct s_fds
@@ -8,6 +10,7 @@ typedef struct s_fds
 	int	**pipe_fds;
 	int	**heredoc_fds;
 	int	*fd_files;
+	int	*c_pids;
 	int	file_id;
 	int	doc_id;
 	int	n_files;
@@ -26,6 +29,7 @@ t_ast	*ft_cmd7();
 t_ast	*ft_cmd8();
 t_ast	*ft_cmd9();
 t_ast	*ft_bash();
+t_ast	*fail_cmd();
 
 
 //---init_files
@@ -36,6 +40,7 @@ int		fill_fd_file(t_fds **fds, t_ast *ast_root, int i);
 void	free_all(void **ptr, size_t rows);
 void	free_tree(t_ast *ast_root);
 int		ft_arraylen(void **ptr);
+int		init_pid(pid_t *pid, t_fds **fds);
 
 //---ft_getters
 char	*get_command_path(char **arg, char **env);
@@ -48,16 +53,17 @@ int	ft_max(int a, int b);
 //---ft_here_doc
 void	here_doc(char *lim, int *fd);
 
+//---ft_child_process
+void ft_child_process(t_ast *node, t_fds **fds, int i, char **envp);
+
+//--ft_closing_all
+void	ft_closing_all(t_fds **fds);
+
 //		ft_execution
 int		number_of_cmds(t_ast *ast_root);
-int		number_of_pipes(t_ast *ast_root);
-int		execute_pipe(t_ast *node, t_fds **fds, int i, char **envp);
 void	create_fds(t_fds **fds, t_ast *ast_root);
-int		execute_tree(t_ast *node, t_fds **fds, int i, char **envp);
-int		execute_cmd(t_ast *node, t_fds **fds, int i, char **envp);
+int		ft_exec_tree(t_ast *node, t_fds **fds, int i, char **envp);
 void	init_pipe(t_fds **fds, int ***pipe_fds, t_ast *ast_root);
 void	ft_closing_all(t_fds **fds);
 void	init_heredoc(t_fds **fds, t_ast *node);
-void	fill_heredoc(t_fds **fds, t_ast *node, int i);
-int		number_of_heredocks(t_ast *ast_root);
 #endif

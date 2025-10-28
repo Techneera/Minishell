@@ -13,7 +13,7 @@ t_lexer	*ft_state_lexer(char *line)
 
     ptr = (t_lexer *)ft_calloc(1, sizeof(t_lexer));
     if (!ptr)
-	return (NULL);
+		return (NULL);
     ptr->input = line;
     ptr->pos = 0;
     ptr->len = ft_strlen(line);
@@ -23,15 +23,15 @@ t_lexer	*ft_state_lexer(char *line)
 t_token	*get_next_token(t_lexer *l)
 {
     if (!l)
-	return (NULL);
+		return (NULL);
     while (l->input[l->pos] && ft_isspace(l->input[l->pos]))
-	l->pos++;
+		l->pos++;
     if (l->pos >= l->len)
-	return (create_token(TOKEN_EOF, NULL));
+		return (create_token(TOKEN_EOF, NULL));
     if (ft_ismeta(l->input[l->pos]))
-	return (ft_handle_operator(l));
+		return (ft_handle_operator(l));
     else
-	return (ft_handle_word(l));
+		return (ft_handle_word(l));
 }
 
 t_token	*ft_handle_operator(t_lexer *l)
@@ -40,36 +40,36 @@ t_token	*ft_handle_operator(t_lexer *l)
 
     current = l->input[l->pos];
     if (current == '|')
-	return (ft_which_or(l));
+		return (ft_which_or(l));
     else if (current == '&')
-	return (ft_which_and(l));
+		return (ft_which_and(l));
     else if (current == '<' || current == '>')
-	return (ft_which_redir(l));
+		return (ft_which_redir(l));
     else if (current == '(')
     {
-	l->pos++;
-	return (create_token(TOKEN_LEFT_PAR, ft_strdup("(")));
+		l->pos++;
+		return (create_token(TOKEN_LEFT_PAR, ft_strdup("(")));
     }
     else if (current == ')')
     {
-	l->pos++;
-	return (create_token(TOKEN_RIGHT_PAR, ft_strdup(")")));
+		l->pos++;
+		return (create_token(TOKEN_RIGHT_PAR, ft_strdup(")")));
     }
     else
-	return (create_token(TOKEN_ERROR, ft_strdup("Unsuported operator")));
+		return (create_token(TOKEN_ERROR, ft_strdup("Unsuported operator")));
 }
 
 t_token	*ft_which_or(t_lexer *l)
 {
     if (l->pos + 1 < l->len && l->input[l->pos + 1] == '|')
     {
-	l->pos += 2;
-	return (create_token(TOKEN_OR, ft_strdup("||")));
+		l->pos += 2;
+		return (create_token(TOKEN_OR, ft_strdup("||")));
     }
     else
     {
-	l->pos++;
-	return (create_token(TOKEN_PIPE, ft_strdup("|")));
+		l->pos++;
+		return (create_token(TOKEN_PIPE, ft_strdup("|")));
     }
 }
 
@@ -77,8 +77,8 @@ t_token	*ft_which_and(t_lexer *l)
 {
     if (l->pos + 1 < l->len && l->input[l->pos + 1] == '&')
     {
-	l->pos += 2;
-	return (create_token(TOKEN_AND, ft_strdup("&&")));
+		l->pos += 2;
+		return (create_token(TOKEN_AND, ft_strdup("&&")));
     }
     l->pos++;
     return (create_token(TOKEN_ERROR, ft_strdup("Unsuported operator")));
@@ -90,31 +90,31 @@ t_token	*ft_which_redir(t_lexer *l)
 
     if (l->pos + 1 < l->len && l->input[l->pos + 1] == '>')
     {
-	l->pos += 2;
-	return (create_token(TOKEN_REDIR_APPEND, ft_strdup(">>")));
+		l->pos += 2;
+		return (create_token(TOKEN_REDIR_APPEND, ft_strdup(">>")));
     }
     else if (l->input[l->pos] == '>')
     {
-	l->pos++;
-	return (create_token(TOKEN_REDIR_OUT, ft_strdup(">")));
+		l->pos++;
+		return (create_token(TOKEN_REDIR_OUT, ft_strdup(">")));
     }
     else if (l->pos + 1 < l->len && l->input[l->pos + 1] == '<')
     {
-	l->pos += 2;
-	while (l->pos < l->len && ft_isspace(l->input[l->pos]))
-	    l->pos++;
-	delim = ft_get_unquoted_str(l);
-	if (!delim)
-	    return (create_token(TOKEN_ERROR, ft_strdup("Unexpected error in delim.")));
-	return (create_token(TOKEN_REDIR_HEREDOC, delim));
+		l->pos += 2;
+		while (l->pos < l->len && ft_isspace(l->input[l->pos]))
+		    l->pos++;
+		delim = ft_get_unquoted_str(l);
+		if (!delim)
+		    return (create_token(TOKEN_ERROR, ft_strdup("Unexpected error in delim.")));
+		return (create_token(TOKEN_REDIR_HEREDOC, delim));
     }
     else if (l->input[l->pos] == '<')
     {
-	l->pos++;
-	return (create_token(TOKEN_REDIR_IN, ft_strdup("<")));
+		l->pos++;
+		return (create_token(TOKEN_REDIR_IN, ft_strdup("<")));
     }
     else
-	return (create_token(TOKEN_ERROR, ft_strdup("minishell: syntax error near unexpected token `<'")));
+		return (create_token(TOKEN_ERROR, ft_strdup("minishell: syntax error near unexpected token `<'")));
 }
 
 t_token	*ft_handle_word(t_lexer *l)
@@ -126,24 +126,24 @@ t_token	*ft_handle_word(t_lexer *l)
     in_quotes = '\0';
     while(l->pos < l->len)
     {
-	if (in_quotes)
-	{
-	    if (l->input[l->pos] == in_quotes)
-		in_quotes = '\0';
-	}
-	else
-	{
-	    if (l->input[l->pos] == '\'' || l->input[l->pos] == '\"')
-		in_quotes = l->input[l->pos];
-	    else if (ft_ismeta(l->input[l->pos]) || l->input[l->pos] == ' ')
-		    break;
-	}
-	l->pos++;
+		if (in_quotes)
+		{
+		    if (l->input[l->pos] == in_quotes)
+			in_quotes = '\0';
+		}
+		else
+		{
+		    if (l->input[l->pos] == '\'' || l->input[l->pos] == '\"')
+				in_quotes = l->input[l->pos];
+		    else if (ft_ismeta(l->input[l->pos]) || l->input[l->pos] == ' ')
+				break;
+		}
+		l->pos++;
     }
     if (in_quotes)
-	return (create_token(TOKEN_ERROR, ft_strdup("Unclosed word.")));
+		return (create_token(TOKEN_ERROR, ft_strdup("Unclosed word.")));
     else
-	return (create_token(TOKEN_WORD, ft_substr(l->input, start, l->pos - start)));
+		return (create_token(TOKEN_WORD, ft_substr(l->input, start, l->pos - start)));
 }
 
 t_token	*create_token(t_token_label tok_label, char *str)
@@ -154,7 +154,7 @@ t_token	*create_token(t_token_label tok_label, char *str)
     if (!t)
     {
         free(str);
-	return (NULL);
+		return (NULL);
     }
     t->str = str;
     t->tok_label = tok_label;
@@ -168,14 +168,14 @@ void	add_token_back(t_token **tok_lst, t_token *new)
 
     if (!*tok_lst && new)
     {
-	*tok_lst = new;
-	return ;
+		*tok_lst = new;
+		return ;
     }
     ptr = *tok_lst;
     if (!new)
-	return ;
+		return ;
     while (ptr->next)
-	ptr = ptr->next;
+		ptr = ptr->next;
     ptr->next = new;
 }
 
@@ -184,12 +184,12 @@ void	free_token_lst(t_token **tok_lst, void (*del)(t_token *))
     t_token	*ptr;
 
     if (!tok_lst)
-	return ;
+		return ;
     while (*tok_lst)
     {
-	ptr = (*tok_lst)->next;
-	del(*tok_lst);
-	*tok_lst = ptr;
+		ptr = (*tok_lst)->next;
+		del(*tok_lst);
+		*tok_lst = ptr;
     }
     *tok_lst = NULL;
 }
@@ -197,7 +197,7 @@ void	free_token_lst(t_token **tok_lst, void (*del)(t_token *))
 void	free_token(t_token *t)
 {
     if (!t)
-	return ;
+		return ;
     free(t->str);
     free(t);
     t = NULL;
@@ -206,7 +206,7 @@ void	free_token(t_token *t)
 void	free_lexer(t_lexer *l)
 {
     if (!l)
-	return ;
+		return ;
     free(l);
     l = NULL;
 }
@@ -242,4 +242,38 @@ char	*ft_get_unquoted_str(t_lexer *l)
     }
     // If no quotes, return the raw delimiter
     return (raw_delim);
+}
+
+void	ft_tokens_constructor(t_lexer **lex, t_token **head)
+{
+	t_token	*tmp;
+
+	tmp = get_next_token(*lex);
+	if (!tmp)
+		return ;
+	while(tmp->tok_label != TOKEN_EOF && tmp->tok_label != TOKEN_ERROR)
+	{
+		add_token_back(head, tmp);
+		tmp = get_next_token(*lex);
+	}
+	add_token_back(head, tmp);
+}
+
+void	free_all(char *line, t_lexer *lex, t_token **head)
+{
+	if (line)
+	{
+		free(line);
+		line = NULL;
+	}
+	if (lex)
+	{
+		free_lexer(lex);
+		lex = NULL;
+	}
+	if (head)
+	{
+		free_token_lst(head, &free_token);
+		head = NULL;
+	}
 }

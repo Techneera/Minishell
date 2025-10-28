@@ -26,7 +26,7 @@ EXEC_DIR = $(SRC_DIR)/execution
 
 #		---AST---				#
 
-SRCS_AST=  ft_ast.c
+SRCS_AST=  ft_ast.c core.c guards.c
 
 OBJS_AST = $(SRCS_AST:.c=.o)
 
@@ -46,7 +46,9 @@ PATH_OBJS_LEXER = $(patsubst %,$(OBJS_DIR)/lexer/%,$(OBJS_LEXER))
 
 #		---EXECUTION---			#
 
-SRCS_EXEC = ft_execution.c test_cmds.c  init_files.c exec_utils.c ft_getters.c ft_here_doc.c add_libft.c
+SRCS_EXEC = add_libft.c exec_tree_utils.c exec_utils.c files_utils.c ft_child_process.c ft_exec_tree.c \
+			ft_fill_fds_file.c ft_getters.c ft_here_doc.c here_doc_utils.c ft_fill_fds_file.c test_cmds.c \
+			ft_closing_all.c
 
 OBJS_EXEC = $(SRCS_EXEC:.c=.o)
 
@@ -76,7 +78,10 @@ unit: $(PATH_OBJS_LEXER) $(LFT)
 exec: $(PATH_OBJS_EXEC) $(LFT)
 	$(CC) $(CFLAGS) $(TESTER_DIR)/exec_main.c $^ -o $(EXEC)
 
-$(AST_NAME): $(PATH_OBJS_AST) $(LFT)
+test_parser: $(PATH_OBJS_AST) $(PATH_OBJS_LEXER) $(LFT)
+	$(CC) $(CFLAGS) $(TESTER_DIR)/parser.c $^ -o $@
+
+$(AST_NAME): $(PATH_OBJS_AST) $(PATH_OBJS_LEXER) $(LFT)
 	$(CC) $(CFLAGS) $(TESTER_DIR)/ast_tester.c $^ -o $@
 
 $(NAME): $(PATH_OBJS_LEXER) $(LFT)
@@ -122,4 +127,4 @@ re: fclean all
 vgr: all
 	valgrind --leak-check=full --show-leak-kinds=all --suppressions=./readline.supp ./$(NAME)
 
-.PHONY: all clean fclean re unit vgr exec
+.PHONY: all clean fclean re unit vgr exec test_parser

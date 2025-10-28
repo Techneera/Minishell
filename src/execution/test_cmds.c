@@ -1,18 +1,5 @@
 #include "execution.h"
 
-/*
-                        [NODE_PIPE]
-                            /       \
-                           /         \
-                  [NODE_CMD]          [NODE_CMD]
-                    `-- cmd:            `-- cmd: {
-                        {args: {"cat", "README.md", NULL}, ...}
-                                              args: {"grep", "minishell", NULL},
-                                              redir_count: 1,
-                                              redirs: { {label: REDIR_OUT, file_name: "output.txt"} }
-                                            }
-*/
-
 #include <stdlib.h> // For malloc, free, NULL
 #include <string.h> // For strdup
 
@@ -52,6 +39,93 @@ static char **dup_args(const char **args_literal)
     new_args[count] = NULL; // Null-terminate the new array
     return (new_args);
 }
+
+// (Assuming dup_args, t_cmd, t_redir, t_ast, and enums are defined)
+
+/*
+
+
+                        [NODE_PIPE]
+                            /       \
+                           /         \
+                  [NODE_CMD]          [NODE_CMD]
+                    `-- cmd:            `-- cmd: {
+                        {args: {"cat", "README.md", NULL}, ...}
+                                              args: {"banana", NULL},
+                                              redir_count: 1,
+                                              redirs: { {label: REDIR_OUT, file_name: "output.txt"} }
+                                            }
+*/
+
+
+t_ast	*fail_cmd()
+{
+    // --- Command 1: cat README.md ---
+    const char *args_literal1[] = {"cat", "README.md", NULL};
+    char **args_cmd1 = dup_args(args_literal1); // Dynamically allocate args
+
+    t_cmd *cmd1 = malloc(sizeof(t_cmd));
+    if (!cmd1) return (NULL);
+    cmd1->args = args_cmd1;
+    cmd1->redir_count = 0;
+    cmd1->redirs = NULL;
+
+    // --- Command 2: grep "minishell" > output.txt ---
+    const char *args_literal2[] = {"banana", NULL};
+    char **args_cmd2 = dup_args(args_literal2); // Dynamically allocate args
+    
+    // Redirection
+    t_redir *redir2 = malloc(sizeof(t_redir));
+    if (!redir2) { /* Cleanup cmd1 structures... */ return (NULL); }
+    redir2->label = REDIR_OUT;
+    // strdup is correct here to duplicate "output.txt"
+    redir2->file_name = strdup("output.txt"); 
+    
+    t_cmd *cmd2 = malloc(sizeof(t_cmd));
+    if (!cmd2) { /* Cleanup... */ return (NULL); }
+    cmd2->args = args_cmd2;
+    cmd2->redir_count = 1;
+    cmd2->redirs = redir2;
+    
+    // --- AST Nodes ---
+    t_ast *ast_cmd1 = malloc(sizeof(t_ast));
+    if (!ast_cmd1) { /* Cleanup... */ return (NULL); }
+    ast_cmd1->type = NODE_CMD;
+    ast_cmd1->cmd = cmd1;
+    ast_cmd1->left = NULL;
+    ast_cmd1->right = NULL;
+    
+    t_ast *ast_cmd2 = malloc(sizeof(t_ast));
+    if (!ast_cmd2) { /* Cleanup... */ return (NULL); }
+    ast_cmd2->type = NODE_CMD;
+    ast_cmd2->cmd = cmd2;
+    ast_cmd2->left = NULL;
+    ast_cmd2->right = NULL;
+    
+    // --- Root: NODE_PIPE ---
+    t_ast *ast_pipe_root = malloc(sizeof(t_ast));
+    if (!ast_pipe_root) { /* Cleanup... */ return (NULL); }
+    ast_pipe_root->type = NODE_PIPE;
+    ast_pipe_root->cmd = NULL;
+    ast_pipe_root->left = ast_cmd1;
+    ast_pipe_root->right = ast_cmd2;
+
+    return (ast_pipe_root);
+}
+
+/*
+                        [NODE_PIPE]
+                            /       \
+                           /         \
+                  [NODE_CMD]          [NODE_CMD]
+                    `-- cmd:            `-- cmd: {
+                        {args: {"cat", "README.md", NULL}, ...}
+                                              args: {"grep", "minishell", NULL},
+                                              redir_count: 1,
+                                              redirs: { {label: REDIR_OUT, file_name: "output.txt"} }
+                                            }
+*/
+
 
 t_ast   *ft_cmd1()
 {
