@@ -1,4 +1,5 @@
 #include "ast.h"
+#include "lexer.h"
 
 t_ast	*ft_ast_node_command(t_cmd *cmd)
 {
@@ -17,36 +18,52 @@ t_ast	*ft_ast_node_command(t_cmd *cmd)
 	return (new_node);
 }
 
-t_ast	*ft_ast_generic_node(t_token *token)
+t_ast	*ft_ast_generic_node(t_node_type type)
 {
 	t_ast	*new_node;
 
 	new_node = (t_ast *)ft_calloc(1, sizeof(t_ast));
 	if (!new_node)
 		return (NULL);
-	new_node->type = ft_which_token();
+	new_node->type = type;
 	new_node->cmd = NULL;
+	new_node->body= NULL;
 	new_node->left = NULL;
 	new_node->right = NULL;
 	return (new_node);
 }
 
-t_ast	*ft_init_parser(t_lexer *l)
+t_parser	*ft_init_parser(t_lexer *l)
 {
-	t_ast	*new;
+	t_parser	*parser;
 
-	new = (t_ast *)ft_calloc(1, sizeof(t_ast));
-	if (!new)
+	parser = (t_parser *)ft_calloc(1, sizeof(t_parser));
+	if (!parser)
 		return (NULL);
-	new->lex = l;
-	new->next_token = get_next_token(l);
+	parser->lex = l;
+	parser->current_token = get_next_token(l);
+	if (!parser->current_token)
+	{
+		free(parser);
+		return (NULL);
+	}
+	parser->peek = get_next_token(l);
+	if (!parser->peek)
+	{
+		free(parser->current_token);
+		free(parser);
+		return (NULL);
+	}
+	return (parser);
 }
 
-t_ast	*ft_parser_input(t_lexer *l)
+void	ft_parser_iter(t_parser *parser)
 {
-	t_ast	*node;
-
-	node = ft_init_node(l);
+	if (parser->current_token->tok_label == TOKEN_EOF)
+		return ;
+	free_token(parser->current_token);
+	parser->current_token = parser->peek;
+	parser->peek = get_next_token(parser->lex);
 }
 
 t_cmd	*ft_create_command(char	**av, t_redir *redirs, int count)
@@ -62,7 +79,7 @@ t_cmd	*ft_create_command(char	**av, t_redir *redirs, int count)
 	return (new_cmd);
 }
 
-t_redir	*ft_create_redir(t_label_redir label, char *str)
+t_redir	*ft_create_redir_lst(t_label_redir label, char *str)
 {
 	t_redir	*r;
 
@@ -71,41 +88,37 @@ t_redir	*ft_create_redir(t_label_redir label, char *str)
 		return (NULL);
 	r->label = label;
 	r->file_name = str;
+	r->next = NULL;
 	return (r);
 }
 
-t_parser	*ft_init_parser(t_lexer *lex, t_token *)
+void	ft_redirs_addback(t_redir **head, t_redir *new)
 {
-	t_parser	*new;
+	t_redir	*ptr;
 
-	new = (t_parser *)ft_calloc(1, sizeof(t_parser));
-	if (!new)
-		return (NULL);
-	new->lex = NULL;
-	new->next_token = NULL;
-	new->peek = NULL;
-	return (new);
-}
-
-void	ft_free_cmd(t_cmd *cmd)
-{
-	int	i;
-
-	i = 0;
-	while (cmd->args[i])
+	if (!*head && new)
 	{
-		free(cmd->args[i]);
-		i++;
+		*head = new;
+		return ;
 	}
-	free(cmd->args);
-	free(cmd->redirs);
-	free(cmd);
+	if (!new)
+		return ;
+	ptr = *head;
+	while (ptr)
+		ptr = ptr->next;
+	ptr->next = new;
 }
 
-void	ft_free_node(t_ast *root)
+void	ft_redirs_clear(t_redir **redirs)
 {
-	free(root->left);
-	free(root->right);
-	ft_free_cmd(root->cmd);
-	free(root);
+	t_redir	*tmp;
+
+	while (redirs)
+	{
+		tmp = (*redirs)->next;
+		free((*redirs)->file_name);
+		free(*redirs);
+		*redirs = tmp;
+	}
+	*redirs = NULL;
 }

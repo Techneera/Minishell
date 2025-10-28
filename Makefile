@@ -26,7 +26,7 @@ EXEC_DIR = $(SRC_DIR)/execution
 
 #		---AST---				#
 
-SRCS_AST=  ft_ast.c
+SRCS_AST=  ft_ast.c core.c guards.c
 
 OBJS_AST = $(SRCS_AST:.c=.o)
 
@@ -78,7 +78,10 @@ unit: $(PATH_OBJS_LEXER) $(LFT)
 exec: $(PATH_OBJS_EXEC) $(LFT)
 	$(CC) $(CFLAGS) $(TESTER_DIR)/exec_main.c $^ -o $(EXEC)
 
-$(AST_NAME): $(PATH_OBJS_AST) $(LFT)
+test_parser: $(PATH_OBJS_AST) $(PATH_OBJS_LEXER) $(LFT)
+	$(CC) $(CFLAGS) $(TESTER_DIR)/parser.c $^ -o $@
+
+$(AST_NAME): $(PATH_OBJS_AST) $(PATH_OBJS_LEXER) $(LFT)
 	$(CC) $(CFLAGS) $(TESTER_DIR)/ast_tester.c $^ -o $@
 
 $(NAME): $(PATH_OBJS_LEXER) $(LFT)
@@ -124,4 +127,4 @@ re: fclean all
 vgr: all
 	valgrind --leak-check=full --show-leak-kinds=all --suppressions=./readline.supp ./$(NAME)
 
-.PHONY: all clean fclean re unit vgr exec
+.PHONY: all clean fclean re unit vgr exec test_parser
