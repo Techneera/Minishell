@@ -88,5 +88,37 @@ t_redir	*ft_create_redir_lst(t_label_redir label, char *str)
 		return (NULL);
 	r->label = label;
 	r->file_name = str;
+	r->next = NULL;
 	return (r);
+}
+
+t_redir	*ft_redirs_addback(t_redir **head, t_redir *new)
+{
+	t_redir	*ptr;
+
+	if (!*head && new)
+	{
+		*head = new;
+		return ;
+	}
+	if (!new)
+		return ;
+	ptr = *head;
+	while (ptr)
+		ptr = ptr->next;
+	ptr->next = new;
+}
+
+void	ft_redirs_clear(t_redir **redirs)
+{
+	t_redir	*tmp;
+
+	while (redirs)
+	{
+		tmp = (*redirs)->next;
+		free((*redirs)->file_name);
+		free(*redirs);
+		*redirs = tmp;
+	}
+	*redirs = NULL;
 }

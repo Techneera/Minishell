@@ -13,7 +13,7 @@ t_ast	*ft_parser(t_lexer *l)
 		return (NULL);
 	}
 	ast_root = ft_parse_and_or(parser); // Search lowest precedence
-	if (ast_root != NULL && parser->current_token->tok_label == TOKEN_EOF)
+	if (ast_root != NULL && parser->current_token->tok_label != TOKEN_EOF)
 	{
 		fprintf(stderr, "Error creating tree.");
 		ft_free_ast(ast_root);
@@ -70,10 +70,10 @@ t_ast	*ft_parse_pipeline(t_parser *parser)
 		ft_parser_iter(parser);
 		ast_right = ft_parse_grain_with_redirs(parser);
 		if (!ast_right)
-			return (NULL);
+			return (ft_free_ast(ast_left), NULL);
 		new_parent = ft_ast_generic_node(NODE_PIPE);
 		if (!new_parent)
-			return (NULL);
+			return (ft_free_ast(ast_left), ft_free_ast(ast_right), NULL);
 		new_parent->left = ast_left;
 		new_parent->right= ast_right;
 		ast_left = new_parent;
@@ -94,7 +94,15 @@ t_ast	*ft_parse_grain_with_redirs(t_parser *parser)
 		fprintf(stderr, "Error invalid token.");
 	if (!node)
 		return (NULL);
-	ft_handle_redirects(parser, &node);
+	if (node->type == NODE_SUBSHELL)
+	{
+		node->cmd = ft_create_command(NULL, NULL, 0);
+		if (!node->cmd)
+			return (ft_free_ast(node), NULL);
+	}
+	if (ft_handle_redirects(parser, &node->cmd->redirs) == false)
+		return (ft_free_ast(node), NULL);
+	return (node);
 }
 
 t_ast	*ft_parse_node_command(t_parser *parser)
@@ -109,6 +117,8 @@ t_ast	*ft_parse_node_command(t_parser *parser)
 	if (!cmd->args)
 		return (free(cmd), NULL);
 	node_cmd = ft_ast_node_command(cmd);
+	if (!node_cmd)
+		return (ft_free_cmd(cmd), NULL);
 	return (node_cmd);
 }
 
@@ -153,9 +163,46 @@ char	**ft_lst_to_args(t_lst **head, int size)
 	}
 	return (ret);
 }
-/*
+
+static
+int	ft_isredir(t_parser *parser)
+{
+	return (parser->current_token->tok_label == TOKEN_REDIR_IN || \
+			parser->current_token->tok_label == TOKEN_REDIR_OUT || \
+			parser->current_token->tok_label == TOKEN_REDIR_APPEND || \
+			parser->current_token->tok_label == TOKEN_REDIR_HEREDOCK);
+}
+
+int	ft_handle_redirects(t_parser *parser, t_redir **head_redir)
+{
+	t_redir *new_redir;
+
+	while (ft_isredir(parser))
+	{
+		if (parser->peek->tok_label == TOKEN_WORD)
+		{
+			if (parser->current_token->tok_label == TOKEN_REDIR_IN)
+				new_redir = ft_create_redir_lst(REDIR_IN, ft_strdup(parser->peek->str));
+			else if (parser->current_token->tok_label == TOKEN_REDIR_OUT)
+				new_redir = ft_create_redir_lst(REDIR_OUT, ft_strdup(parser->peek->str));
+			else if (parser->current_token->tok_label == TOKEN_REDIR_APPEND)
+				new_redir = ft_create_redir_lst(REDIR_APPEND, ft_strdup(parser->peek->str));
+			else if (parser->current_token->tok_label == TOKEN_REDIR_HEREDOCK)
+				new_redir = ft_create_redir_lst(REDIR_HEREDOCK, ft_strdup(parser->peek->str));
+		}
+		else
+			return (fprintf(stderr, "Syntax error near token \`%s\"", parser->current_token->str), ft_redirs_clear(head_redir), false);
+		if (!new_redir)
+			return (ft_redirs_clear(head_redir), false);
+		ft_redirs_addback(head_redir, new_redir);
+		ft_parser_iter(parser);
+		ft_parser_iter(parser);
+	}
+	return (true);
+}
+
 t_ast	*ft_parse_subshell(parser)
 {
-	
+	fprintf("%s\n", parser->current_token->str);
+	return (NULL);
 }
-*/

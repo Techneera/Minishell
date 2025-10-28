@@ -34,6 +34,20 @@ void	test_parser(char *input)
 	free(parser);
 }
 
+void	test_handle_and_or(char *input)
+{
+	t_lexer		*lexer;
+	t_ast		*root;
+
+	lexer = ft_state_lexer(input);
+	if (!lexer)
+	{
+		fprintf(stderr, "Error allocating lexer");
+		return ;
+	}
+	root = ft_parser(lexer);
+}
+
 int	main(void)
 {
 	test_parser("echo fa\"$HOME\" | grep a");
