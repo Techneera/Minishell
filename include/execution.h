@@ -67,7 +67,10 @@ int	ft_max(int a, int b);
 void	here_doc(char *lim, int *fd);
 
 //---ft_child_process
-void ft_child_process(t_ast *node, t_fds **fds, int i, char **envp);
+void	ft_child_process(t_ast *node, t_fds **fds, int i, char **envp);
+void	apply_std_dup(t_fds **fds, int i);
+void	apply_redirs_dup(t_ast *node, t_fds **fds);
+void	heredoc_dup(t_ast *node, t_fds **fds, int r);
 
 //--ft_closing_all
 void	ft_closing_all(t_fds **fds);

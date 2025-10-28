@@ -1,8 +1,8 @@
 #include "execution.h"
 
-static void	apply_std_dup(t_fds **fds, int i);
-static void	apply_redirs_dup(t_ast *node, t_fds **fds);
-static void	heredoc_dup(t_ast *node, t_fds **fds, int r);
+void	apply_std_dup(t_fds **fds, int i);
+void	apply_redirs_dup(t_ast *node, t_fds **fds);
+void	heredoc_dup(t_ast *node, t_fds **fds, int r);
 
 void	ft_child_process(t_ast *node, t_fds **fds, int i, char **envp)
 {
@@ -24,7 +24,7 @@ void	ft_child_process(t_ast *node, t_fds **fds, int i, char **envp)
 	exit(1);
 }
 
-static void	apply_std_dup(t_fds **fds, int i)
+void	apply_std_dup(t_fds **fds, int i)
 {
 	if (i > 0 && (*fds)->get.n_pipes > 0)
 	{
@@ -38,7 +38,7 @@ static void	apply_std_dup(t_fds **fds, int i)
 	}
 }
 
-static void	apply_redirs_dup(t_ast *node, t_fds **fds)
+void	apply_redirs_dup(t_ast *node, t_fds **fds)
 {
 	int	r;
 
@@ -64,7 +64,7 @@ static void	apply_redirs_dup(t_ast *node, t_fds **fds)
 	}
 }
 
-static void	heredoc_dup(t_ast *node, t_fds **fds, int r)
+void	heredoc_dup(t_ast *node, t_fds **fds, int r)
 {
 	if (node->cmd->redirs[r].label == REDIR_HEREDOCK)
 	{
