@@ -48,13 +48,13 @@ t_ast *new_cmd_node(char **args) {
     t_ast *node = malloc(sizeof(t_ast));
     if (!node) { free(cmd); return (NULL); }
     node->type = NODE_CMD;
-    node->body = (struct s_ast *)cmd; // Use body for CMD content
+    node->cmd = cmd;
     node->left = NULL;
     node->right = NULL;
     return (node);
 }
 
-// Helper to create an operator node (NODE_PIPE, NODE_AND, NODE_OR)
+// Helper to create an operator node (NODE_PIPE, NODE_AND, NODE_OR, NODE_SUBSHELL)
 t_ast *new_op_node(t_node_type type, t_ast *left, t_ast *right) {
     t_ast *node = malloc(sizeof(t_ast));
     if (!node) return (NULL);
@@ -86,13 +86,24 @@ t_ast *new_op_node(t_node_type type, t_ast *left, t_ast *right) {
 
 t_ast	*bonus_cmd()
 {
-    t_ast *ast_c1 = new_cmd_node(dup_args((const char *[]){"banana", "frita",NULL}));
-    t_ast *ast_c2 = new_cmd_node(dup_args((const char *[]){"ls", NULL}));
-    t_ast *ast_c3 = new_cmd_node(dup_args((const char *[]){"ls", NULL}));
-    t_ast *ast_pipe = new_op_node(NODE_PIPE, ast_c2, ast_c3);
-    t_ast *ast_and = new_op_node(NODE_AND, ast_c1, ast_pipe);
-    t_ast *ast_c4 = new_cmd_node(dup_args((const char *[]){"echo", "oi", NULL}));
-    t_ast *ast_root = new_op_node(NODE_OR, ast_and, ast_c4);
+    t_ast *ast_c1 = new_cmd_node(dup_args((const char *[]){"ls", NULL}));
+    t_ast *ast_c2 = new_cmd_node(dup_args((const char *[]){"grep", "oi",NULL}));
+    t_ast *ast_c3 = new_cmd_node(dup_args((const char *[]){"cat", NULL}));
+
+    ast_c2->cmd->redir_count = 1;
+    ast_c2->cmd->redirs = ft_calloc(sizeof(t_redir), 1);
+    ast_c2->cmd->redirs[0].file_name = ft_strdup("o");
+    ast_c2->cmd->redirs[0].label = REDIR_IN;
+
+    t_ast *ast_sub = new_op_node(NODE_SUBSHELL, NULL, NULL);
+    ast_sub->body = new_op_node(NODE_PIPE, ast_c2, ast_c3);
+    ast_sub->cmd = ft_calloc(sizeof(t_cmd), 1);
+    ast_sub->cmd->args = dup_args((const char *[]){NULL});
+    ast_sub->cmd->redir_count = 1;
+    ast_sub->cmd->redirs = ft_calloc(sizeof(t_redir), 1);
+    ast_sub->cmd->redirs[0].file_name = ft_strdup("a");
+    ast_sub->cmd->redirs[0].label = REDIR_IN;
+    t_ast *ast_root = new_op_node(NODE_PIPE, ast_c1, ast_sub);
     return (ast_root);
 }
 

@@ -49,9 +49,10 @@ void	get_sizes(t_ast *ast_root, t_fds **fds)
 	get_sizes(ast_root->body, fds);
 	get_sizes(ast_root->left, fds);
 	get_sizes(ast_root->right, fds);
-	if (ast_root->type == NODE_CMD)
+	if (ast_root->type == NODE_CMD || ast_root->type == NODE_SUBSHELL)
 	{
-		(*fds)->get.n_cmds++;
+		if (ast_root->type == NODE_CMD)
+			(*fds)->get.n_cmds++;
 		while (i < ast_root->cmd->redir_count)
 		{
 			if (ast_root->cmd->redirs[i].label != REDIR_HEREDOCK)

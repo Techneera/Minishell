@@ -1,9 +1,10 @@
 #include "execution.h"
 
+int child_status;
 
 int	main(int argc, char *argv[], char **envp)
 {
-	t_ast	*cmd = ft_cmd4();
+	t_ast	*cmd = bonus_cmd();
 	t_fds	*fds;
 	int	g_signal;
 	int	i;

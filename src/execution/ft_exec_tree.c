@@ -2,6 +2,7 @@
 
 static int	execute_pipe(t_ast *node, t_fds **fds, int i, char **envp);
 static int	execute_cmd(t_ast *node, t_fds **fds, int i, char **envp);
+static int	execute_subshell(t_ast *node, t_fds **fds, int i, char **envp);
 // static int	execute_and(t_ast *node, t_fds **fds, int i, char **envp);
 // static int	execute_or(t_ast *node, t_fds **fds, int i, char **envp);
 
@@ -52,41 +53,69 @@ static int	execute_cmd(t_ast *node, t_fds **fds, int i, char **envp)
 	return (i);
 }
 
-static	int	execute_bonus(t_ast *node, t_fds **fds, int i, char **envp)
+// static	int	execute_bonus(t_ast *node, t_fds **fds, int i, char **envp)
+// {
+// 	int	**new_pipes;
+// 	int	start_point;
+// 	int	end_point;
+
+// 	start_point = i;
+// 	if (node->body->type == NODE_AND || node->body->type == NODE_OR)
+// 	{
+// 		search_and_create_pipes(&new_pipes);
+// 	}
+// 	else
+// 	{
+// 		end_point = ft_exec_tree(node->body, fds, i, envp);
+// 	}
+// }
+
+void	heredoc_subshell(t_cmd *cmd, t_fds **fds, int r)
 {
-	int	**new_pipes;
-	int	start_point;
-	int	end_point;
-
-	start_point = i;
-	if (node->body->type == NODE_AND || node->body->type == NODE_OR)
+	if (cmd->redirs[r].label == REDIR_HEREDOCK)
 	{
-		search_and_create_pipes(&new_pipes);
+		if ((*fds)->heredoc_fds[(*fds)->pos.doc_id][0] != -1
+		&& dup2((*fds)->heredoc_fds[(*fds)->pos.doc_id][0], STDIN_FILENO) == -1)
+			perror("dup on REDIR_DOC");
+		(*fds)->pos.doc_id++;
 	}
-	else
-	{
-		end_point = ft_exec_tree(node->body, fds, i, envp);
+}
+void	apply_redirs_subshell(t_cmd *cmd, t_fds **fds)
+{
+	int	r;
 
+	r = 0;
+	while (r < cmd->redir_count)
+	{
+		heredoc_subshell(cmd, fds, r);
+		if (cmd->redirs[r].label == REDIR_IN)
+		{
+			if (dup2((*fds)->fd_files[(*fds)->pos.file_id], STDIN_FILENO) == -1)
+				exit(1);
+			(*fds)->pos.file_id++;
+		}
+		else if (cmd->redirs[r].label == REDIR_OUT
+			|| cmd->redirs[r].label == REDIR_APPEND)
+		{
+			if ((*fds)->fd_files[(*fds)->pos.file_id] != -1
+				&& dup2((*fds)->fd_files[(*fds)->pos.file_id], STDOUT_FILENO) == -1)
+				perror("dup on REDIR_OUT");
+			(*fds)->pos.file_id++;
+		}
+		r++;
 	}
 }
 
+
+
 static int	execute_subshell(t_ast *node, t_fds **fds, int i, char **envp)
 {
-	int	**new_pipes;
-	int	start_point;
-	int	end_point;
-
-	start_point = i;
-	if (node->cmd)
+	if (node->body->type == NODE_PIPE)
 	{
-		apply_redirs_dup(node->cmd, fds);
-		end_point = ft_exec_tree(node, fds, i, envp);
-		while(start_point < end_point && node->cmd)
-		{
-			printf("%s", (*fds)->pipe_fds[start_point]);
-			start_point++;
-		}
+		apply_redirs_subshell(node->cmd, fds);
+		ft_exec_tree(node->body, fds, i, envp);
 	}
+	return (0);
 }
 
 // static void	execute_and(t_ast *node, t_fds **fds, int i, char **envp)
