@@ -44,7 +44,10 @@ void	get_sizes(t_ast *ast_root, t_fds **fds)
 	if (!ast_root)
 		return ;
 	if (ast_root->type == NODE_AND || ast_root->type == NODE_OR)
+	{
+		(*fds)->get.n_pipes++;
 		return ;
+	}
 	i = 0;
 	get_sizes(ast_root->body, fds);
 	get_sizes(ast_root->left, fds);

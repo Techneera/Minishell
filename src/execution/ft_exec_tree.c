@@ -106,8 +106,6 @@ void	apply_redirs_subshell(t_cmd *cmd, t_fds **fds)
 	}
 }
 
-
-
 static int	execute_subshell(t_ast *node, t_fds **fds, int i, char **envp)
 {
 	if (node->body->type == NODE_PIPE)
@@ -118,15 +116,16 @@ static int	execute_subshell(t_ast *node, t_fds **fds, int i, char **envp)
 	return (0);
 }
 
-// static void	execute_and(t_ast *node, t_fds **fds, int i, char **envp)
+// static int	execute_and(t_ast *node, t_fds **fds, int i, char **envp)
 // {
 // 	pid_t pid;
 
 // 	if (node == NULL)
-// 		return ;
-
-// 	execute_and(node->left, fds, i, envp);
-// 	execute_and(node->right, fds, i,envp);
+// 		return (0);
+// 	if (execute_and(node->left, fds, i, envp) == -1)
+// 		return (-1);
+// 	if (execute_and(node->right, fds, i,envp) == -1)
+// 		return (-1);
 // 	if (node->type == NODE_CMD)
 // 	{
 // 		pid = fork();
@@ -136,10 +135,11 @@ static int	execute_subshell(t_ast *node, t_fds **fds, int i, char **envp)
 // 			exit(1);
 // 		}
 // 		if (pid == 0)
-// 			ft_execute_cmd();
+// 			ft_child_process(node, fds, i, envp);
 // 		waitpid(pid, &child_status, 0);
 // 		if (WIFEXITED(child_status) && WEXITSTATUS(child_status) != 1)
-// 			return ;
+// 			return (-1);
+// 		return (1);
 // 	}
 // }
 
@@ -148,10 +148,11 @@ static int	execute_subshell(t_ast *node, t_fds **fds, int i, char **envp)
 // 	pid_t pid;
 
 // 	if (node == NULL)
-// 		return ;
-
-// 	execute_and(node->left, fds, i, envp);
-// 	execute_and(node->right, fds, i,envp);
+// 		return (0);
+// 	if (execute_and(node->left, fds, i, envp) == -1)
+// 		return (-1);
+// 	if (execute_and(node->right, fds, i,envp) == -1)
+// 		return (-1);
 // 	if (node->type == NODE_CMD)
 // 	{
 // 		pid = fork();
@@ -161,8 +162,10 @@ static int	execute_subshell(t_ast *node, t_fds **fds, int i, char **envp)
 // 			exit(1);
 // 		}
 // 		if (pid == 0)
-// 			ft_execute_cmd();
+// 			ft_child_process(node, fds, i, envp);
 // 		waitpid(pid, &child_status, 0);
 // 		if (WIFEXITED(child_status) && WEXITSTATUS(child_status) == 1)
-// 			return ;
+// 			return (-1);
+// 		return (1);
 // 	}
+// }
