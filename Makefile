@@ -87,6 +87,7 @@ $(NAME): $(PATH_OBJS_LEXER) $(LFT)
 
 $(LFT):
 	$(MAKE) -C libft
+	$(MAKE) -C libft bonus
 
 $(OBJS_DIR)/lexer/%.o:$(LEXER_DIR)/%.c | $(OBJS_DIR)/lexer
 	$(CC) $(CFLAGS) -c $< -o $@

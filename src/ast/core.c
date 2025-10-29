@@ -173,30 +173,58 @@ int	ft_isredir(t_parser *parser)
 			parser->current_token->tok_label == TOKEN_REDIR_HEREDOC);
 }
 
+static
+t_label_redir	ft_label_map(t_token_label label)
+{
+	if (label == TOKEN_REDIR_IN)
+		return (REDIR_IN);
+	else if (label == TOKEN_REDIR_OUT)
+		return (REDIR_OUT);
+	else if (label == TOKEN_REDIR_APPEND)
+		return (REDIR_APPEND);
+	else if (label == TOKEN_REDIR_HEREDOC)
+		return (REDIR_HEREDOCK);
+	return (REDIR_NONE);
+}
+
 int	ft_handle_redirects(t_parser *parser, t_redir **head_redir)
 {
-	t_redir *new_redir;
-
+	t_redir			*new_redir;
+	t_label_redir	label;
+	char			*filename_or_delim;
+	
 	while (ft_isredir(parser))
 	{
-		if (parser->peek->tok_label == TOKEN_WORD)
+		if (parser->current_token->tok_label == TOKEN_REDIR_HEREDOC)
 		{
-			if (parser->current_token->tok_label == TOKEN_REDIR_IN)
-				new_redir = ft_create_redir_lst(REDIR_IN, ft_strdup(parser->peek->str));
-			else if (parser->current_token->tok_label == TOKEN_REDIR_OUT)
-				new_redir = ft_create_redir_lst(REDIR_OUT, ft_strdup(parser->peek->str));
-			else if (parser->current_token->tok_label == TOKEN_REDIR_APPEND)
-				new_redir = ft_create_redir_lst(REDIR_APPEND, ft_strdup(parser->peek->str));
-			else if (parser->current_token->tok_label == TOKEN_REDIR_HEREDOC)
-				new_redir = ft_create_redir_lst(REDIR_HEREDOCK, ft_strdup(parser->peek->str));
+			label = REDIR_HEREDOCK;
+			filename_or_delim = ft_strdup(parser->current_token->str);
+			if (!filename_or_delim)
+				return (ft_redirs_clear(head_redir), false);
+			new_redir = ft_create_redir_lst(label, filename_or_delim);
+			ft_parser_iter(parser);
 		}
 		else
-			return (fprintf(stderr, "Syntax error near token"), ft_redirs_clear(head_redir), false);
+		{
+			if (parser->peek->tok_label != TOKEN_WORD)
+			{
+				fprintf(stderr, "Syntax error near token\n");
+				return (ft_redirs_clear(head_redir), false);
+			}
+			label = ft_label_map(parser->current_token->tok_label);
+			filename_or_delim = ft_strdup(parser->peek->str);
+			if (!filename_or_delim)
+				return (ft_redirs_clear(head_redir), false);
+			new_redir = ft_create_redir_lst(label, filename_or_delim);
+			ft_parser_iter(parser);
+			ft_parser_iter(parser);
+		}
 		if (!new_redir)
+		{
+			free(filename_or_delim);
 			return (ft_redirs_clear(head_redir), false);
+		}
 		ft_redirs_addback(head_redir, new_redir);
-		ft_parser_iter(parser);
-		ft_parser_iter(parser);
 	}
 	return (true);
 }
