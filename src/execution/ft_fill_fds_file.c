@@ -3,21 +3,33 @@
 static int	open_files(t_fds **fds, t_ast *ast_root, int i, int r);
 static int	create_redir_in(t_fds **fds, t_ast *ast_root, int i, int r);
 static int	create_redir_out(t_fds **fds, t_ast *ast_root, int i, int r);
+static int	fill_files(t_fds **fds, t_ast *ast_root, int i);
 
 int	fill_fd_file(t_fds **fds, t_ast *ast_root, int i)
+{
+
+	if (!ast_root)
+		return (i);
+	if (ast_root->type == NODE_AND || ast_root -> type == NODE_OR)
+		return (i);
+	if (ast_root->type == NODE_SUBSHELL)
+		i = fill_files(fds, ast_root, i);
+	i = fill_fd_file(fds, ast_root->left, i);
+	i = fill_fd_file(fds, ast_root->right, i);
+	i = fill_fd_file(fds, ast_root->body, i);
+	if (ast_root->type == NODE_CMD)
+		return (fill_files(fds, ast_root, i));
+	return (i);
+}
+
+static int	fill_files(t_fds **fds, t_ast *ast_root, int i)
 {
 	int	j;
 	int	r;
 
 	r = 0;
 	j = 0;
-	if (!ast_root)
-		return (i);
-	if (ast_root->type == NODE_AND || ast_root -> type == NODE_OR)
-		return (i);
-	i = fill_fd_file(fds, ast_root->left, i);
-	i = fill_fd_file(fds, ast_root->right, i);
-	if (ast_root->cmd && ast_root->cmd->redirs)
+	if (ast_root->cmd->redirs)
 	{
 		while (j < ast_root->cmd->redir_count)
 		{
@@ -27,7 +39,7 @@ int	fill_fd_file(t_fds **fds, t_ast *ast_root, int i)
 				break ;
 			j++;
 		}
-		return (i + r + 1);
+		return (i + r);
 	}
 	return (i);
 }
