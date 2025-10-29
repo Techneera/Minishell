@@ -9,18 +9,18 @@ t_ast	*ft_parser(t_lexer *l)
 	parser = ft_init_parser(l);
 	if (!parser)
 	{
-		fprintf(stderr, "Error parser allocate.");
+		fprintf(stderr, "Error parser allocate.\n");
 		return (NULL);
 	}
 	ast_root = ft_parse_and_or(parser); // Search lowest precedence
 	if (ast_root != NULL && parser->current_token->tok_label != TOKEN_EOF)
 	{
-		fprintf(stderr, "Error creating tree.");
+		fprintf(stderr, "Error creating tree.\n");
 		ft_free_ast(ast_root);
 		ast_root = NULL;
 	}
-	free(parser->current_token);
-	free(parser->peek);
+	free_token(parser->current_token);
+	free_token(parser->peek);
 	free(parser);
 	return (ast_root);
 }
@@ -91,7 +91,7 @@ t_ast	*ft_parse_grain_with_redirs(t_parser *parser)
 	else if (parser->current_token->tok_label == TOKEN_WORD)
 		node = ft_parse_node_command(parser);
 	else
-		fprintf(stderr, "Error invalid token.");
+		fprintf(stderr, "Error invalid token.\n");
 	if (!node)
 		return (NULL);
 	if (node->type == NODE_SUBSHELL)
@@ -231,6 +231,21 @@ int	ft_handle_redirects(t_parser *parser, t_redir **head_redir)
 
 t_ast	*ft_parse_subshell(t_parser *parser)
 {
-	fprintf(stdout, "%s\n", parser->current_token->str);
-	return (NULL);
+	t_ast	*node_subsh;
+	t_ast	*body;
+
+	if (parser->peek->tok_label == TOKEN_RIGHT_PAR)
+		return (fprintf(stderr, "Syntax error near token \")\".\n"), NULL);
+	ft_parser_iter(parser);
+	body = ft_parse_and_or(parser);
+	if (!body)
+		return (fprintf(stderr, "Error in subshell body.\n"), NULL);
+	if (parser->current_token->tok_label != TOKEN_RIGHT_PAR)
+		return (fprintf(stderr, "Error unclosed parenthese.\n"), ft_free_ast(body), NULL);
+	ft_parser_iter(parser);
+	node_subsh = ft_ast_generic_node(NODE_SUBSHELL);
+	if (!node_subsh)
+		return (ft_free_ast(body), NULL);
+	node_subsh->body = body;
+	return (node_subsh);
 }
