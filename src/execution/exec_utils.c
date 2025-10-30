@@ -27,6 +27,8 @@ int	number_of_cmds(t_ast *ast_root)
 	int		depth_left;
 	int		depth_right;
 
+	depth_left = 0;
+	depth_right = 0;
 	if (!ast_root)
 		return (0);
 	depth_left = number_of_cmds(ast_root->left);
@@ -44,10 +46,7 @@ void	get_sizes(t_ast *ast_root, t_fds **fds)
 	if (!ast_root)
 		return ;
 	if (ast_root->type == NODE_AND || ast_root->type == NODE_OR)
-	{
-		(*fds)->get.n_pipes++;
 		return ;
-	}
 	i = 0;
 	get_sizes(ast_root->body, fds);
 	get_sizes(ast_root->left, fds);

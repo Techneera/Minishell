@@ -19,9 +19,12 @@ void	ft_create_fds(t_fds **fds, t_ast *ast_root)
 		if (!(*fds)->fd_files)
 			exit(1);
 	}
-	(*fds)->c_pids = ft_calloc((*fds)->get.n_pipes + 2, sizeof(int));
-	if (!(*fds)->c_pids)
-		exit(1);
+	if ((*fds)->get.n_cmds > 0)
+	{
+		(*fds)->c_pids = ft_calloc((*fds)->get.n_cmds, sizeof(int));
+		if (!(*fds)->c_pids)
+			exit(1);
+	}
 	init_heredoc(fds, ast_root);
 	fill_fd_file(fds, ast_root, 0);
 }

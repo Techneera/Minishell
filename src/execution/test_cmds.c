@@ -86,24 +86,16 @@ t_ast *new_op_node(t_node_type type, t_ast *left, t_ast *right) {
 
 t_ast	*bonus_cmd()
 {
-    t_ast *ast_c1 = new_cmd_node(dup_args((const char *[]){"ls", NULL}));
-    t_ast *ast_c2 = new_cmd_node(dup_args((const char *[]){"grep", "oi",NULL}));
-    t_ast *ast_c3 = new_cmd_node(dup_args((const char *[]){"cat", NULL}));
+    t_ast *ast_c1 = new_cmd_node(dup_args((const char *[]){"echo", "OLA GABIGOLL",NULL}));
+    t_ast *ast_c2 = new_cmd_node(dup_args((const char *[]){"cat", NULL}));
 
     ast_c2->cmd->redir_count = 1;
     ast_c2->cmd->redirs = ft_calloc(sizeof(t_redir), 1);
-    ast_c2->cmd->redirs[0].file_name = ft_strdup("o");
+    ast_c2->cmd->redirs[0].file_name = ft_strdup("a");
     ast_c2->cmd->redirs[0].label = REDIR_IN;
 
-    t_ast *ast_sub = new_op_node(NODE_SUBSHELL, NULL, NULL);
-    ast_sub->body = new_op_node(NODE_PIPE, ast_c2, ast_c3);
-    ast_sub->cmd = ft_calloc(sizeof(t_cmd), 1);
-    ast_sub->cmd->args = dup_args((const char *[]){NULL});
-    ast_sub->cmd->redir_count = 1;
-    ast_sub->cmd->redirs = ft_calloc(sizeof(t_redir), 1);
-    ast_sub->cmd->redirs[0].file_name = ft_strdup("a");
-    ast_sub->cmd->redirs[0].label = REDIR_IN;
-    t_ast *ast_root = new_op_node(NODE_PIPE, ast_c1, ast_sub);
+    t_ast *ast_sub = new_op_node(NODE_AND, ast_c1, ast_c2);
+    t_ast *ast_root = ast_sub;
     return (ast_root);
 }
 
