@@ -20,8 +20,8 @@ void	free_all(void **ptr, size_t rows)
 		{
 			free(ptr[i]);
 			ptr[i] = NULL;
-			i++;
 		}
+		i++;
 	}
 	free(ptr);
 	ptr = NULL;

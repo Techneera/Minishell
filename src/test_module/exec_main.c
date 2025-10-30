@@ -18,17 +18,17 @@ int	main(int argc, char *argv[], char **envp)
 	ft_create_fds(&fds, cmd);
 	ft_exec_tree(cmd, &fds, -1, envp);
 	ft_closing_all(&fds);
-	free_all((void **) fds->pipe_fds, number_of_cmds(cmd) - 1);
-	free_all((void **) fds->heredoc_fds, fds->get.n_docs);
-	free(fds->fd_files);
-	free(fds);
-	free_tree(cmd);
 	i = 0;
-	while(waitpid(fds->c_pids[i], &child_status, 0) > 0)
+	while(fds->c_pids && waitpid(fds->c_pids[i], &child_status, 0) > 0)
 	{
 		if (WIFEXITED(child_status))
 			g_signal = WEXITSTATUS(child_status);
 		i++;
 	}
+	free_all((void **) fds->pipe_fds, fds->get.n_pipes);
+	free_all((void **) fds->heredoc_fds, fds->get.n_docs);
+	free(fds->fd_files);
+	free(fds);
+	free_tree(cmd);
 	return(g_signal);
 }
