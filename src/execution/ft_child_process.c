@@ -9,15 +9,21 @@ void	ft_child_process(t_ast *node, t_fds **fds, int i, char **envp)
 	char	*cmd_path;
 	char	**args;	
 
+	if (i == -1)
+		i = 0;
 	args = node->cmd->args;
 	cmd_path = get_command_path(args, envp);
 	apply_std_dup(fds, i);
 	apply_redirs_dup(node, fds);
 	ft_closing_all(fds);
 	execve(cmd_path, args, envp);
-	perror("execve");
 	if (!cmd_path)
 	{
+		if (args)
+		{
+			ft_putstr_fd(args[0], 2);
+			ft_putstr_fd(": command not found\n", 2);
+		}
 		free(cmd_path);
 		exit(CMD_NOT_FOUND);
 	}

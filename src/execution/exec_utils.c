@@ -22,6 +22,19 @@ void	free_tree(t_ast *ast_root)
 	free(ast_root);
 }
 
+void	free_fds(t_fds *fds)
+{
+	if (!fds)
+		return ;
+	if (fds->pipe_fds)
+		free_all((void **) fds->pipe_fds, fds->get.n_pipes);
+	if (fds->heredoc_fds)
+		free_all((void **) fds->heredoc_fds, fds->get.n_docs);
+	if (fds->fd_files)
+		free(fds->fd_files);
+	free(fds);
+}
+
 int	number_of_cmds(t_ast *ast_root)
 {
 	int		depth_left;
