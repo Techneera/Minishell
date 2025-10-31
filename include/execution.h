@@ -50,6 +50,7 @@ int		fill_fd_file(t_fds **fds, t_ast *ast_root, int i);
 
 //---exec_utils
 void	free_all(void **ptr, size_t rows);
+void	free_fds(t_fds *fds);
 void	free_tree(t_ast *ast_root);
 int		ft_arraylen(void **ptr);
 int		init_pid(pid_t *pid, t_fds **fds);
@@ -81,4 +82,9 @@ void	ft_create_fds(t_fds **fds, t_ast *ast_root);
 int		ft_exec_tree(t_ast *node, t_fds **fds, int i, char **envp);
 void	ft_closing_all(t_fds **fds);
 void	init_heredoc(t_fds **fds, t_ast *node);
+
+//--exec_tree_bonus
+void	apply_redirs_subshell(t_cmd *cmd, t_fds **fds);
+
+
 #endif

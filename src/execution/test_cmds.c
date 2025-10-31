@@ -86,7 +86,7 @@ t_ast *new_op_node(t_node_type type, t_ast *left, t_ast *right) {
 
 t_ast	*bonus_cmd()
 {
-    t_ast *ast_c1 = new_cmd_node(dup_args((const char *[]){"echo", "OLA GABIGOLL",NULL}));
+    t_ast *ast_c1 = new_cmd_node(dup_args((const char *[]){"echo", "QUEM MECHER CODA EM PYTHON",NULL}));
     t_ast *ast_c2 = new_cmd_node(dup_args((const char *[]){"cat", NULL}));
 
     ast_c2->cmd->redir_count = 1;
