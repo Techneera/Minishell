@@ -104,7 +104,7 @@ void	ft_redirs_addback(t_redir **head, t_redir *new)
 	if (!new)
 		return ;
 	ptr = *head;
-	while (ptr)
+	while (ptr->next)
 		ptr = ptr->next;
 	ptr->next = new;
 }
@@ -113,7 +113,9 @@ void	ft_redirs_clear(t_redir **redirs)
 {
 	t_redir	*tmp;
 
-	while (redirs)
+	if (!redirs || !*redirs)
+		return ;
+	while (*redirs)
 	{
 		tmp = (*redirs)->next;
 		free((*redirs)->file_name);
