@@ -1,3 +1,4 @@
+#include "libshell.h"
 #include "ast.h"
 #include "lexer.h"
 
