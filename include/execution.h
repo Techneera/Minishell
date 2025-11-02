@@ -31,17 +31,15 @@ typedef struct s_fds
 	t_pos	pos;
 }	t_fds;
 
+typedef struct s_data
+{
+	t_ast	*tree;
+	t_fds	*fds;
+}	t_data;
+
+
 //---test_cmds
 t_ast	*ft_cmd1();
-t_ast	*ft_cmd2();
-t_ast	*ft_cmd3();
-t_ast	*ft_cmd4();
-t_ast	*ft_cmd5();
-t_ast	*ft_cmd6();
-t_ast	*ft_cmd7();
-t_ast	*ft_cmd8();
-t_ast	*ft_cmd9();
-t_ast	*ft_bash();
 t_ast	*bonus_cmd();
 
 
@@ -49,9 +47,10 @@ t_ast	*bonus_cmd();
 int		fill_fd_file(t_fds **fds, t_ast *ast_root, int i);
 
 //---exec_utils
+void	 secure_exit(t_data *data, int status);
 void	free_all(void **ptr, size_t rows);
-void	free_fds(t_fds *fds);
-void	free_tree(t_ast *ast_root);
+void	free_fds(t_fds **fds);
+void	free_tree(t_ast **ast_root);
 int		ft_arraylen(void **ptr);
 int		init_pid(pid_t *pid, t_fds **fds);
 void	get_sizes(t_ast *ast_root, t_fds **fds);
@@ -68,18 +67,18 @@ int	ft_max(int a, int b);
 void	here_doc(char *lim, int *fd);
 
 //---ft_child_process
-void	ft_child_process(t_ast *node, t_fds **fds, int i, char **envp);
-void	apply_std_dup(t_fds **fds, int i);
-void	apply_redirs_dup(t_ast *node, t_fds **fds);
-void	heredoc_dup(t_ast *node, t_fds **fds, int r);
+void	ft_child_process(t_data	*data, t_ast **node, int i, char **envp);
+void	apply_std_dup(t_data *data, int i);
+void	apply_redirs_dup(t_data *data, t_ast **node);
+void	heredoc_dup(t_ast **node, t_fds **fds, int r);
 
 //--ft_closing_all
 void	ft_closing_all(t_fds **fds);
 
 //		ft_execution
 int		number_of_cmds(t_ast *ast_root);
-void	ft_create_fds(t_fds **fds, t_ast *ast_root);
-int		ft_exec_tree(t_ast *node, t_fds **fds, int i, char **envp);
+void	ft_create_fds(t_data *data);
+int		ft_exec_tree(t_data	*data, t_ast **node, int i, char **envp);
 void	ft_closing_all(t_fds **fds);
 void	init_heredoc(t_fds **fds, t_ast *node);
 

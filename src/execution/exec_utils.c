@@ -1,38 +1,51 @@
 #include "execution.h"
 
-void	free_tree(t_ast *ast_root)
+void secure_exit(t_data *data, int status)
 {
-	if (!ast_root)
-		return ;
-	free_tree(ast_root->left);
-	free_tree(ast_root->right);
-	if (ast_root->cmd)
-	{
-		free_all((void **) ast_root->cmd->args,
-			ft_arraylen((void **) ast_root->cmd->args));
-		while (ast_root->cmd->redir_count-- > 0)
-		{
-			if (ast_root->cmd->redirs[ast_root->cmd->redir_count].file_name)
-				free(ast_root->cmd
-					->redirs[ast_root->cmd->redir_count].file_name);
-		}
-		free(ast_root->cmd->redirs);
-		free(ast_root->cmd);
-	}
-	free(ast_root);
+	free_tree(&data->tree);
+	ft_closing_all(&data->fds);
+	free_fds(&data->fds);
+	exit(status);
 }
 
-void	free_fds(t_fds *fds)
+void	free_tree(t_ast **ast_root)
 {
-	if (!fds)
+	if (!(*ast_root))
 		return ;
-	if (fds->pipe_fds)
-		free_all((void **) fds->pipe_fds, fds->get.n_pipes);
-	if (fds->heredoc_fds)
-		free_all((void **) fds->heredoc_fds, fds->get.n_docs);
-	if (fds->fd_files)
-		free(fds->fd_files);
-	free(fds);
+	free_tree(&(*ast_root)->left);
+	free_tree(&(*ast_root)->right);
+	if ((*ast_root)->cmd)
+	{
+		free_all((void **) (*ast_root)->cmd->args,
+			ft_arraylen((void **) (*ast_root)->cmd->args));
+		while ((*ast_root)->cmd->redir_count-- > 0)
+			if ((*ast_root)->cmd->redirs[(*ast_root)->cmd->redir_count].file_name)
+				free((*ast_root)->cmd
+					->redirs[(*ast_root)->cmd->redir_count].file_name);
+		free((*ast_root)->cmd->redirs);
+		free((*ast_root)->cmd);
+		(*ast_root)->cmd = NULL;
+	}
+	(*ast_root)->left = NULL;
+	(*ast_root)->right = NULL;
+	free((*ast_root));
+	(*ast_root) = NULL;
+}
+
+void	free_fds(t_fds **fds)
+{
+	if (!(*fds))
+		return ;
+	if ((*fds)->pipe_fds)
+		free_all((void **) (*fds)->pipe_fds, (*fds)->get.n_pipes);
+	if ((*fds)->heredoc_fds)
+		free_all((void **) (*fds)->heredoc_fds, (*fds)->get.n_docs);
+	if ((*fds)->fd_files)
+		free((*fds)->fd_files);
+	if ((*fds)->c_pids)
+		free((*fds)->c_pids);
+	free((*fds));
+	(*fds) = NULL;
 }
 
 int	number_of_cmds(t_ast *ast_root)

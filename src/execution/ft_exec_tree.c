@@ -1,124 +1,165 @@
 #include "execution.h"
 
-static int	execute_pipe(t_ast *node, t_fds **fds, int i, char **envp);
-static int	execute_cmd(t_ast *node, t_fds **fds, int i, char **envp);
-static int	execute_and(t_ast *node, t_fds **fds, int i, char **envp);
-static int	execute_or(t_ast *node, t_fds **fds, int i, char **envp);
+static int	execute_pipe(t_data	*data, t_ast **node, int i, char **envp);
+static int	execute_cmd(t_data	*data, t_ast **node, int i, char **envp);
+// static int	execute_and(t_ast **node, t_fds **fds, int i, char **envp);
+//static int	execute_or(t_ast **node, t_fds **fds, int i, char **envp);
 
-int	ft_exec_tree(t_ast *node, t_fds **fds, int i, char **envp)
+int	ft_exec_tree(t_data	*data, t_ast **node, int i, char **envp)
 {
-	(void)envp;
-	if (node == NULL)
+	int	old_pos;
+	t_fds	*fds;
+
+	fds = data->fds;
+	old_pos = fds->pos.file_id;
+	if (*node == NULL || !fds)
 		return (0);
-	if (node->type == NODE_CMD)
+	if ((*node)->type == NODE_CMD)
 	{
-		i = execute_cmd(node, fds, i, envp);
-		(*fds)->pos.file_id += node->cmd->redir_count;
+		i = execute_cmd(data, node, i, envp);
+		fds->pos.file_id += (*node)->cmd->redir_count;
+		if (i < fds->get.n_pipes)
+		{
+			if (i > 1)
+			{
+				close(fds->pipe_fds[i - 1][0]);
+				fds->pipe_fds[i - 1][0] = -1;
+			}
+			if (i == fds->get.n_pipes)
+			{
+				close(fds->pipe_fds[i][0]);
+				fds->pipe_fds[i][0] = -1;
+			}
+			close(fds->pipe_fds[i][1]);
+			fds->pipe_fds[i][1] = -1;
+		}
+		while (old_pos < fds->pos.file_id) 
+		{
+			if (fds->fd_files[old_pos] != -1)
+				close(fds->fd_files[old_pos]);
+			fds->fd_files[old_pos] = -1;
+			old_pos++;
+		}
 		i++;
 	}
-	else if (node->type == NODE_PIPE)
-		i = execute_pipe(node, fds, i, envp);
-	else if (node->type == NODE_SUBSHELL)
+	else if ((*node)->type == NODE_PIPE)
+		i = execute_pipe(data, node, i, envp);
+	else if ((*node)->type == NODE_SUBSHELL)
 	{
-		apply_redirs_subshell(node->cmd, fds);
-		i = ft_exec_tree(node->body, fds, i, envp);
+		apply_redirs_subshell((*node)->cmd, &fds);
+		i = ft_exec_tree(data, &(*node)->body, i, envp);
 		dup2(STDIN_FILENO, STDIN_FILENO);
 		dup2(STDOUT_FILENO, STDOUT_FILENO);
 	}
-	else if (node->type == NODE_AND)
-		i = execute_and(node, fds, i, envp);
-	else if (node->type == NODE_OR)
-	 	i = execute_or(node, fds, i, envp);
+	// else if ((*node)->type == NODE_AND)
+	// 	i = execute_and(node, fds, i, envp);
+	// else if ((*node)->type == NODE_OR)
+	//  	i = execute_or(node, fds, i, envp);
 	return (i);
 }
 
-static int	execute_pipe(t_ast *node, t_fds **fds, int i, char **envp)
+static int	execute_pipe(t_data	*data, t_ast **node, int i, char **envp)
 {
-	(void)envp;
-	if (node->left)
-		i = ft_exec_tree(node->left, fds, i, envp);
-	if (node->right)
-		i = ft_exec_tree(node->right, fds, i, envp);
+	if ((*node)->left)
+		i = ft_exec_tree(data, &(*node)->left, i, envp);
+	if ((*node)->right)
+		i = ft_exec_tree(data, &(*node)->right, i, envp);
 	return (i);
 }
 
-static int	execute_cmd(t_ast *node, t_fds **fds, int i, char **envp)
+static int	execute_cmd(t_data	*data, t_ast **node, int i, char **envp)
 {
 	pid_t	pid;
+	t_fds	*fds;
 
+	fds = data->fds;
 	if (!node)
 		return (i);
-	if (!init_pid(&pid, fds))
+	if (!init_pid(&pid, &fds))
 		exit(1);
 	if (pid == 0)
-		ft_child_process(node, fds, i, envp);
+		ft_child_process(data, node, i, envp);
 	return (i);
 }
 
-static int	wait_bonus(t_fds *new_fds, int i)
-{
-	int		signal;
+// static int	wait_bonus(t_fds *new_fds)
+// {
+// 	int	signal;
+// 	int	i;
 
-	signal = 0;
-	while(waitpid(new_fds->c_pids[i], &child_status, 0) > 0)
-	{
-		if (WIFEXITED(child_status))
-			signal = WEXITSTATUS(child_status);
-		i++;
-	}
-	return(signal);
-}
-static int	execute_and(t_ast *node, t_fds **fds, int i, char **envp)
-{
-	t_fds	*new_fds;
-	pid_t pid;
+// 	signal = 0;
+// 	i = 0;
+// 	while(i < new_fds->get.n_cmds && waitpid(new_fds->c_pids[i], &child_status, 0) > 0)
+// 	{
+// 		if (WIFEXITED(child_status))
+// 			signal = WEXITSTATUS(child_status);
+// 		i++;
+// 	}
+// 	return(signal);
+//}
 
-	new_fds = NULL;
-	if (node == NULL)
-		return (0);
-	ft_create_fds(&new_fds, node);
-	if (node->type == NODE_CMD)
-	{
-		if (!init_pid(&pid, &new_fds))
-			exit(1);
-		if (pid == 0)
-			ft_child_process(node, &new_fds, i, envp);
-	}
-	if (node->type == NODE_PIPE)
-		ft_exec_tree(node, &new_fds, -1, envp);
-	ft_closing_all(&new_fds);
-	if (new_fds && new_fds->c_pids)
-		return (wait_bonus(new_fds, i));
-	if (execute_and(node->left, fds, i, envp) != 0)
-		return (free_fds(new_fds), -1);
-	if (execute_and(node->right, fds, i,envp) != 0)	
-		return (free_fds(new_fds), -1);
-	return (0);
-}
+// static int	execute_and(t_ast **node, t_fds **fds, int i, char **envp)
+// {
+// 	t_fds	*new_fds;
+// 	pid_t pid;
 
-static int	execute_or(t_ast *node, t_fds **fds, int i, char **envp)
-{
-	t_fds	*new_fds;
-	pid_t pid;
+// 	new_fds = NULL;
+// 	if (node == NULL)
+// 		return (0);
+// 	ft_create_fds(&new_fds, *node);
+// 	if ((*node)->type == NODE_CMD)
+// 	{
+// 		if (!init_pid(&pid, &new_fds))
+// 		{
+// 			free_fds(&new_fds);
+// 			exit(1);
+// 		}
+// 		if (pid == 0)
+// 		{
+// 			free_fds(fds);
+// 			ft_child_process(node, &new_fds, i, envp);
+// 		}
+// 	}
+// 	if ((*node)->type == NODE_PIPE)
+// 		ft_exec_tree(node, &new_fds, -1, envp);
+// 	ft_closing_all(&new_fds);
+// 	if (new_fds && new_fds->c_pids)
+// 	{
+// 		int value = wait_bonus(new_fds);
+// 		free_fds(&new_fds);
+// 		return (value);	
+// 	}
+// 	free_fds(&new_fds);
+// 	if (execute_and(&(*node)->left, fds, i, envp) != 0)
+// 		return (-1);
+// 	if (execute_and(&(*node)->right, fds, i,envp) != 0)	
+// 		return (-1);
+// 	return (0);
+// }
 
-	new_fds = NULL;
-	if (node == NULL)
-		return (0);
-	ft_create_fds(&new_fds, node);
-	if (node->type == NODE_CMD)
-	{
-		if (!init_pid(&pid, &new_fds))
-			exit(1);
-		if (pid == 0)
-			ft_child_process(node, &new_fds, i, envp);
-	}
-	if (node->type == NODE_PIPE)
-		ft_exec_tree(node, &new_fds, -1, envp);
-	ft_closing_all(&new_fds);
-	wait_bonus(new_fds, i);
-	if (execute_or(node->left, fds, i, envp) == 0)
-		return (free_fds(new_fds), -1);
-	if (execute_or(node->right, fds, i,envp) == 0)
-		return (free_fds(new_fds), -1);
-	return (0);
-}
+// static int	execute_or(t_ast **node, t_fds **fds, int i, char **envp)
+// {
+// 	t_fds	*new_fds;
+// 	pid_t pid;
+
+// 	new_fds = NULL;
+// 	if (node == NULL)
+// 		return (0);
+// 	ft_create_fds(&new_fds, node);
+// 	if ((*node)->type == NODE_CMD)
+// 	{
+// 		if (!init_pid(&pid, &new_fds))
+// 			exit(1);
+// 		if (pid == 0)
+// 			ft_child_process(node, &new_fds, i, envp);
+// 	}
+// 	if ((*node)->type == NODE_PIPE)
+// 		ft_exec_tree(node, &new_fds, -1, envp);
+// 	ft_closing_all(&new_fds);
+// 	wait_bonus(new_fds);
+// 	if (execute_or((*node)->left, fds, i, envp) == 0)
+// 		return (free_fds(new_fds), -1);
+// 	if (execute_or((*node)->right, fds, i,envp) == 0)
+// 		return (free_fds(new_fds), -1);
+// 	return (0);
+// }
