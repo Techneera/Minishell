@@ -2,7 +2,7 @@
 
 void secure_exit(t_data *data, int status)
 {
-	free_tree(&data->tree);
+	free_tree(&data->root);
 	ft_closing_all(&data->fds);
 	free_fds(&data->fds);
 	exit(status);

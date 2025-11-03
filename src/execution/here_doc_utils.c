@@ -1,23 +1,28 @@
 #include "execution.h"
 
-static void	malloc_heredoc(t_fds **fds);
+static void	malloc_heredoc(t_data *data, t_fds **fds);
 static void	fill_heredoc(t_fds **fds, t_ast *node, int i);
 
-void	init_heredoc(t_fds **fds, t_ast *node)
+void	init_heredoc(t_data *data)
 {
-	(*fds)->pos.doc_id = 0;
-	(*fds)->heredoc_fds = NULL;
-	if ((*fds)->get.n_docs > 0)
+	t_fds	*fds;
+	t_ast	*node;
+
+	fds = data->fds;
+	node = data->tree;
+	fds->pos.doc_id = 0;
+	fds->heredoc_fds = NULL;
+	if (fds->get.n_docs > 0)
 	{
-		(*fds)->heredoc_fds = malloc((*fds)->get.n_pipes * sizeof(int *));
-		if (!(*fds)->heredoc_fds)
-			exit(1);
-		malloc_heredoc(fds);
-		fill_heredoc(fds, node, 0);
+		fds->heredoc_fds = malloc(fds->get.n_pipes * sizeof(int *));
+		if (!fds->heredoc_fds)
+			secure_exit(data, 1);
+		malloc_heredoc(data, &fds);
+		fill_heredoc(&fds, node, 0);
 	}
 }
 
-static void	malloc_heredoc(t_fds **fds)
+static void	malloc_heredoc(t_data *data, t_fds **fds)
 {
 	int	i;
 
@@ -28,12 +33,12 @@ static void	malloc_heredoc(t_fds **fds)
 		if (!(*fds)->heredoc_fds[i])
 		{
 			free_all((void **)(*fds)->heredoc_fds, (*fds)->get.n_docs);
-			exit(1);
+			secure_exit(data, 1);
 		}
 		if (pipe((*fds)->heredoc_fds[i]) == -1)
 		{
 			free_all((void **)(*fds)->heredoc_fds, (*fds)->get.n_docs);
-			exit(1);
+			secure_exit(data, 1);
 		}
 		i++;
 	}

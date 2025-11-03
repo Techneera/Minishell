@@ -4,16 +4,18 @@ void	apply_std_dup(t_data *data, int i);
 void	apply_redirs_dup(t_data *data, t_ast **node);
 void	heredoc_dup(t_ast **node, t_fds **fds, int r);
 
-void	ft_child_process(t_data	*data, t_ast **node, int i, char **envp)
+void	ft_child_process(t_data	*data, int i, char **envp)
 {
 	char	*cmd_path;
 	char	**args;	
 	t_fds	*fds;
+	t_ast	*node;
 
 	fds = data->fds;
+	node = data->tree;
 	apply_std_dup(data, i);
-	apply_redirs_dup(data, node);
-	args = (*node)->cmd->args;
+	apply_redirs_dup(data, &node);
+	args = node->cmd->args;
 	cmd_path = get_command_path(args, envp);
 	ft_closing_all(&fds);
 	execve(cmd_path, args, envp);
@@ -27,7 +29,7 @@ void	ft_child_process(t_data	*data, t_ast **node, int i, char **envp)
 		free(cmd_path);
 		secure_exit(data, CMD_NOT_FOUND);
 	}
-	exit(1);
+	secure_exit(data, FAIL_STATUS);
 }
 
 void	apply_std_dup(t_data *data, int i)
@@ -59,22 +61,16 @@ void	apply_redirs_dup(t_data *data, t_ast **node)
 		heredoc_dup(node, &fds, r);
 		if ((*node)->cmd->redirs[r].label == REDIR_IN)
 		{
-			if (dup2(fds->fd_files[fds->pos.file_id], STDIN_FILENO) == -1)
-			{
-				fds->pos.file_id++;
+			if (dup2(fds->fd_files[fds->pos.file_id], STDIN_FILENO
+			) == -1 && ++(fds->pos.file_id))
 				secure_exit(data, 1);
-			}
-			fds->pos.file_id++;
 		}
 		else if ((*node)->cmd->redirs[r].label == REDIR_OUT
 			|| (*node)->cmd->redirs[r].label == REDIR_APPEND)
 		{
-			if (dup2(fds->fd_files[fds->pos.file_id], STDOUT_FILENO) == -1)
-			{
-				fds->pos.file_id++;
-				secure_exit(data, 1);
-			}
-			fds->pos.file_id++;
+			if (dup2(fds->fd_files[fds->pos.file_id], STDOUT_FILENO
+			) == -1 && ++(fds->pos.file_id))
+				secure_exit(data, 1);			
 		}
 		r++;
 	}

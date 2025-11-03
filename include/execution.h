@@ -2,6 +2,7 @@
 # define EXECUTION_H
 
 # define CMD_NOT_FOUND 127
+# define FAIL_STATUS 1
 
 #include "libshell.h"
 
@@ -33,6 +34,7 @@ typedef struct s_fds
 
 typedef struct s_data
 {
+	t_ast	*root;
 	t_ast	*tree;
 	t_fds	*fds;
 }	t_data;
@@ -67,7 +69,7 @@ int	ft_max(int a, int b);
 void	here_doc(char *lim, int *fd);
 
 //---ft_child_process
-void	ft_child_process(t_data	*data, t_ast **node, int i, char **envp);
+void	ft_child_process(t_data	*data, int i, char **envp);
 void	apply_std_dup(t_data *data, int i);
 void	apply_redirs_dup(t_data *data, t_ast **node);
 void	heredoc_dup(t_ast **node, t_fds **fds, int r);
@@ -78,12 +80,12 @@ void	ft_closing_all(t_fds **fds);
 //		ft_execution
 int		number_of_cmds(t_ast *ast_root);
 void	ft_create_fds(t_data *data);
-int		ft_exec_tree(t_data	*data, t_ast **node, int i, char **envp);
+int		ft_exec_tree(t_data	*data, int i, char **envp);
 void	ft_closing_all(t_fds **fds);
-void	init_heredoc(t_fds **fds, t_ast *node);
+void	init_heredoc(t_data *data);
 
 //--exec_tree_bonus
-void	apply_redirs_subshell(t_cmd *cmd, t_fds **fds);
+void	apply_redirs_subshell(t_data *data);
 
 
 #endif
