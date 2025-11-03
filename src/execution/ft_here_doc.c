@@ -1,17 +1,21 @@
 #include "execution.h"
 
 static char	*my_strjoin(char **s1, char *s2);
-static void	reciving_string(char **str, char **line, char *new_lim);
+static int	reciving_string(char **str, char **line, char *new_lim);
 
-void	make_lim(char **new_lim, char *lim)
+int	make_lim(char **new_lim, char *lim)
 {
 	*new_lim = NULL;
 	*new_lim = ft_strjoin(lim, "\n");
 	if (!(*new_lim))
-		exit(1);
+	{
+		perror("make_lim malloc failed");
+		return (0);
+	}
+	return (1);
 }
 
-void	here_doc(char *lim, int *fd)
+int	here_doc(char *lim, int *fd)
 {
 	char	*str;
 	char	*line;
@@ -19,8 +23,10 @@ void	here_doc(char *lim, int *fd)
 
 	str = NULL;
 	line = NULL;
-	make_lim(&new_lim, lim);
-	reciving_string(&str, &line, new_lim);
+	if (!make_lim(&new_lim, lim))
+		return (0);
+	if (!reciving_string(&str, &line, new_lim))
+		return (0);
 	if (line)
 		ft_putstr_fd(line, fd[1]);
 	if (str)
@@ -31,10 +37,10 @@ void	here_doc(char *lim, int *fd)
 		free(new_lim);
 	close(fd[1]);
 	fd[1] = -1;
+	return (1);
 }
 
-static
-void	reciving_string(char **str, char **line, char *new_lim)
+static int	reciving_string(char **str, char **line, char *new_lim)
 {
 	ft_printf("> ");
 	while (1)
@@ -44,11 +50,12 @@ void	reciving_string(char **str, char **line, char *new_lim)
 						ft_strlen((*str)), ft_strlen(new_lim))) != 0))
 			break ;
 		(*line) = my_strjoin(line, (*str));
-		if (!line)
-			exit(1);
+		if (!*line)
+			return (0);
 		free((*str));
 		ft_printf("> ");
 	}
+	return (1);
 }
 
 static char	*my_strjoin(char **s1, char *s2)

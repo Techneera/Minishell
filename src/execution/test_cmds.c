@@ -122,3 +122,16 @@ t_ast	*ft_cmd1()
     t_ast *ast_root = ast_pipe3;
     return (ast_root);
 }
+
+t_ast	*ft_cmd2()
+{
+    t_ast *ast_c1 = new_cmd_node(dup_args((const char *[]){"cat", NULL}));
+
+    ast_c1->cmd->redir_count = 1;
+    ast_c1->cmd->redirs = ft_calloc(sizeof(t_redir), 1);
+    ast_c1->cmd->redirs[0].file_name = strdup("END");
+    ast_c1->cmd->redirs[0].label = REDIR_HEREDOCK;
+
+    t_ast *ast_root = ast_c1;
+    return (ast_root);
+}

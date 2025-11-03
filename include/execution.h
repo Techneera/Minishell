@@ -42,6 +42,7 @@ typedef struct s_data
 
 //---test_cmds
 t_ast	*ft_cmd1();
+t_ast	*ft_cmd2();
 t_ast	*bonus_cmd();
 
 
@@ -66,7 +67,7 @@ void	message_error(char	*str, char *file, int type);
 int	ft_max(int a, int b);
 
 //---ft_here_doc
-void	here_doc(char *lim, int *fd);
+int	here_doc(char *lim, int *fd);
 
 //---ft_child_process
 void	ft_child_process(t_data	*data, int i, char **envp);
