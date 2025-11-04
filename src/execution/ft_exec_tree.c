@@ -7,19 +7,20 @@ static int	execute_cmd(t_data	*data, int i, char **envp);
 
 int	ft_exec_tree(t_data	*data, int i, char **envp)
 {
-	int	old_pos;
+	int	old_pos_file;
+	int	old_pos_doc;
 	t_fds	*fds;
 	t_ast	*node;
 
 	fds = data->fds;
 	node = data->tree;
-	old_pos = fds->pos.file_id;
+	old_pos_file = fds->pos.file_id;
+	old_pos_doc = fds->pos.doc_id;
 	if (node == NULL || !fds)
 		return (0);
 	if (node->type == NODE_CMD)
 	{
 		i = execute_cmd(data, i, envp);
-		fds->pos.file_id += node->cmd->redir_count;
 		if (i < fds->get.n_pipes)
 		{
 			if (i > 1)
@@ -35,12 +36,19 @@ int	ft_exec_tree(t_data	*data, int i, char **envp)
 			close(fds->pipe_fds[i][1]);
 			fds->pipe_fds[i][1] = -1;
 		}
-		while (old_pos < fds->pos.file_id) 
+		while (old_pos_file < fds->pos.file_id) 
 		{
-			if (fds->fd_files[old_pos] != -1)
-				close(fds->fd_files[old_pos]);
-			fds->fd_files[old_pos] = -1;
-			old_pos++;
+			if (fds->fd_files[old_pos_file] != -1)
+				close(fds->fd_files[old_pos_file]);
+			fds->fd_files[old_pos_file] = -1;
+			old_pos_file++;
+		}
+		while (old_pos_doc < fds->pos.doc_id) 
+		{
+			if (fds->fd_files[old_pos_doc] != -1)
+				close(fds->fd_files[old_pos_doc]);
+			fds->fd_files[old_pos_doc] = -1;
+			old_pos_doc++;
 		}
 		i++;
 	}
