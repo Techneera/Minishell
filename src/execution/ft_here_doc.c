@@ -46,7 +46,7 @@ static int	reciving_string(char **str, char **line, char *new_lim)
 	while (1)
 	{
 		(*str) = get_next_line (0);
-		if (!(str && ft_strncmp((*str), new_lim, ft_max(
+		if (!((*str) && ft_strncmp((*str), new_lim, ft_max(
 						ft_strlen((*str)), ft_strlen(new_lim))) != 0))
 			break ;
 		(*line) = my_strjoin(line, (*str));
