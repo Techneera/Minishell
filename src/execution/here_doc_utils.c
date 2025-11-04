@@ -14,7 +14,7 @@ void	init_heredoc(t_data *data)
 	fds->heredoc_fds = NULL;
 	if (fds->get.n_docs > 0)
 	{
-		fds->heredoc_fds = malloc(fds->get.n_pipes * sizeof(int *));
+		fds->heredoc_fds = ft_calloc(fds->get.n_docs, sizeof(int *));
 		if (!fds->heredoc_fds)
 			exit(1);
 		if (!malloc_heredoc(&fds))
