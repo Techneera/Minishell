@@ -47,6 +47,8 @@ t_ast	*ft_cmd3();
 t_ast	*bonus_cmd();
 
 
+int	ft_execution(t_ast **root, char **envp);
+
 //---init_files
 int		fill_fd_file(t_fds **fds, t_ast *ast_root, int i);
 

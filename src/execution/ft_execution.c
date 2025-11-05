@@ -1,15 +1,14 @@
 #include "execution.h"
 
+int child_status = 0;
 
-int	main(int argc, char *argv[], char **envp)
+int	ft_execution(t_ast **root, char **envp)
 {
 	t_data	data;
 	int	g_signal;
 	int	i;
 
-	(void)argc;
-	(void)argv;
-	data.root = ft_cmd2();
+	data.root = *root;
 	data.tree = data.root;
 	data.fds = NULL;
 	g_signal = 0;
@@ -27,5 +26,6 @@ int	main(int argc, char *argv[], char **envp)
 	}
 	free_fds(&data.fds);
 	free_tree(&data.tree);
+	*root = NULL;
 	return(g_signal);
 }

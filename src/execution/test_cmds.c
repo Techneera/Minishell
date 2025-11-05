@@ -125,13 +125,16 @@ t_ast	*ft_cmd1()
 
 t_ast	*ft_cmd2()
 {
-    t_ast *ast_c1 = new_cmd_node(dup_args((const char *[]){"cat", NULL}));
+    t_ast *ast_c1 = new_cmd_node(dup_args((const char *[]){"ls", NULL}));
 
-    ast_c1->cmd->redir_count = 1;
-    ast_c1->cmd->redirs = ft_calloc(sizeof(t_redir), 1);
-    ast_c1->cmd->redirs[0].file_name = strdup("END");
-    ast_c1->cmd->redirs[0].label = REDIR_HEREDOCK;
-
+    ast_c1->cmd->redir_count = 3;
+    ast_c1->cmd->redirs = ft_calloc(sizeof(t_redir), ast_c1->cmd->redir_count);
+    ast_c1->cmd->redirs[0].file_name = strdup("o1");
+    ast_c1->cmd->redirs[0].label = REDIR_OUT;
+    ast_c1->cmd->redirs[1].file_name = strdup("o2");
+    ast_c1->cmd->redirs[1].label = REDIR_OUT;
+    ast_c1->cmd->redirs[2].file_name = strdup("o3");
+    ast_c1->cmd->redirs[2].label = REDIR_OUT;
     t_ast *ast_root = ast_c1;
     return (ast_root);
 }
