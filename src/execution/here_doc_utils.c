@@ -59,7 +59,7 @@ static int	fill_heredoc(t_fds **fds, t_ast *node, int i)
 	{
 		if (node->cmd->redirs[y].label == REDIR_HEREDOCK)
 		{
-			if (!here_doc(node->cmd->redirs[y].file_name, (*fds)->heredoc_fds[r]))
+			if (!here_doc(node->cmd->redirs[y].file_name, &(*fds)->heredoc_fds[r]))
 				return (0);
 			r++;
 		}

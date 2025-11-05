@@ -18,10 +18,11 @@ void	ft_child_process(t_data	*data, int i, char **envp)
 	args = node->cmd->args;
 	cmd_path = get_command_path(args, envp);
 	ft_closing_all(&fds);
-	execve(cmd_path, args, envp);
+	if (args && args[0])
+		execve(cmd_path, args, envp);
 	if (!cmd_path)
 	{
-		if (args)
+		if (args && args[0])
 		{
 			ft_putstr_fd(args[0], 2);
 			ft_putstr_fd(": command not found\n", 2);
@@ -61,7 +62,6 @@ void	apply_redirs_dup(t_data *data, t_ast **node)
 		heredoc_dup(data, r);
 		if ((*node)->cmd->redirs[r].label == REDIR_IN)
 		{
-			fds->pos.file_id++;
 			if (dup2(fds->fd_files[fds->pos.file_id], STDIN_FILENO
 			) == -1)
 			{

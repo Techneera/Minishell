@@ -34,7 +34,7 @@ static int	fill_files(t_fds **fds, t_ast *ast_root, int i)
 		{
 			if (open_files(fds, ast_root, i + r, j))
 			{
-				if (ast_root->cmd->redirs[r].label != REDIR_HEREDOCK)
+				if (ast_root->cmd->redirs[j].label != REDIR_HEREDOCK)
 					r++;
 			}
 			else

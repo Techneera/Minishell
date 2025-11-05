@@ -71,7 +71,7 @@ int	ft_max(int a, int b);
 void	secure_close(int *fd);
 
 //---ft_here_doc
-int	here_doc(char *lim, int *fd);
+int	here_doc(char *lim, int **fd);
 
 //---ft_child_process
 void	ft_child_process(t_data	*data, int i, char **envp);

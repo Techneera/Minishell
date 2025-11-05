@@ -36,7 +36,8 @@ int	ft_exec_tree(t_data	*data, int i, char **envp)
 		}
 		while (old_pos_doc < fds->pos.doc_id) 
 		{
-			secure_close(&fds->fd_files[old_pos_doc]);
+			secure_close(&fds->heredoc_fds[old_pos_doc][0]);
+			secure_close(&fds->heredoc_fds[old_pos_doc][1]);
 			old_pos_doc++;
 		}
 		i++;

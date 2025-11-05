@@ -33,7 +33,7 @@ void	ft_create_fds(t_data *data)
 	}
 	data->fds = fds;
 	init_heredoc(data);
-	fill_fd_file(&fds, ast_root, 0);
+	fill_fd_file(&data->fds, ast_root, 0);
 }
 
 static void	init_pipe(t_data *data, t_fds **fds, int ***pipe_fds)
