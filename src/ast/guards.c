@@ -2,21 +2,6 @@
 #include "ast.h"
 #include "lexer.h"
 
-void	ft_free_redir_lst(t_redir *redir)
-{
-	t_redir	*tmp;
-
-	if (!redir)
-		return ;
-	while (redir)
-	{
-		tmp = redir->next;
-		free(redir->file_name);
-		free(redir);
-		redir = tmp;
-	}
-}
-
 void	ft_free_array(char **arr)
 {
 	int	i;
@@ -62,4 +47,14 @@ void	ft_free_ast(t_ast *root)
 		ft_free_ast(root->body);
 	ft_free_cmd(root->cmd);
 	free(root);
+}
+
+void    ft_free_redir_struct_only(void *content)
+{
+	t_redir *redir;
+
+	redir = (t_redir *)content;
+	if (!redir)
+		return;
+	free(redir);
 }

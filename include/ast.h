@@ -18,16 +18,13 @@ t_ast		*ft_parse_subshell(t_parser *parser);
 char		**ft_parse_args(t_parser *parser);
 char		**ft_lst_to_args(t_list **head, int size);
 int			ft_handle_redirects(t_parser *parser, t_cmd *cmd_to_fill);
+t_redir		*ft_create_redir(t_label_redir label, char *str);
+void		ft_free_redir_struct_only(void *content);
+void		ft_free_redir_content(void *content);
+void		ft_copy_lst_to_array(t_list *head, t_redir *array);
 
 void		ft_free_array(char **arr);
 void		ft_free_cmd(t_cmd *cmd);
 void		ft_free_ast(t_ast *root);
 
-
-
-
-t_redir		*ft_create_redir_lst(t_label_redir label, char *str);
-void		ft_redirs_addback(t_redir **head, t_redir *new);
-void		ft_redirs_clear(t_redir **redirs);
-void		ft_free_redir_lst(t_redir *redir);
 #endif

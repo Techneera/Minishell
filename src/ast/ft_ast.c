@@ -80,7 +80,7 @@ t_cmd	*ft_create_command(char	**av, t_redir *redirs, int count)
 	return (new_cmd);
 }
 
-t_redir	*ft_create_redir_lst(t_label_redir label, char *str)
+t_redir	*ft_create_redir(t_label_redir label, char *str)
 {
 	t_redir	*r;
 
@@ -89,41 +89,7 @@ t_redir	*ft_create_redir_lst(t_label_redir label, char *str)
 		return (free(str), NULL);
 	r->label = label;
 	r->file_name = str;
-	r->next = NULL;
 	return (r);
-}
-
-void	ft_redirs_addback(t_redir **head, t_redir *new)
-{
-	t_redir	*ptr;
-
-	if (!*head && new)
-	{
-		*head = new;
-		return ;
-	}
-	if (!new)
-		return ;
-	ptr = *head;
-	while (ptr->next)
-		ptr = ptr->next;
-	ptr->next = new;
-}
-
-void	ft_redirs_clear(t_redir **redirs)
-{
-	t_redir	*tmp;
-
-	if (!redirs || !*redirs)
-		return ;
-	while (*redirs)
-	{
-		tmp = (*redirs)->next;
-		free((*redirs)->file_name);
-		free(*redirs);
-		*redirs = tmp;
-	}
-	*redirs = NULL;
 }
 
 void	ft_free_redir_content(void *content)

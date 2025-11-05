@@ -92,7 +92,6 @@ typedef struct s_redir
 {
 	char			*file_name;
 	t_label_redir	label;
-	struct s_redir	*next;
 }	t_redir;
 
 typedef struct s_cmd
