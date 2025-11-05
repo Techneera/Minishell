@@ -79,6 +79,9 @@ exec: $(PATH_OBJS_EXEC) $(LFT)
 test_parser: $(PATH_OBJS_AST) $(PATH_OBJS_LEXER) $(LFT)
 	$(CC) $(CFLAGS) $(TESTER_DIR)/parser.c $^ -o $@
 
+refactor_parser: $(PATH_OBJS_AST) $(PATH_OBJS_LEXER) $(LFT)
+	$(CC) $(CFLAGS) $(TESTER_DIR)/refactor_parser.c $^ -o $@
+
 $(AST_NAME): $(PATH_OBJS_AST) $(PATH_OBJS_LEXER) $(LFT)
 	$(CC) $(CFLAGS) $(TESTER_DIR)/ast_tester.c $^ -o $@
 
@@ -127,4 +130,4 @@ re: fclean all
 vgr: all
 	valgrind --leak-check=full --show-leak-kinds=all --suppressions=./readline.supp ./$(NAME)
 
-.PHONY: all clean fclean re unit vgr exec test_parser
+.PHONY: all clean fclean re unit vgr exec test_parser refactor_parser
