@@ -124,6 +124,7 @@ fclean: clean
 	rm -rf $(EXEC)
 	rm -rf $(AST_NAME)
 	rm -rf test_parser
+	rm -rf refactor_parser
 
 re: fclean all
 

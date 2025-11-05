@@ -85,10 +85,11 @@ void	print_command_members(t_cmd *cmd, int depth)
 		print_indent(depth);
 		printf("Redirs: ");
 		t_redir *r = cmd->redirs;
-		while (r)
+		int	i = 0;
+		while (i < cmd->redir_count)
 		{
-			printf("(%s %s) ", redir_map(r->label), r->file_name);
-			r = r->next;
+			printf("(%s %s) ", redir_map(r[i].label), r[i].file_name);
+			i++;
 		}
 		printf("\n");
 	}
