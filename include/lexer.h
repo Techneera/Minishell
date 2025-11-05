@@ -1,6 +1,8 @@
 #ifndef LEXER_H
 #define LEXER_H
 
+# include "libshell.h"
+
 t_lexer	*ft_state_lexer(char *line);
 t_token	*get_next_token(t_lexer *l);
 t_token	*ft_handle_operator(t_lexer *l);

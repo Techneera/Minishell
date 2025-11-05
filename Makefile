@@ -81,14 +81,18 @@ exec: $(PATH_OBJS_EXEC) $(LFT)
 test_parser: $(PATH_OBJS_AST) $(PATH_OBJS_LEXER) $(LFT)
 	$(CC) $(CFLAGS) $(TESTER_DIR)/parser.c $^ -o $@
 
+refactor_parser: $(PATH_OBJS_AST) $(PATH_OBJS_LEXER) $(LFT)
+	$(CC) $(CFLAGS) $(TESTER_DIR)/refactor_parser.c $^ -o $@
+
 $(AST_NAME): $(PATH_OBJS_AST) $(PATH_OBJS_LEXER) $(LFT)
 	$(CC) $(CFLAGS) $(TESTER_DIR)/ast_tester.c $^ -o $@
 
-$(NAME): $(PATH_OBJS_LEXER) $(LFT)
+$(NAME): $(PATH_OBJS_AST) $(PATH_OBJS_LEXER) $(LFT)
 	$(CC) $(CFLAGS) -lreadline src/test_module/shell.c $^ -o $(NAME)
 
 $(LFT):
 	$(MAKE) -C libft
+	$(MAKE) -C libft bonus
 
 $(OBJS_DIR)/lexer/%.o:$(LEXER_DIR)/%.c | $(OBJS_DIR)/lexer
 	$(CC) $(CFLAGS) -c $< -o $@
@@ -121,10 +125,12 @@ fclean: clean
 	rm -rf $(UNIT)
 	rm -rf $(EXEC)
 	rm -rf $(AST_NAME)
+	rm -rf test_parser
+	rm -rf refactor_parser
 
 re: fclean all
 
 vgr: all
 	valgrind --leak-check=full --show-leak-kinds=all --suppressions=./readline.supp ./$(NAME)
 
-.PHONY: all clean fclean re unit vgr exec test_parser
+.PHONY: all clean fclean re unit vgr exec test_parser refactor_parser

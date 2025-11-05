@@ -1,3 +1,4 @@
+#include "libshell.h"
 #include "ast.h"
 #include "lexer.h"
 
@@ -79,46 +80,43 @@ t_cmd	*ft_create_command(char	**av, t_redir *redirs, int count)
 	return (new_cmd);
 }
 
-t_redir	*ft_create_redir_lst(t_label_redir label, char *str)
+t_redir	*ft_create_redir(t_label_redir label, char *str)
 {
 	t_redir	*r;
 
 	r = (t_redir *)ft_calloc(1, sizeof(t_redir));
 	if (!r)
-		return (NULL);
+		return (free(str), NULL);
 	r->label = label;
 	r->file_name = str;
-	r->next = NULL;
 	return (r);
 }
 
-void	ft_redirs_addback(t_redir **head, t_redir *new)
+void	ft_free_redir_content(void *content)
 {
-	t_redir	*ptr;
+	t_redir	*redir;
 
-	if (!*head && new)
-	{
-		*head = new;
+	redir = (t_redir *)content;
+	if (!redir)
 		return ;
-	}
-	if (!new)
-		return ;
-	ptr = *head;
-	while (ptr)
-		ptr = ptr->next;
-	ptr->next = new;
+	free(redir->file_name);
+	free(redir);
 }
 
-void	ft_redirs_clear(t_redir **redirs)
+void	ft_copy_lst_to_array(t_list *head, t_redir *array)
 {
-	t_redir	*tmp;
+	int		i;
+	t_list	*tmp;
+	t_redir	*redir_to_arr;
 
-	while (redirs)
+	i = 0;
+	tmp = head;
+	while (tmp)
 	{
-		tmp = (*redirs)->next;
-		free((*redirs)->file_name);
-		free(*redirs);
-		*redirs = tmp;
+		redir_to_arr = (t_redir *)tmp->content;
+		array[i].label = redir_to_arr->label;
+		array[i].file_name = redir_to_arr->file_name;
+		i++;
+		tmp = tmp->next;
 	}
-	*redirs = NULL;
 }

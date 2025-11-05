@@ -1,8 +1,12 @@
 #include "libshell.h"
+#include "ast.h"
 #include "lexer.h"
 
-void	loop(void);
-void	print_tokens(t_token *head);
+void				loop(void);
+static void			print_ast(t_ast *node, int depth);
+static void			print_indent(int depth);
+static void 		print_command_members(t_cmd *cmd, int depth);
+static const char	*redir_map(t_label_redir label);
 
 int	main(int argc, char **argv, char **envp)
 {
@@ -16,40 +20,120 @@ int	main(int argc, char **argv, char **envp)
 void	loop(void)
 {
 	char	*line;
-	t_lexer	*lex;
-	t_token	*head;
+	t_lexer	*lexer;
+	t_ast	*head;
 
 	line = NULL;
-	lex = NULL;
+	lexer = NULL;
 	while(1)
 	{
 		head = NULL;
 		line = readline(PROMPT);
-		if (!line || !ft_strcmp(line, "exit"))
+		if (!line)
 			break ;
-		lex = ft_state_lexer(line);
-		if (!lex)
+		if (!ft_strcmp(line, "exit"))
+			return (free(line));
+		lexer = ft_state_lexer(line);
+		if (!lexer)
 		{
 			free(line);
 			break ;
 		}
-		ft_tokens_constructor(&lex, &head);
-		print_tokens(head);
-		free_all(line, lex, &head);
+		head = ft_parser(lexer);
+		if (head == NULL)
+			fprintf(stderr, "Syntax error AST.\n");
+		else
+			print_ast(head, 0);
+		ft_free_ast(head);
+		free_lexer(lexer);
+		free(line);
 	}
-	free_all(line, NULL, &head);
 }
 
-void	print_tokens(t_token *head)
+static
+void	print_indent(int depth)
 {
-	t_token	*ptr;
+	for (int i = 0; i < depth; i++)
+		printf("\t");
+}
 
-	if (!head)
+static
+const char	*redir_map(t_label_redir label)
+{
+	if (label == REDIR_IN) return ("<");
+	if (label == REDIR_OUT) return (">");
+	if (label == REDIR_APPEND) return (">>");
+	if (label == REDIR_HEREDOCK) return ("<<");
+	return ("?");
+}
+
+static
+void	print_command_members(t_cmd *cmd, int depth)
+{
+	if (!cmd)
 		return ;
-	ptr = head;
-	while (ptr)
+	if (cmd->args)
 	{
-		printf("%d, %s\n", ptr->tok_label, ptr->str);
-		ptr = ptr->next;
+		print_indent(depth);
+		printf("Args: ");
+		for (int i = 0; cmd->args[i]; i++)
+			printf("[%s]", cmd->args[i]);
+		printf("\n");
 	}
+	if (cmd->redirs)
+	{
+		print_indent(depth);
+		printf("Redirs: ");
+		t_redir *r = cmd->redirs;
+		int	i = 0;
+		while (i < cmd->redir_count)
+		{
+			printf("(%s %s) ", redir_map(r[i].label), r[i].file_name);
+			i++;
+		}
+		printf("\n");
+	}
+}
+
+static
+void print_ast(t_ast *node, int depth)
+{
+    if (!node)
+    {
+        print_indent(depth);
+        printf("(NULL NODE)\n");
+        return;
+    }
+
+    print_indent(depth);
+
+    switch (node->type)
+    {
+        case NODE_PIPE:
+            printf("PIPE\n");
+            print_ast(node->left, depth + 1);
+            print_ast(node->right, depth + 1);
+            break;
+        case NODE_AND:
+            printf("AND (&&)\n");
+            print_ast(node->left, depth + 1);
+            print_ast(node->right, depth + 1);
+            break;
+        case NODE_OR:
+            printf("OR (||)\n");
+            print_ast(node->left, depth + 1);
+            print_ast(node->right, depth + 1);
+            break;
+        case NODE_CMD:
+            printf("COMMAND\n");
+            print_command_members(node->cmd, depth + 1);
+            break;
+        case NODE_SUBSHELL:
+            printf("SUBSHELL ( ... )\n");
+            print_command_members(node->cmd, depth + 1);
+            print_ast(node->body, depth + 1);
+            break;
+        default:
+            printf("UNKNOWN NODE TYPE\n");
+    }
 }
