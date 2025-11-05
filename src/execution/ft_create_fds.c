@@ -7,7 +7,9 @@ void	ft_create_fds(t_data *data)
 {
 	t_fds	*fds;
 	t_ast	*ast_root;
+	int		i;
 
+	i = -1;
 	ast_root = data->tree;
 	fds = ft_calloc(1, sizeof(t_fds));
 	if (!fds)
@@ -20,6 +22,8 @@ void	ft_create_fds(t_data *data)
 		fds->fd_files = ft_calloc(fds->get.n_files, sizeof(int));
 		if (!fds->fd_files)
 			secure_exit(data, FAIL_STATUS);
+		while (++i < fds->get.n_files)		
+			fds->fd_files[i] = -1;
 	}
 	if (fds->get.n_cmds > 0)
 	{

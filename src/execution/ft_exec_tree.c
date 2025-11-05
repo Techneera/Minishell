@@ -24,30 +24,19 @@ int	ft_exec_tree(t_data	*data, int i, char **envp)
 		if (i < fds->get.n_pipes)
 		{
 			if (i > 1)
-			{
-				close(fds->pipe_fds[i - 1][0]);
-				fds->pipe_fds[i - 1][0] = -1;
-			}
+				secure_close(&fds->pipe_fds[i - 1][0]);
 			if (i == fds->get.n_pipes)
-			{
-				close(fds->pipe_fds[i][0]);
-				fds->pipe_fds[i][0] = -1;
-			}
-			close(fds->pipe_fds[i][1]);
-			fds->pipe_fds[i][1] = -1;
+				secure_close(&fds->pipe_fds[i][0]);
+			secure_close(&fds->pipe_fds[i][1]);
 		}
 		while (old_pos_file < fds->pos.file_id) 
 		{
-			if (fds->fd_files[old_pos_file] != -1)
-				close(fds->fd_files[old_pos_file]);
-			fds->fd_files[old_pos_file] = -1;
+			secure_close(&fds->fd_files[old_pos_file]);
 			old_pos_file++;
 		}
 		while (old_pos_doc < fds->pos.doc_id) 
 		{
-			if (fds->fd_files[old_pos_doc] != -1)
-				close(fds->fd_files[old_pos_doc]);
-			fds->fd_files[old_pos_doc] = -1;
+			secure_close(&fds->fd_files[old_pos_doc]);
 			old_pos_doc++;
 		}
 		i++;
@@ -90,14 +79,26 @@ static int	execute_cmd(t_data	*data, int i, char **envp)
 {
 	pid_t	pid;
 	t_fds	*fds;
+	t_ast	*node;
+	int		j;
 
 	fds = data->fds;
+	node = data->tree;
+	j = 0;
 	if (!data->tree)
 		return (i);
 	if (!init_pid(&pid, &fds))
 		secure_exit(data, FAIL_STATUS);
 	if (pid == 0)
 		ft_child_process(data, i, envp);
+	while (j < node->cmd->redir_count)
+	{
+		if (node->cmd->redirs[j].label != REDIR_HEREDOCK)
+			fds->pos.file_id++;
+		else
+			fds->pos.doc_id++;
+		j++;
+	}
 	return (i);
 }
 

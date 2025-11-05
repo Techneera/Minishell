@@ -7,7 +7,6 @@ static int	fill_files(t_fds **fds, t_ast *ast_root, int i);
 
 int	fill_fd_file(t_fds **fds, t_ast *ast_root, int i)
 {
-
 	if (!ast_root)
 		return (i);
 	if (ast_root->type == NODE_AND || ast_root -> type == NODE_OR)
@@ -34,7 +33,10 @@ static int	fill_files(t_fds **fds, t_ast *ast_root, int i)
 		while (j < ast_root->cmd->redir_count)
 		{
 			if (open_files(fds, ast_root, i + r, j))
-				r++;
+			{
+				if (ast_root->cmd->redirs[r].label != REDIR_HEREDOCK)
+					r++;
+			}
 			else
 				break ;
 			j++;
@@ -50,7 +52,7 @@ static int	open_files(t_fds **fds, t_ast *ast_root, int i, int r)
 		return (create_redir_in(fds, ast_root, i, r));
 	else if (ast_root->cmd->redirs[r].label != REDIR_HEREDOCK)
 		return (create_redir_out(fds, ast_root, i, r));
-	return (0);
+	return (1);
 }
 
 static int	create_redir_in(t_fds **fds, t_ast *ast_root, int i, int r)

@@ -43,6 +43,7 @@ typedef struct s_data
 //---test_cmds
 t_ast	*ft_cmd1();
 t_ast	*ft_cmd2();
+t_ast	*ft_cmd3();
 t_ast	*bonus_cmd();
 
 
@@ -65,6 +66,7 @@ void	message_error(char	*str, char *file, int type);
 
 //---add_libft
 int	ft_max(int a, int b);
+void	secure_close(int *fd);
 
 //---ft_here_doc
 int	here_doc(char *lim, int *fd);
@@ -73,7 +75,6 @@ int	here_doc(char *lim, int *fd);
 void	ft_child_process(t_data	*data, int i, char **envp);
 void	apply_std_dup(t_data *data, int i);
 void	apply_redirs_dup(t_data *data, t_ast **node);
-void	heredoc_dup(t_ast **node, t_fds **fds, int r);
 
 //--ft_closing_all
 void	ft_closing_all(t_fds **fds);

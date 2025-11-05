@@ -2,7 +2,7 @@
 
 void	apply_std_dup(t_data *data, int i);
 void	apply_redirs_dup(t_data *data, t_ast **node);
-void	heredoc_dup(t_ast **node, t_fds **fds, int r);
+static void	heredoc_dup(t_data *data, int r);
 
 void	ft_child_process(t_data	*data, int i, char **envp)
 {
@@ -58,7 +58,7 @@ void	apply_redirs_dup(t_data *data, t_ast **node)
 	r = 0;
 	while (r < (*node)->cmd->redir_count)
 	{
-		heredoc_dup(node, &fds, r);
+		heredoc_dup(data, r);
 		if ((*node)->cmd->redirs[r].label == REDIR_IN)
 		{
 			if (dup2(fds->fd_files[fds->pos.file_id], STDIN_FILENO
@@ -76,13 +76,19 @@ void	apply_redirs_dup(t_data *data, t_ast **node)
 	}
 }
 
-void	heredoc_dup(t_ast **node, t_fds **fds, int r)
+static void	heredoc_dup(t_data *data, int r)
 {
-	if ((*node)->cmd->redirs[r].label == REDIR_HEREDOCK)
+	t_fds	*fds;
+	t_ast	*node;
+
+	node = data->tree;
+	fds = data->fds;
+	if (node->cmd->redirs[r].label == REDIR_HEREDOCK)
 	{
-		if ((*fds)->heredoc_fds[(*fds)->pos.doc_id][0] != -1
-		&& dup2((*fds)->heredoc_fds[(*fds)->pos.doc_id][0], STDIN_FILENO) == -1)
-			perror("dup on REDIR_DOC");
-		(*fds)->pos.doc_id++;
+		secure_close(&fds->heredoc_fds[fds->pos.doc_id][1]);
+		if (fds->heredoc_fds[fds->pos.doc_id][0] != -1
+		&& dup2(fds->heredoc_fds[fds->pos.doc_id][0], STDIN_FILENO) == -1)
+			secure_exit(data, 1);
+		fds->pos.doc_id++;
 	}
 }
