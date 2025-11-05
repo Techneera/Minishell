@@ -61,16 +61,25 @@ void	apply_redirs_dup(t_data *data, t_ast **node)
 		heredoc_dup(data, r);
 		if ((*node)->cmd->redirs[r].label == REDIR_IN)
 		{
+			fds->pos.file_id++;
 			if (dup2(fds->fd_files[fds->pos.file_id], STDIN_FILENO
-			) == -1 && ++(fds->pos.file_id))
+			) == -1)
+			{
+				fds->pos.file_id++;
 				secure_exit(data, 1);
+			}
+			fds->pos.file_id++;
 		}
 		else if ((*node)->cmd->redirs[r].label == REDIR_OUT
 			|| (*node)->cmd->redirs[r].label == REDIR_APPEND)
 		{
 			if (dup2(fds->fd_files[fds->pos.file_id], STDOUT_FILENO
-			) == -1 && ++(fds->pos.file_id))
-				secure_exit(data, 1);			
+			) == -1)
+			{
+				fds->pos.file_id++;
+				secure_exit(data, 1);
+			}
+			fds->pos.file_id++;
 		}
 		r++;
 	}
