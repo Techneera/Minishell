@@ -31,10 +31,21 @@ void	ft_free_array(char **arr)
 
 void	ft_free_cmd(t_cmd *cmd)
 {
+	int	i;
+
 	if (!cmd)
 		return ;
 	ft_free_array(cmd->args);
-	ft_free_redir_lst(cmd->redirs);
+	if (cmd->redirs)
+	{
+		i = 0;
+		while (i < cmd->redir_count)
+		{
+			free(cmd->redirs[i].file_name);
+			i++;
+		}
+		free(cmd->redirs);
+	}
 	free(cmd);
 }
 
