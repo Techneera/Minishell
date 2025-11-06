@@ -82,10 +82,10 @@ static int	create_redir_out(t_fds **fds, t_ast *ast_root, int i, int r)
 {
 	if (ast_root->cmd->redirs[r].label == REDIR_OUT)
 		(*fds)->fd_files[i] = open(ast_root->cmd->redirs[r].file_name,
-				O_WRONLY | O_CREAT | O_TRUNC, 0671);
+				O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	else
 		(*fds)->fd_files[i] = open(ast_root->cmd->redirs[r].file_name,
-				O_WRONLY | O_CREAT | O_APPEND, 0671);
+				O_WRONLY | O_CREAT | O_APPEND, 0644);
 	if ((*fds)->fd_files[i] == -1)
 	{
 		message_error(": Permission denied",
