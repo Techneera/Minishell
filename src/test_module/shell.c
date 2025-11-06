@@ -3,7 +3,7 @@
 #include "lexer.h"
 #include "execution.h"
 
-void				loop(void);
+void				loop(char **envp);
 static void			print_ast(t_ast *node, int depth);
 static void			print_indent(int depth);
 static void 		print_command_members(t_cmd *cmd, int depth);
@@ -43,8 +43,14 @@ void	loop(char **envp)
 		if (head == NULL)
 			fprintf(stderr, "Syntax error AST.\n");
 		else
+		{
 			print_ast(head, 0);
-		ft_free_ast(head);
+			printf("\n\n");
+
+			ft_execution(&head, envp);
+		}
+		if (head)
+			ft_free_ast(head);
 		free_lexer(lexer);
 		free(line);
 	}
@@ -85,18 +91,6 @@ void	print_command_members(t_cmd *cmd, int depth)
 		print_indent(depth);
 		printf("Redirs: ");
 		t_redir *r = cmd->redirs;
-		while (r)
-		{
-			printf("(%s %s) ", redir_map(r->label), r->file_name);
-			r = r->next;
-		}
-		printf("\n");
-	}
-	if (cmd->redirs)
-	{
-		print_indent(depth);
-		printf("Redirs: ");
-		t_redir *r = cmd->redirs;
 		int	i = 0;
 		while (i < cmd->redir_count)
 		{
@@ -105,49 +99,6 @@ void	print_command_members(t_cmd *cmd, int depth)
 		}
 		printf("\n");
 	}
-}
-
-static
-void print_ast(t_ast *node, int depth)
-{
-    if (!node)
-    {
-        print_indent(depth);
-        printf("(NULL NODE)\n");
-        return;
-    }
-
-    print_indent(depth);
-
-    switch (node->type)
-    {
-        case NODE_PIPE:
-            printf("PIPE\n");
-            print_ast(node->left, depth + 1);
-            print_ast(node->right, depth + 1);
-            break;
-        case NODE_AND:
-            printf("AND (&&)\n");
-            print_ast(node->left, depth + 1);
-            print_ast(node->right, depth + 1);
-            break;
-        case NODE_OR:
-            printf("OR (||)\n");
-            print_ast(node->left, depth + 1);
-            print_ast(node->right, depth + 1);
-            break;
-        case NODE_CMD:
-            printf("COMMAND\n");
-            print_command_members(node->cmd, depth + 1);
-            break;
-        case NODE_SUBSHELL:
-            printf("SUBSHELL ( ... )\n");
-            print_command_members(node->cmd, depth + 1);
-            print_ast(node->body, depth + 1);
-            break;
-        default:
-            printf("UNKNOWN NODE TYPE\n");
-    }
 }
 
 static

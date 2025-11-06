@@ -99,10 +99,8 @@ void	ft_free_redir_content(void *content)
 	redir = (t_redir *)content;
 	if (!redir)
 		return ;
-	ptr = *head;
-	while (ptr->next)
-		ptr = ptr->next;
-	ptr->next = new;
+	free(redir->file_name);
+	free(redir);
 }
 
 void	ft_copy_lst_to_array(t_list *head, t_redir *array)
@@ -111,9 +109,9 @@ void	ft_copy_lst_to_array(t_list *head, t_redir *array)
 	t_list	*tmp;
 	t_redir	*redir_to_arr;
 
-	if (!redirs || !*redirs)
-		return ;
-	while (*redirs)
+	i = 0;
+	tmp = head;
+	while (tmp)
 	{
 		redir_to_arr = (t_redir *)tmp->content;
 		array[i].label = redir_to_arr->label;

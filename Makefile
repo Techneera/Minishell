@@ -87,7 +87,7 @@ refactor_parser: $(PATH_OBJS_AST) $(PATH_OBJS_LEXER) $(LFT)
 $(AST_NAME): $(PATH_OBJS_AST) $(PATH_OBJS_LEXER) $(LFT)
 	$(CC) $(CFLAGS) $(TESTER_DIR)/ast_tester.c $^ -o $@
 
-$(NAME): $(PATH_OBJS_AST) $(PATH_OBJS_LEXER) $(LFT)
+$(NAME): $(PATH_OBJS_AST) $(PATH_OBJS_LEXER) $(PATH_OBJS_EXEC) $(LFT)
 	$(CC) $(CFLAGS) -lreadline src/test_module/shell.c $^ -o $(NAME)
 
 $(LFT):
@@ -126,6 +126,7 @@ fclean: clean
 	rm -rf $(EXEC)
 	rm -rf $(AST_NAME)
 	rm -rf test_parser
+	rm -rf refactor_parser
 
 re: fclean all
 
