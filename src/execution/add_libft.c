@@ -1,5 +1,15 @@
 #include "execution.h"
 
+void	secure_close(int *fd)
+{
+	if (!fd)
+		return ;
+	if (*fd == -1)
+		return ;
+	close(*fd);
+	(*fd) = -1;
+}
+
 int	ft_max(int a, int b)
 {
 	if (a > b)
@@ -20,8 +30,8 @@ void	free_all(void **ptr, size_t rows)
 		{
 			free(ptr[i]);
 			ptr[i] = NULL;
-			i++;
 		}
+		i++;
 	}
 	free(ptr);
 	ptr = NULL;

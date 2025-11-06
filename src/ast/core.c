@@ -85,6 +85,7 @@ t_ast	*ft_parse_pipeline(t_parser *parser)
 t_ast	*ft_parse_grain_with_redirs(t_parser *parser)
 {
 	t_ast	*node;
+	t_cmd	*cmd_to_fill;
 
 	node = NULL;
 	if (parser->current_token->tok_label == TOKEN_LEFT_PAR)
@@ -101,7 +102,8 @@ t_ast	*ft_parse_grain_with_redirs(t_parser *parser)
 		if (!node->cmd)
 			return (ft_free_ast(node), NULL);
 	}
-	if (ft_handle_redirects(parser, &node->cmd->redirs) == false)
+	cmd_to_fill = node->cmd;
+	if (ft_handle_redirects(parser, cmd_to_fill) == false)
 		return (ft_free_ast(node), NULL);
 	return (node);
 }
