@@ -82,6 +82,15 @@ t_ast	*ft_parse_pipeline(t_parser *parser)
 	return (ast_left);
 }
 
+static
+int	ft_isredir(t_parser *parser)
+{
+	return (parser->current_token->tok_label == TOKEN_REDIR_IN || \
+			parser->current_token->tok_label == TOKEN_REDIR_OUT || \
+			parser->current_token->tok_label == TOKEN_REDIR_APPEND || \
+			parser->current_token->tok_label == TOKEN_REDIR_HEREDOC);
+}
+
 t_ast	*ft_parse_grain_with_redirs(t_parser *parser)
 {
 	t_ast	*node;
@@ -90,8 +99,8 @@ t_ast	*ft_parse_grain_with_redirs(t_parser *parser)
 	node = NULL;
 	if (parser->current_token->tok_label == TOKEN_LEFT_PAR)
 		node = ft_parse_subshell(parser);
-	else if (parser->current_token->tok_label == TOKEN_WORD)
-		node = ft_parse_node_command(parser);
+	else if (parser->current_token->tok_label == TOKEN_WORD || ft_isredir(parser))
+		node = ft_parse_simple_command(parser);
 	else
 		fprintf(stderr, "Error invalid token.\n");
 	if (!node)
@@ -101,49 +110,72 @@ t_ast	*ft_parse_grain_with_redirs(t_parser *parser)
 		node->cmd = ft_create_command(NULL, NULL, 0);
 		if (!node->cmd)
 			return (ft_free_ast(node), NULL);
+		cmd_to_fill = node->cmd;
+		if (ft_handle_redirects(parser, cmd_to_fill) == false)
+			return (ft_free_ast(node), NULL);
 	}
-	cmd_to_fill = node->cmd;
-	if (ft_handle_redirects(parser, cmd_to_fill) == false)
-		return (ft_free_ast(node), NULL);
 	return (node);
 }
 
-t_ast	*ft_parse_node_command(t_parser *parser)
+t_ast	*ft_parse_simple_command(t_parser *parser)
 {
-	t_ast	*node_cmd;
-	t_cmd	*cmd;
+	t_list	*args_lst;
+	t_list	*redirs_lst;
+	t_cmd	*cmd_to_fill;
+	t_redir	*new_redir;
 
-	cmd = ft_create_command(NULL, NULL, 0);
-	if (!cmd)
-		return (NULL);
-	cmd->args = ft_parse_args(parser);
-	if (!cmd->args)
-		return (free(cmd), NULL);
-	node_cmd = ft_ast_node_command(cmd);
-	if (!node_cmd)
-		return (ft_free_cmd(cmd), NULL);
-	return (node_cmd);
+	cmd_to_fill = NULL;
+	args_lst = NULL;
+	redirs_lst = NULL;
+	while (parser->current_token->tok_label == TOKEN_WORD || ft_redir(parser))
+	{
+		if (parser->current_token->tok_label == TOKEN_WORD)
+			ft_parse_args(parser, &args_lst);
+		else if (ft_isredir(parser))
+		{
+			new_redir = ft_parse_single_redir(parser, &redirs_lst);
+			if (!new_redir)
+				ft_lstclear(&redirs_lst, &ft_free_redir_content);
+			ft_lstadd_back(&redir_lst, new_redir);
+		}
+	}
+	return (ft_ast_generic_node(NODE_CMD));
 }
 
-char	**ft_parse_args(t_parser *parser)
+void	ft_parse_args(t_parser *parser, t_list **head)
 {
-	t_list	*head;
-	char	**args_ret;
 	char	*arg_cpy;
 
-	head = NULL;
-	while (parser->current_token->tok_label == TOKEN_WORD)
+	arg_cpy = strdup(parser->current_token->str);
+	if (!arg_cpy)
 	{
-		arg_cpy = strdup(parser->current_token->str);
-		if (!arg_cpy)
-			return (ft_lstclear(&head, &free), NULL);
-		ft_lstadd_back(&head, ft_lstnew(arg_cpy));
-		ft_parser_iter(parser);
+		ft_lstclear(head, &free);
+		return ;
 	}
-	args_ret = ft_lst_to_args(&head, ft_lstsize(head));
-	if (!args_ret)
-		return (ft_lstclear(&head, &free), NULL);
-	return (args_ret);
+	ft_lstadd_back(head, ft_lstnew(arg_cpy));
+	ft_parser_iter(parser);
+}
+
+t_redir	*ft_parse_single_redir(t_parser *parser)
+{
+	t_label_redir	label;
+	char			*filename;
+
+	label = ft_label_map(parser->current_token->tok_label);
+	if (label == REDIR_HEREDOCK)
+		filename = ft_strdup(parser->current_token->str);
+	else
+	{
+		if (parser->peek->tok_label != TOKEN_WORD)
+			return (NULL);
+		filename = ft_strdup(parser->peek->str);
+	}
+	if (!filename)
+		return (NULL);
+	ft_parser_iter(parser);
+	if (label == REDIR_HEREDOCK)
+		ft_parser_iter(parser);
+	return (ft_create_redir(label, filename));
 }
 
 char	**ft_lst_to_args(t_list **head, int size)
@@ -165,15 +197,6 @@ char	**ft_lst_to_args(t_list **head, int size)
 		i++;
 	}
 	return (ret);
-}
-
-static
-int	ft_isredir(t_parser *parser)
-{
-	return (parser->current_token->tok_label == TOKEN_REDIR_IN || \
-			parser->current_token->tok_label == TOKEN_REDIR_OUT || \
-			parser->current_token->tok_label == TOKEN_REDIR_APPEND || \
-			parser->current_token->tok_label == TOKEN_REDIR_HEREDOC);
 }
 
 static

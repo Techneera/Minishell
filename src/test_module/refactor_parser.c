@@ -218,7 +218,15 @@ int main(void)
 	// --- Category 7: Complex Combinations ---
 	total_tests++; pass_count += run_test("(cmd1 < in && (cmd2 | cmd3)) > out || cmd4 << EOF");
 
-	// --- Category 8: Syntax Errors (Should return NULL) ---
+	// --- Category 8: Edge Cases ---
+	total_tests++; pass_count += run_test("> out");
+	total_tests++; pass_count += run_test("< in");
+	total_tests++; pass_count += run_test(">> app");
+	total_tests++; pass_count += run_test("<< here");
+	total_tests++; pass_count += run_test("ls > out -la");
+	total_tests++; pass_count += run_test("< ~/Documents ls -l");
+
+	// --- Category 9: Syntax Errors (Should return NULL) ---
 	printf("\n======================================================\n");
 	printf("TESTING SYNTAX ERRORS (Should return [NULL])\n");
 	printf("======================================================\n");
