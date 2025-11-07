@@ -5,6 +5,7 @@
 # define FAIL_STATUS 1
 
 #include "libshell.h"
+#include "ast.h"
 
 extern int child_status;
 

@@ -9,7 +9,7 @@ int	main(int argc, char *argv[], char **envp)
 
 	(void)argc;
 	(void)argv;
-	data.root = ft_cmd3();
+	data.root = ft_cmd1();
 	data.tree = data.root;
 	data.fds = NULL;
 	g_signal = 0;
@@ -26,6 +26,6 @@ int	main(int argc, char *argv[], char **envp)
 		i++;
 	}
 	free_fds(&data.fds);
-	free_tree(&data.tree);
+	free_tree(&data.root);
 	return(g_signal);
 }

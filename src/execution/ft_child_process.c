@@ -18,7 +18,7 @@ void	ft_child_process(t_data	*data, int i, char **envp)
 	args = node->cmd->args;
 	cmd_path = get_command_path(args, envp);
 	ft_closing_all(&fds);
-	if (args && args[0])
+	if (args && args[0] && cmd_path)
 		execve(cmd_path, args, envp);
 	if (!cmd_path)
 	{
@@ -27,9 +27,10 @@ void	ft_child_process(t_data	*data, int i, char **envp)
 			ft_putstr_fd(args[0], 2);
 			ft_putstr_fd(": command not found\n", 2);
 		}
-		free(cmd_path);
 		secure_exit(data, CMD_NOT_FOUND);
 	}
+	if (cmd_path)
+			free(cmd_path);
 	secure_exit(data, FAIL_STATUS);
 }
 

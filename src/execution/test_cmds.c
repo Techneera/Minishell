@@ -105,7 +105,7 @@ t_ast	*bonus_cmd()
 
 t_ast	*ft_cmd1()
 {
-    t_ast *ast_c1 = new_cmd_node(dup_args((const char *[]){"cat", NULL}));
+    t_ast *ast_c1 = new_cmd_node(dup_args((const char *[]){"banana", NULL}));
     t_ast *ast_c2 = new_cmd_node(dup_args((const char *[]){"sort", "-r", NULL}));
     t_ast *ast_c3 = new_cmd_node(dup_args((const char *[]){"uniq", "-r", NULL}));
     t_ast *ast_c4 = new_cmd_node(dup_args((const char *[]){"head", "-n", "5", NULL}));
@@ -113,7 +113,7 @@ t_ast	*ft_cmd1()
     ast_c1->cmd->redir_count = 1;
     ast_c1->cmd->redirs = ft_calloc(sizeof(t_redir), 1);
     ast_c1->cmd->redirs[0].file_name = strdup("file_list.txt");
-    ast_c1->cmd->redirs[0].label = REDIR_IN;
+    ast_c1->cmd->redirs[0].label = REDIR_OUT;
 
     t_ast *ast_pipe1 = new_op_node(NODE_PIPE, ast_c1, ast_c2);
     t_ast *ast_pipe2 = new_op_node(NODE_PIPE, ast_pipe1, ast_c3);
@@ -130,7 +130,7 @@ t_ast	*ft_cmd2()
     ast_c1->cmd->redir_count = 3;
     ast_c1->cmd->redirs = ft_calloc(sizeof(t_redir), ast_c1->cmd->redir_count);
     ast_c1->cmd->redirs[0].file_name = strdup("o1");
-    ast_c1->cmd->redirs[0].label = REDIR_OUT;
+    ast_c1->cmd->redirs[0].label = REDIR_IN;
     ast_c1->cmd->redirs[1].file_name = strdup("o2");
     ast_c1->cmd->redirs[1].label = REDIR_OUT;
     ast_c1->cmd->redirs[2].file_name = strdup("o3");
