@@ -47,6 +47,7 @@ int	ft_exec_tree(t_data	*data, int i, char **envp)
 	else if (node->type == NODE_SUBSHELL)
 	{
 		apply_redirs_subshell(data);
+		data->tree = node->body;
 		i = ft_exec_tree(data, i, envp);
 		dup2(STDIN_FILENO, STDIN_FILENO);
 		dup2(STDOUT_FILENO, STDOUT_FILENO);
