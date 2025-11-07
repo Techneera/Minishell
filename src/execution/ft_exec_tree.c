@@ -144,7 +144,7 @@ static int	execute_and(t_data	*data, int i, char **envp)
 			ft_child_process(&new_data, i, envp);
 		}
 	}
-	if (node->type == NODE_PIPE)
+	if (node->type == NODE_PIPE || node->type == NODE_SUBSHELL)
 		ft_exec_tree(&new_data, -1, envp);
 	ft_closing_all(&new_data.fds);
 	if (new_data.fds && new_data.fds->c_pids)
@@ -215,7 +215,7 @@ static int	execute_or(t_data	*data, int i, char **envp)
 			ft_child_process(&new_data, i, envp);
 		}
 	}
-	if (node->type == NODE_PIPE)
+	if (node->type == NODE_PIPE || node->type == NODE_SUBSHELL)
 		ft_exec_tree(&new_data, -1, envp);
 	ft_closing_all(&new_data.fds);
 	wait_bonus(new_data.fds);
