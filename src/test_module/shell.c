@@ -31,6 +31,7 @@ void	loop(char **envp)
 		line = readline(PROMPT);
 		if (!line)
 			break ;
+		add_history(line);
 		if (!ft_strcmp(line, "exit"))
 			return (free(line));
 		lexer = ft_state_lexer(line);
