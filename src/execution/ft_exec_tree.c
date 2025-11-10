@@ -162,13 +162,15 @@ static int	execute_and(t_data	*data, int i, char **envp)
 		if (holder->left)
 		{
 			new_data.tree = holder->left;
-			i = execute_and(&new_data, i, envp);
+			if (execute_and(&new_data, i, envp) != 0)
+				return (free_fds(&new_data.fds), -1);
 		}
 		if (holder->right)
 		{
 			new_data.tree = holder->right;
-			i = execute_and(&new_data, i, envp);
-		}
+			if (execute_and(&new_data, i, envp) != 0)
+				return (free_fds(&new_data.fds), -1);
+		}		
 	}
 	if (new_data.tree->type == NODE_OR)
 	{
@@ -178,14 +180,14 @@ static int	execute_and(t_data	*data, int i, char **envp)
 		if (holder->left)
 		{
 			new_data.tree = holder->left;
-			if (execute_and(&new_data, i, envp) == 0)
-				return (free_fds(&new_data.fds), -1);
+			if (execute_or(&new_data, i, envp) == 0)
+				return (free_fds(&new_data.fds), 0);
 		}
 		if (holder->right)
 		{
 			new_data.tree = holder->right;
-			if (execute_and(&new_data, i, envp) == 0)
-				return (free_fds(&new_data.fds), -1);
+			if (execute_or(&new_data, i, envp) == 0)
+				return (free_fds(&new_data.fds), 0);
 		}		
 	}
 	return (0);
@@ -228,13 +230,15 @@ static int	execute_or(t_data	*data, int i, char **envp)
 		if (holder->left)
 		{
 			new_data.tree = holder->left;
-			i = execute_and(&new_data, i, envp);
+			if (execute_and(&new_data, i, envp) != 0)
+				return (free_fds(&new_data.fds), -1);
 		}
 		if (holder->right)
 		{
 			new_data.tree = holder->right;
-			i = execute_and(&new_data, i, envp);
-		}
+			if (execute_and(&new_data, i, envp) != 0)
+				return (free_fds(&new_data.fds), -1);
+		}		
 	}
 	if (new_data.tree->type == NODE_OR)
 	{
@@ -244,14 +248,14 @@ static int	execute_or(t_data	*data, int i, char **envp)
 		if (holder->left)
 		{
 			new_data.tree = holder->left;
-			if (execute_and(&new_data, i, envp) == 0)
-				return (free_fds(&new_data.fds), -1);
+			if (execute_or(&new_data, i, envp) == 0)
+				return (free_fds(&new_data.fds), 0);
 		}
 		if (holder->right)
 		{
 			new_data.tree = holder->right;
-			if (execute_and(&new_data, i, envp) == 0)
-				return (free_fds(&new_data.fds), -1);
+			if (execute_or(&new_data, i, envp) == 0)
+				return (free_fds(&new_data.fds), 0);
 		}		
 	}
 	return (0);
