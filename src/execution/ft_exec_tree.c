@@ -1,47 +1,20 @@
 #include "execution.h"
 
 static int	execute_pipe(t_data	*data, char **envp);
-static int	execute_cmd(t_data	*data, char **envp);
 static int	execute_and(t_data	*data, char **envp);
 static int	execute_or(t_data	*data, char **envp);
 
 int	ft_exec_tree(t_data	*data, char **envp)
 {
-	int	old_pos_file;
-	int	old_pos_doc;
 	t_fds	*fds;
 	t_ast	*node;
 
 	fds = data->fds;
 	node = data->tree;
-	old_pos_file = fds->pos.file_id;
-	old_pos_doc = fds->pos.doc_id;
 	if (node == NULL || !fds)
 		return (0);
 	if (node->type == NODE_CMD)
-	{
-		execute_cmd(data, envp);
-		if (fds->pos.pipe_id < fds->get.n_pipes)
-		{
-			if (fds->pos.pipe_id > 1)
-				secure_close(&fds->pipe_fds[fds->pos.pipe_id - 1][0]);
-			if (fds->pos.pipe_id == fds->get.n_pipes)
-				secure_close(&fds->pipe_fds[fds->pos.pipe_id][0]);
-			secure_close(&fds->pipe_fds[fds->pos.pipe_id][1]);
-		}
-		while (old_pos_file < fds->pos.file_id) 
-		{
-			secure_close(&fds->fd_files[old_pos_file]);
-			old_pos_file++;
-		}
-		while (old_pos_doc < fds->pos.doc_id) 
-		{
-			secure_close(&fds->heredoc_fds[old_pos_doc][0]);
-			secure_close(&fds->heredoc_fds[old_pos_doc][1]);
-			old_pos_doc++;
-		}
-		fds->pos.pipe_id++;
-	}
+		ft_execute_cmd(data, envp);
 	else if (node->type == NODE_PIPE)
 		execute_pipe(data, envp);
 	else if (node->type == NODE_SUBSHELL)
@@ -76,33 +49,6 @@ static int	execute_pipe(t_data	*data, char **envp)
 	{
 		data->tree = holder->right;
 		ft_exec_tree(data, envp);
-	}
-	return (0);
-}
-
-static int	execute_cmd(t_data	*data, char **envp)
-{
-	pid_t	pid;
-	t_fds	*fds;
-	t_ast	*node;
-	int		j;
-
-	fds = data->fds;
-	node = data->tree;
-	j = 0;
-	if (!data->tree)
-		return (0);
-	if (!init_pid(&pid, &fds))
-		secure_exit(data, FAIL_STATUS);
-	if (pid == 0)
-		ft_child_process(data, envp);
-	while (j < node->cmd->redir_count)
-	{
-		if (node->cmd->redirs[j].label != REDIR_HEREDOCK)
-			fds->pos.file_id++;
-		else
-			fds->pos.doc_id++;
-		j++;
 	}
 	return (0);
 }

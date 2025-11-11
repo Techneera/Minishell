@@ -50,6 +50,10 @@ t_ast	*ft_cmd3();
 t_ast	*bonus_cmd();
 
 
+//---ft_execute_cmd
+void	ft_execute_cmd(t_data *data, char **envp);
+
+
 int	ft_execution(t_ast **root, char **envp);
 
 //---init_files
