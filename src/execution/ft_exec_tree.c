@@ -1,11 +1,11 @@
 #include "execution.h"
 
-static int	execute_pipe(t_data	*data, int i, char **envp);
-static int	execute_cmd(t_data	*data, int i, char **envp);
-static int	execute_and(t_data	*data, int i, char **envp);
-static int	execute_or(t_data	*data, int i, char **envp);
+static int	execute_pipe(t_data	*data, char **envp);
+static int	execute_cmd(t_data	*data, char **envp);
+static int	execute_and(t_data	*data, char **envp);
+static int	execute_or(t_data	*data, char **envp);
 
-int	ft_exec_tree(t_data	*data, int i, char **envp)
+int	ft_exec_tree(t_data	*data, char **envp)
 {
 	int	old_pos_file;
 	int	old_pos_doc;
@@ -20,14 +20,14 @@ int	ft_exec_tree(t_data	*data, int i, char **envp)
 		return (0);
 	if (node->type == NODE_CMD)
 	{
-		i = execute_cmd(data, i, envp);
-		if (i < fds->get.n_pipes)
+		execute_cmd(data, envp);
+		if (fds->pos.pipe_id < fds->get.n_pipes)
 		{
-			if (i > 1)
-				secure_close(&fds->pipe_fds[i - 1][0]);
-			if (i == fds->get.n_pipes)
-				secure_close(&fds->pipe_fds[i][0]);
-			secure_close(&fds->pipe_fds[i][1]);
+			if (fds->pos.pipe_id > 1)
+				secure_close(&fds->pipe_fds[fds->pos.pipe_id - 1][0]);
+			if (fds->pos.pipe_id == fds->get.n_pipes)
+				secure_close(&fds->pipe_fds[fds->pos.pipe_id][0]);
+			secure_close(&fds->pipe_fds[fds->pos.pipe_id][1]);
 		}
 		while (old_pos_file < fds->pos.file_id) 
 		{
@@ -40,10 +40,10 @@ int	ft_exec_tree(t_data	*data, int i, char **envp)
 			secure_close(&fds->heredoc_fds[old_pos_doc][1]);
 			old_pos_doc++;
 		}
-		i++;
+		fds->pos.pipe_id++;
 	}
 	else if (node->type == NODE_PIPE)
-		i = execute_pipe(data, i, envp);
+		execute_pipe(data, envp);
 	else if (node->type == NODE_SUBSHELL)
 	{
 		t_data holder;
@@ -51,18 +51,18 @@ int	ft_exec_tree(t_data	*data, int i, char **envp)
 		holder = *data;
 		holder.tree = node->body;
 		apply_redirs_subshell(data);
-		i = ft_exec_tree(&holder, i, envp);
+		ft_exec_tree(&holder, envp);
 		dup2(STDIN_FILENO, STDIN_FILENO);
 		dup2(STDOUT_FILENO, STDOUT_FILENO);
 	}
 	else if (node->type == NODE_AND)
-		i = execute_and(data, 0, envp);
+		execute_and(data, envp);
 	else if (node->type == NODE_OR)
-	 	i = execute_or(data, 0, envp);
-	return (i);
+	 	execute_or(data, envp);
+	return (0);
 }
 
-static int	execute_pipe(t_data	*data, int i, char **envp)
+static int	execute_pipe(t_data	*data, char **envp)
 {
 	t_ast	*holder;
 
@@ -70,17 +70,17 @@ static int	execute_pipe(t_data	*data, int i, char **envp)
 	if (holder->left)
 	{
 		data->tree = holder->left;
-		i = ft_exec_tree(data, i, envp);
+		ft_exec_tree(data, envp);
 	}
 	if (holder->right)
 	{
 		data->tree = holder->right;
-		i = ft_exec_tree(data, i, envp);
+		ft_exec_tree(data, envp);
 	}
-	return (i);
+	return (0);
 }
 
-static int	execute_cmd(t_data	*data, int i, char **envp)
+static int	execute_cmd(t_data	*data, char **envp)
 {
 	pid_t	pid;
 	t_fds	*fds;
@@ -91,11 +91,11 @@ static int	execute_cmd(t_data	*data, int i, char **envp)
 	node = data->tree;
 	j = 0;
 	if (!data->tree)
-		return (i);
+		return (0);
 	if (!init_pid(&pid, &fds))
 		secure_exit(data, FAIL_STATUS);
 	if (pid == 0)
-		ft_child_process(data, i, envp);
+		ft_child_process(data, envp);
 	while (j < node->cmd->redir_count)
 	{
 		if (node->cmd->redirs[j].label != REDIR_HEREDOCK)
@@ -104,7 +104,7 @@ static int	execute_cmd(t_data	*data, int i, char **envp)
 			fds->pos.doc_id++;
 		j++;
 	}
-	return (i);
+	return (0);
 }
 
 static int	wait_bonus(t_fds *new_fds)
@@ -123,7 +123,7 @@ static int	wait_bonus(t_fds *new_fds)
 	return(signal);
 }
 
-static int	execute_and(t_data	*data, int i, char **envp)
+static int	execute_and(t_data	*data, char **envp)
 {
 	t_data	new_data;
 	t_ast	*node;
@@ -144,11 +144,11 @@ static int	execute_and(t_data	*data, int i, char **envp)
 		if (pid == 0)
 		{
 			free_fds(&data->fds);
-			ft_child_process(&new_data, i, envp);
+			ft_child_process(&new_data, envp);
 		}
 	}
 	if (node->type == NODE_PIPE || node->type == NODE_SUBSHELL)
-		ft_exec_tree(&new_data, 0, envp);
+		ft_exec_tree(&new_data, envp);
 	ft_closing_all(&new_data.fds);
 	if (new_data.fds && new_data.fds->c_pids)
 	{
@@ -165,13 +165,13 @@ static int	execute_and(t_data	*data, int i, char **envp)
 		if (holder->left)
 		{
 			new_data.tree = holder->left;
-			if (execute_and(&new_data, 0, envp) != 0)
+			if (execute_and(&new_data, envp) != 0)
 				return (free_fds(&new_data.fds), -1);
 		}
 		if (holder->right)
 		{
 			new_data.tree = holder->right;
-			if (execute_and(&new_data, 0, envp) != 0)
+			if (execute_and(&new_data, envp) != 0)
 				return (free_fds(&new_data.fds), -1);
 		}		
 	}
@@ -183,20 +183,20 @@ static int	execute_and(t_data	*data, int i, char **envp)
 		if (holder->left)
 		{
 			new_data.tree = holder->left;
-			if (execute_or(&new_data, 0, envp) == 0)
+			if (execute_or(&new_data, envp) == 0)
 				return (free_fds(&new_data.fds), 0);
 		}
 		if (holder->right)
 		{
 			new_data.tree = holder->right;
-			if (execute_or(&new_data, 0, envp) == 0)
+			if (execute_or(&new_data, envp) == 0)
 				return (free_fds(&new_data.fds), 0);
 		}		
 	}
 	return (0);
 }
 
-static int	execute_or(t_data	*data, int i, char **envp)
+static int	execute_or(t_data	*data, char **envp)
 {
 	t_data	new_data;
 	t_ast	*node;
@@ -217,11 +217,11 @@ static int	execute_or(t_data	*data, int i, char **envp)
 		if (pid == 0)
 		{
 			free_fds(&data->fds);
-			ft_child_process(&new_data, i, envp);
+			ft_child_process(&new_data, envp);
 		}
 	}
 	if (node->type == NODE_PIPE || node->type == NODE_SUBSHELL)
-		ft_exec_tree(&new_data, -1, envp);
+		ft_exec_tree(&new_data, envp);
 	ft_closing_all(&new_data.fds);
 	wait_bonus(new_data.fds);
 	free_fds(&new_data.fds);
@@ -233,13 +233,13 @@ static int	execute_or(t_data	*data, int i, char **envp)
 		if (holder->left)
 		{
 			new_data.tree = holder->left;
-			if (execute_and(&new_data, 0, envp) != 0)
+			if (execute_and(&new_data, envp) != 0)
 				return (free_fds(&new_data.fds), -1);
 		}
 		if (holder->right)
 		{
 			new_data.tree = holder->right;
-			if (execute_and(&new_data, 0, envp) != 0)
+			if (execute_and(&new_data, envp) != 0)
 				return (free_fds(&new_data.fds), -1);
 		}		
 	}
@@ -251,13 +251,13 @@ static int	execute_or(t_data	*data, int i, char **envp)
 		if (holder->left)
 		{
 			new_data.tree = holder->left;
-			if (execute_or(&new_data, 0, envp) == 0)
+			if (execute_or(&new_data, envp) == 0)
 				return (free_fds(&new_data.fds), 0);
 		}
 		if (holder->right)
 		{
 			new_data.tree = holder->right;
-			if (execute_or(&new_data, 0, envp) == 0)
+			if (execute_or(&new_data, envp) == 0)
 				return (free_fds(&new_data.fds), 0);
 		}		
 	}

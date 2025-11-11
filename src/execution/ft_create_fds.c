@@ -15,6 +15,8 @@ void	ft_create_fds(t_data *data)
 	if (!fds)
 		secure_exit(data, FAIL_STATUS);
 	fds->pos.file_id = 0;
+	fds->pos.doc_id = 0;
+	fds->pos.pipe_id = 0;
 	get_sizes(ast_root, &fds);
 	init_pipe(data, &fds, &(fds->pipe_fds));
 	if (fds->get.n_files > 0)

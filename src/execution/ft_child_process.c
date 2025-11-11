@@ -1,10 +1,10 @@
 #include "execution.h"
 
-void	apply_std_dup(t_data *data, int i);
+void	apply_std_dup(t_data *data);
 void	apply_redirs_dup(t_data *data, t_ast **node);
 static void	heredoc_dup(t_data *data, int r);
 
-void	ft_child_process(t_data	*data, int i, char **envp)
+void	ft_child_process(t_data	*data, char **envp)
 {
 	char	*cmd_path;
 	char	**args;	
@@ -13,7 +13,7 @@ void	ft_child_process(t_data	*data, int i, char **envp)
 
 	fds = data->fds;
 	node = data->tree;
-	apply_std_dup(data, i);
+	apply_std_dup(data);
 	apply_redirs_dup(data, &node);
 	args = node->cmd->args;
 	cmd_path = get_command_path(args, envp);
@@ -34,19 +34,19 @@ void	ft_child_process(t_data	*data, int i, char **envp)
 	secure_exit(data, FAIL_STATUS);
 }
 
-void	apply_std_dup(t_data *data, int i)
+void	apply_std_dup(t_data *data)
 {
 	t_fds	*fds;
 
 	fds = data->fds;
-	if (i > 0 && fds->get.n_pipes > 0)
+	if (fds->pos.pipe_id > 0 && fds->get.n_pipes > 0)
 	{
-		if (dup2(fds->pipe_fds[i - 1][0], STDIN_FILENO) == -1)
+		if (dup2(fds->pipe_fds[fds->pos.pipe_id - 1][0], STDIN_FILENO) == -1)
 			secure_exit(data, CMD_NOT_FOUND);
 	}
-	if (i < fds->get.n_pipes)
+	if (fds->pos.pipe_id < fds->get.n_pipes)
 	{
-		if (dup2(fds->pipe_fds[i][1], STDOUT_FILENO) == -1)
+		if (dup2(fds->pipe_fds[fds->pos.pipe_id][1], STDOUT_FILENO) == -1)
 			secure_exit(data, CMD_NOT_FOUND);
 	}
 }

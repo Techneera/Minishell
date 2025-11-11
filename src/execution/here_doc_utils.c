@@ -10,7 +10,6 @@ void	init_heredoc(t_data *data)
 
 	fds = data->fds;
 	node = data->tree;
-	fds->pos.doc_id = 0;
 	fds->heredoc_fds = NULL;
 	if (fds->get.n_docs > 0)
 	{

@@ -15,7 +15,7 @@ int	ft_execution(t_ast **root, char **envp)
 	if (!data.tree)
 		return (-1);
 	ft_create_fds(&data);
-	ft_exec_tree(&data, 0, envp);
+	ft_exec_tree(&data, envp);
 	ft_closing_all(&data.fds);
 	i = 0;
 	while(i < data.fds->get.n_cmds && waitpid(data.fds->c_pids[i], &child_status, 0) > 0)

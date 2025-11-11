@@ -21,6 +21,7 @@ typedef struct s_pos
 {
 	int	file_id;
 	int	doc_id;
+	int	pipe_id;
 }	t_pos;
 
 typedef struct s_fds
@@ -38,6 +39,7 @@ typedef struct s_data
 	t_ast	*root;
 	t_ast	*tree;
 	t_fds	*fds;
+	char	**envp;
 }	t_data;
 
 
@@ -75,8 +77,8 @@ void	secure_close(int *fd);
 int	here_doc(char *lim, int **fd);
 
 //---ft_child_process
-void	ft_child_process(t_data	*data, int i, char **envp);
-void	apply_std_dup(t_data *data, int i);
+void	ft_child_process(t_data	*data, char **envp);
+void	apply_std_dup(t_data *data);
 void	apply_redirs_dup(t_data *data, t_ast **node);
 
 //--ft_closing_all
@@ -85,7 +87,7 @@ void	ft_closing_all(t_fds **fds);
 //		ft_execution
 int		number_of_cmds(t_ast *ast_root);
 void	ft_create_fds(t_data *data);
-int		ft_exec_tree(t_data	*data, int i, char **envp);
+int		ft_exec_tree(t_data	*data, char **envp);
 void	ft_closing_all(t_fds **fds);
 void	init_heredoc(t_data *data);
 
