@@ -46,16 +46,19 @@ int	ft_exec_tree(t_data	*data, int i, char **envp)
 		i = execute_pipe(data, i, envp);
 	else if (node->type == NODE_SUBSHELL)
 	{
+		t_data holder;
+
+		holder = *data;
+		holder.tree = node->body;
 		apply_redirs_subshell(data);
-		data->tree = node->body;
-		i = ft_exec_tree(data, i, envp);
+		i = ft_exec_tree(&holder, i, envp);
 		dup2(STDIN_FILENO, STDIN_FILENO);
 		dup2(STDOUT_FILENO, STDOUT_FILENO);
 	}
 	else if (node->type == NODE_AND)
-		i = execute_and(data, i, envp);
+		i = execute_and(data, 0, envp);
 	else if (node->type == NODE_OR)
-	 	i = execute_or(data, i, envp);
+	 	i = execute_or(data, 0, envp);
 	return (i);
 }
 
@@ -145,7 +148,7 @@ static int	execute_and(t_data	*data, int i, char **envp)
 		}
 	}
 	if (node->type == NODE_PIPE || node->type == NODE_SUBSHELL)
-		ft_exec_tree(&new_data, -1, envp);
+		ft_exec_tree(&new_data, 0, envp);
 	ft_closing_all(&new_data.fds);
 	if (new_data.fds && new_data.fds->c_pids)
 	{
@@ -162,13 +165,13 @@ static int	execute_and(t_data	*data, int i, char **envp)
 		if (holder->left)
 		{
 			new_data.tree = holder->left;
-			if (execute_and(&new_data, i, envp) != 0)
+			if (execute_and(&new_data, 0, envp) != 0)
 				return (free_fds(&new_data.fds), -1);
 		}
 		if (holder->right)
 		{
 			new_data.tree = holder->right;
-			if (execute_and(&new_data, i, envp) != 0)
+			if (execute_and(&new_data, 0, envp) != 0)
 				return (free_fds(&new_data.fds), -1);
 		}		
 	}
@@ -180,13 +183,13 @@ static int	execute_and(t_data	*data, int i, char **envp)
 		if (holder->left)
 		{
 			new_data.tree = holder->left;
-			if (execute_or(&new_data, i, envp) == 0)
+			if (execute_or(&new_data, 0, envp) == 0)
 				return (free_fds(&new_data.fds), 0);
 		}
 		if (holder->right)
 		{
 			new_data.tree = holder->right;
-			if (execute_or(&new_data, i, envp) == 0)
+			if (execute_or(&new_data, 0, envp) == 0)
 				return (free_fds(&new_data.fds), 0);
 		}		
 	}
@@ -230,13 +233,13 @@ static int	execute_or(t_data	*data, int i, char **envp)
 		if (holder->left)
 		{
 			new_data.tree = holder->left;
-			if (execute_and(&new_data, i, envp) != 0)
+			if (execute_and(&new_data, 0, envp) != 0)
 				return (free_fds(&new_data.fds), -1);
 		}
 		if (holder->right)
 		{
 			new_data.tree = holder->right;
-			if (execute_and(&new_data, i, envp) != 0)
+			if (execute_and(&new_data, 0, envp) != 0)
 				return (free_fds(&new_data.fds), -1);
 		}		
 	}
@@ -248,13 +251,13 @@ static int	execute_or(t_data	*data, int i, char **envp)
 		if (holder->left)
 		{
 			new_data.tree = holder->left;
-			if (execute_or(&new_data, i, envp) == 0)
+			if (execute_or(&new_data, 0, envp) == 0)
 				return (free_fds(&new_data.fds), 0);
 		}
 		if (holder->right)
 		{
 			new_data.tree = holder->right;
-			if (execute_or(&new_data, i, envp) == 0)
+			if (execute_or(&new_data, 0, envp) == 0)
 				return (free_fds(&new_data.fds), 0);
 		}		
 	}
