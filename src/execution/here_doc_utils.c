@@ -15,7 +15,7 @@ void	init_heredoc(t_data *data)
 	{
 		fds->heredoc_fds = ft_calloc(fds->get.n_docs, sizeof(int *));
 		if (!fds->heredoc_fds)
-			exit(1);
+			secure_exit(data, 1);
 		if (!malloc_heredoc(&fds))
 			secure_exit(data, 1);
 		if (!fill_heredoc(&fds, node, 0))
