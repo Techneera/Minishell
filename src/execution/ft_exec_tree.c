@@ -18,16 +18,7 @@ int	ft_exec_tree(t_data	*data, char **envp)
 	else if (node->type == NODE_PIPE)
 		execute_pipe(data, envp);
 	else if (node->type == NODE_SUBSHELL)
-	{
-		t_data holder;
-
-		holder = *data;
-		holder.tree = node->body;
-		apply_redirs_subshell(data);
-		ft_exec_tree(&holder, envp);
-		dup2(STDIN_FILENO, STDIN_FILENO);
-		dup2(STDOUT_FILENO, STDOUT_FILENO);
-	}
+		ft_execute_sshell(data, envp);
 	else if (node->type == NODE_AND)
 		execute_and(data, envp);
 	else if (node->type == NODE_OR)

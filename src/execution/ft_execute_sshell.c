@@ -1,6 +1,6 @@
 #include "execution.h"
 
-void	ft_execute_cmd(t_data *data, char **envp)
+void	ft_execute_sshell(t_data *data, char **envp)
 {
 	pid_t	pid;
 
@@ -10,7 +10,10 @@ void	ft_execute_cmd(t_data *data, char **envp)
 		secure_exit(data, FAIL_STATUS);
 	if (pid == 0)
 	{
-		ft_child_process(data, envp);
+		apply_std_dup(data);
+		apply_redirs_subshell(data);
+		data->tree = data->tree->body;
+		ft_exec_tree(data, envp);
 		secure_exit(data, 42);
 	}
 	update_positions(data);

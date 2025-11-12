@@ -49,10 +49,14 @@ t_ast	*ft_cmd2();
 t_ast	*ft_cmd3();
 t_ast	*bonus_cmd();
 
+//---ft_update_position
+void	update_positions(t_data *data);
+
+//---ft_execute_sshell
+void	ft_execute_sshell(t_data *data, char **envp);
 
 //---ft_execute_cmd
 void	ft_execute_cmd(t_data *data, char **envp);
-
 
 int	ft_execution(t_ast **root, char **envp);
 
