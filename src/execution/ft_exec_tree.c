@@ -64,26 +64,16 @@ static int	execute_and(t_data	*data, char **envp)
 {
 	t_data	new_data;
 	t_ast	*node;
-	pid_t 	pid;
 
+	ft_closing_all(&data->fds);
+	free_fds(&data->fds);
 	new_data = *data;
 	node = new_data.tree;
 	if (node == NULL)
 		return (0);
 	ft_create_fds(&new_data);	
 	if (node->type == NODE_CMD)
-	{
-		if (!init_pid(&pid, &new_data.fds))
-		{
-			free_fds(&new_data.fds);
-			secure_exit(data, 1);
-		}
-		if (pid == 0)
-		{
-			free_fds(&data->fds);
-			ft_child_process(&new_data, envp);
-		}
-	}
+		ft_execute_cmd(&new_data, envp);
 	if (node->type == NODE_PIPE || node->type == NODE_SUBSHELL)
 		ft_exec_tree(&new_data, envp);
 	ft_closing_all(&new_data.fds);

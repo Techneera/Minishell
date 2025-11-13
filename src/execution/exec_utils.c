@@ -12,6 +12,7 @@ void	free_tree(t_ast **ast_root)
 {
 	if (!(*ast_root))
 		return ;
+	free_tree(&(*ast_root)->body);
 	free_tree(&(*ast_root)->left);
 	free_tree(&(*ast_root)->right);
 	if ((*ast_root)->cmd)
