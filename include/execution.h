@@ -12,7 +12,6 @@ extern int child_status;
 typedef struct s_get
 {
 	int	n_files;
-	int	n_pipes;
 	int	n_cmds;
 	int	n_docs;
 }	t_get;
@@ -21,12 +20,11 @@ typedef struct s_pos
 {
 	int	file_id;
 	int	doc_id;
-	int	pipe_id;
+	int	fork_id;
 }	t_pos;
 
 typedef struct s_fds
 {
-	int		**pipe_fds;
 	int		**heredoc_fds;
 	int		*fd_files;
 	int		*c_pids;
@@ -40,6 +38,7 @@ typedef struct s_data
 	t_ast	*tree;
 	t_fds	*fds;
 	char	**envp;
+	int		status;
 }	t_data;
 
 
@@ -48,6 +47,13 @@ t_ast	*ft_cmd1();
 t_ast	*ft_cmd2();
 t_ast	*ft_cmd3();
 t_ast	*bonus_cmd();
+
+//--ft_child_sshel
+void	ft_child_sshell(t_data *data, char **envp);
+
+
+//---ft_execute_pipe
+void ft_execute_pipe(t_data *data, char **envp);
 
 //---ft_update_position
 void	update_positions(t_data *data);
@@ -70,7 +76,8 @@ void	free_fds(t_fds **fds);
 void	free_tree(t_ast **ast_root);
 int		ft_arraylen(void **ptr);
 int		init_pid(pid_t *pid, t_fds **fds);
-void	get_sizes(t_ast *ast_root, t_fds **fds);
+void	get_sizes(t_ast *ast_root, t_fds **fds, int inside_sshell);
+int	docs_bonus(t_ast *ast_root, t_fds **fds);
 
 //---ft_getters
 char	*get_command_path(char **arg, char **env);
@@ -84,8 +91,8 @@ void	secure_close(int *fd);
 //---ft_here_doc
 int	here_doc(char *lim, int **fd);
 
-//---ft_child_process
-void	ft_child_process(t_data	*data, char **envp);
+//---ft_child_cmd
+void	ft_child_cmd(t_data	*data, char **envp);
 void	apply_std_dup(t_data *data);
 void	apply_redirs_dup(t_data *data, t_ast **node);
 

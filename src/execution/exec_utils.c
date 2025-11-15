@@ -37,8 +37,6 @@ void	free_fds(t_fds **fds)
 {
 	if (!(*fds))
 		return ;
-	if ((*fds)->pipe_fds)
-		free_all((void **) (*fds)->pipe_fds, (*fds)->get.n_pipes);
 	if ((*fds)->heredoc_fds)
 		free_all((void **) (*fds)->heredoc_fds, (*fds)->get.n_docs);
 	if ((*fds)->fd_files)
@@ -66,21 +64,49 @@ int	number_of_cmds(t_ast *ast_root)
 		return (depth_left + depth_right);
 }
 
-void	get_sizes(t_ast *ast_root, t_fds **fds)
+int	docs_bonus(t_ast *ast_root, t_fds **fds)
+{
+	int	i;
+	int	j;
+
+	i = 0;
+	j = 0;
+	if (!ast_root)
+		return (i);
+	i += docs_bonus(ast_root->body, fds);
+	i += docs_bonus(ast_root->left, fds);
+	i += docs_bonus(ast_root->right, fds);
+	if (ast_root->type == NODE_CMD || ast_root->type == NODE_SUBSHELL)
+	{
+		while (j < ast_root->cmd->redir_count)
+		{
+			if (ast_root->cmd->redirs[j].label == REDIR_HEREDOCK)
+				i++;
+			j++;
+		}
+	}
+	return (i);
+}
+
+void	get_sizes(t_ast *ast_root, t_fds **fds, int inside_sshell)
 {
 	int	i;
 
 	if (!ast_root)
 		return ;
 	if (ast_root->type == NODE_AND || ast_root->type == NODE_OR)
+	{
+		(*fds)->get.n_docs += docs_bonus(ast_root, fds);
 		return ;
+	}
 	i = 0;
-	get_sizes(ast_root->body, fds);
-	get_sizes(ast_root->left, fds);
-	get_sizes(ast_root->right, fds);
+	if (ast_root->type == NODE_SUBSHELL)
+		get_sizes(ast_root->body, fds, 1);
+	get_sizes(ast_root->left, fds, inside_sshell);
+	get_sizes(ast_root->right, fds, inside_sshell);
 	if (ast_root->type == NODE_CMD || ast_root->type == NODE_SUBSHELL)
 	{
-		if (ast_root->type == NODE_CMD || ast_root->type == NODE_SUBSHELL)
+		if (!inside_sshell)
 			(*fds)->get.n_cmds++;
 		while (i < ast_root->cmd->redir_count)
 		{
@@ -91,6 +117,5 @@ void	get_sizes(t_ast *ast_root, t_fds **fds)
 			i++;
 		}
 	}
-	else if (ast_root->type == NODE_PIPE)
-		(*fds)->get.n_pipes++;
 }
+

@@ -1,6 +1,5 @@
 #include "execution.h"
 
-static int	execute_pipe(t_data	*data, char **envp);
 static int	execute_and(t_data	*data, char **envp);
 static int	execute_or(t_data	*data, char **envp);
 
@@ -16,31 +15,13 @@ int	ft_exec_tree(t_data	*data, char **envp)
 	if (node->type == NODE_CMD)
 		ft_execute_cmd(data, envp);
 	else if (node->type == NODE_PIPE)
-		execute_pipe(data, envp);
+		ft_execute_pipe(data, envp);
 	else if (node->type == NODE_SUBSHELL)
 		ft_execute_sshell(data, envp);
 	else if (node->type == NODE_AND)
 		execute_and(data, envp);
 	else if (node->type == NODE_OR)
 	 	execute_or(data, envp);
-	return (0);
-}
-
-static int	execute_pipe(t_data	*data, char **envp)
-{
-	t_ast	*holder;
-
-	holder = data->tree;
-	if (holder->left)
-	{
-		data->tree = holder->left;
-		ft_exec_tree(data, envp);
-	}
-	if (holder->right)
-	{
-		data->tree = holder->right;
-		ft_exec_tree(data, envp);
-	}
 	return (0);
 }
 
@@ -144,7 +125,7 @@ static int	execute_or(t_data	*data, char **envp)
 		if (pid == 0)
 		{
 			free_fds(&data->fds);
-			ft_child_process(&new_data, envp);
+			ft_child_cmd(&new_data, envp);
 		}
 	}
 	if (node->type == NODE_PIPE || node->type == NODE_SUBSHELL)

@@ -9,9 +9,6 @@ void	ft_execute_cmd(t_data *data, char **envp)
 	if (!init_pid(&pid, &data->fds))
 		secure_exit(data, FAIL_STATUS);
 	if (pid == 0)
-	{
-		ft_child_process(data, envp);
-		secure_exit(data, 42);
-	}
+		ft_child_cmd(data, envp);
 	update_positions(data);
 }

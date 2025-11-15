@@ -47,11 +47,12 @@ static int	fill_heredoc(t_fds **fds, t_ast *node, int i)
 
 	y = 0;
 	r = 0;
-	if (node->left)
-		fill_heredoc(fds, node->left, i);
-	if (node->right)
-		fill_heredoc(fds, node->right, i);
-	if (!node->cmd && !node->cmd->redirs)
+	if (!node)
+		return (0);
+	fill_heredoc(fds, node->body, i);	
+	fill_heredoc(fds, node->left, i);
+	fill_heredoc(fds, node->right, i);
+	if (!node->cmd || !node->cmd->redirs)
 		return (2);
 	i++;
 	while (y < node->cmd->redir_count)

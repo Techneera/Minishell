@@ -46,10 +46,10 @@ PATH_OBJS_LEXER = $(patsubst %,$(OBJS_DIR)/lexer/%,$(OBJS_LEXER))
 
 #		---EXECUTION---			#
 
-SRCS_EXEC = add_libft.c exec_tree_utils.c exec_utils.c files_utils.c ft_child_process.c ft_exec_tree.c \
+SRCS_EXEC = add_libft.c exec_tree_utils.c exec_utils.c files_utils.c ft_child_cmd.c ft_exec_tree.c \
 			ft_fill_fds_file.c ft_getters.c ft_here_doc.c here_doc_utils.c ft_fill_fds_file.c test_cmds.c \
 			ft_closing_all.c ft_create_fds.c exec_tree_bonus.c ft_execution.c ft_execute_cmd.c ft_execute_sshell.c \
-			ft_update_position.c
+			ft_update_position.c ft_execute_pipe.c ft_child_sshell.c
 
 OBJS_EXEC = $(SRCS_EXEC:.c=.o)
 
