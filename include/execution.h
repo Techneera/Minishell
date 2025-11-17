@@ -93,15 +93,21 @@ int	here_doc(char *lim, int **fd);
 
 //---ft_child_cmd
 void	ft_child_cmd(t_data	*data, char **envp);
-void	apply_std_dup(t_data *data);
 void	apply_redirs_dup(t_data *data, t_ast **node);
 
 //--ft_closing_all
 void	ft_closing_all(t_fds **fds);
+void	closing_files(t_fds **fds);
 
 //		ft_execution
 int		number_of_cmds(t_ast *ast_root);
+
+//---ft_create_fds
 void	ft_create_fds(t_data *data);
+
+//---ft_create_fds_bonus
+void	ft_create_fds_bonus(t_data *data);
+
 int		ft_exec_tree(t_data	*data, char **envp);
 void	ft_closing_all(t_fds **fds);
 void	init_heredoc(t_data *data);

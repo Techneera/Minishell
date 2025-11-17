@@ -41,30 +41,44 @@ static int	wait_bonus(t_fds *new_fds)
 	return(signal);
 }
 
+void	free_fds_bonus(t_data	*data)
+{
+	closing_files(&data->fds);
+	if (data->fds->fd_files)
+		free(data->fds->fd_files);
+	if (data->fds->c_pids)
+		free(data->fds->c_pids);
+	data->fds->fd_files = NULL;
+	data->fds->c_pids = NULL;
+}
+
 static int	execute_and(t_data	*data, char **envp)
 {
 	t_data	new_data;
 	t_ast	*node;
 
-	ft_closing_all(&data->fds);
-	free_fds(&data->fds);
+	free_fds_bonus(data);
+
 	new_data = *data;
 	node = new_data.tree;
 	if (node == NULL)
 		return (0);
-	ft_create_fds(&new_data);	
+	ft_create_fds_bonus(&new_data);
 	if (node->type == NODE_CMD)
 		ft_execute_cmd(&new_data, envp);
 	if (node->type == NODE_PIPE || node->type == NODE_SUBSHELL)
 		ft_exec_tree(&new_data, envp);
-	ft_closing_all(&new_data.fds);
+	closing_files(&data->fds);
 	if (new_data.fds && new_data.fds->c_pids)
 	{
 		int value = wait_bonus(new_data.fds);
-		free_fds(&new_data.fds);
+		free_fds_bonus(data);
 		return (value);	
 	}
-	free_fds(&new_data.fds);
+	if (data->fds->fd_files)
+		free(data->fds->fd_files);
+	if (data->fds->c_pids)
+		free(data->fds->c_pids);
 	if (new_data.tree->type == NODE_AND)
 	{
 		t_ast	*holder;
@@ -74,13 +88,13 @@ static int	execute_and(t_data	*data, char **envp)
 		{
 			new_data.tree = holder->left;
 			if (execute_and(&new_data, envp) != 0)
-				return (free_fds(&new_data.fds), -1);
+				return (free_fds_bonus(data), -1);
 		}
 		if (holder->right)
 		{
 			new_data.tree = holder->right;
 			if (execute_and(&new_data, envp) != 0)
-				return (free_fds(&new_data.fds), -1);
+				return (free_fds_bonus(data), -1);
 		}		
 	}
 	if (new_data.tree->type == NODE_OR)
@@ -92,13 +106,13 @@ static int	execute_and(t_data	*data, char **envp)
 		{
 			new_data.tree = holder->left;
 			if (execute_or(&new_data, envp) == 0)
-				return (free_fds(&new_data.fds), 0);
+				return (free_fds_bonus(data), -1);
 		}
 		if (holder->right)
 		{
 			new_data.tree = holder->right;
 			if (execute_or(&new_data, envp) == 0)
-				return (free_fds(&new_data.fds), 0);
+				return (free_fds_bonus(data), -1);
 		}		
 	}
 	return (0);
@@ -114,7 +128,7 @@ static int	execute_or(t_data	*data, char **envp)
 	node = new_data.tree;
 	if (node == NULL)
 		return (0);
-	ft_create_fds(&new_data);
+	ft_create_fds_bonus(&new_data);
 	if (node->type == NODE_CMD)
 	{
 		if (!init_pid(&pid, &new_data.fds))

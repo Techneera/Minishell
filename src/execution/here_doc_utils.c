@@ -1,7 +1,7 @@
 #include "execution.h"
 
 static int	malloc_heredoc(t_fds **fds);
-static int	fill_heredoc(t_fds **fds, t_ast *node, int i);
+static int	fill_heredoc(t_data *data, t_ast *node, int i);
 
 void	init_heredoc(t_data *data)
 {
@@ -18,8 +18,7 @@ void	init_heredoc(t_data *data)
 			secure_exit(data, 1);
 		if (!malloc_heredoc(&fds))
 			secure_exit(data, 1);
-		if (!fill_heredoc(&fds, node, 0))
-			secure_exit(data, 1);
+		fill_heredoc(data, node, 0);
 	}
 }
 
@@ -40,30 +39,29 @@ static int	malloc_heredoc(t_fds **fds)
 	return (1);
 }
 
-static int	fill_heredoc(t_fds **fds, t_ast *node, int i)
+static int	fill_heredoc(t_data *data, t_ast *node, int i)
 {
-	int	y;
-	int	r;
+	int		y;
+	t_fds	*fds;
 
+	fds = data->fds;
 	y = 0;
-	r = 0;
 	if (!node)
-		return (0);
-	fill_heredoc(fds, node->body, i);	
-	fill_heredoc(fds, node->left, i);
-	fill_heredoc(fds, node->right, i);
+		return (i);
+	i = fill_heredoc(data, node->body, i);	
+	i = fill_heredoc(data, node->left, i);
+	i = fill_heredoc(data, node->right, i);
 	if (!node->cmd || !node->cmd->redirs)
-		return (2);
-	i++;
+		return (i);
 	while (y < node->cmd->redir_count)
 	{
 		if (node->cmd->redirs[y].label == REDIR_HEREDOCK)
 		{
-			if (!here_doc(node->cmd->redirs[y].file_name, &(*fds)->heredoc_fds[r]))
-				return (0);
-			r++;
+			if (!here_doc(node->cmd->redirs[y].file_name, &fds->heredoc_fds[i]))
+				return (secure_exit(data, 1), -1);
+			i++;
 		}
 		y++;
 	}
-	return (1);
+	return (i);
 }

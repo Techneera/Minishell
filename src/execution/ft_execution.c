@@ -18,7 +18,7 @@ int	ft_execution(t_ast **root, char **envp)
 	ft_exec_tree(&data, envp);
 	ft_closing_all(&data.fds);
 	i = 0;
-	while(data.fds && i < data.fds->get.n_cmds && waitpid(data.fds->c_pids[i], &child_status, 0) > 0)
+	while(data.fds && i < data.fds->get.n_cmds && data.fds->c_pids && waitpid(data.fds->c_pids[i], &child_status, 0) > 0)
 	{
 		if (WIFEXITED(child_status))
 			g_signal = WEXITSTATUS(child_status);

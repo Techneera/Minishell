@@ -88,6 +88,39 @@ int	docs_bonus(t_ast *ast_root, t_fds **fds)
 	return (i);
 }
 
+int	is_builtin(char *arg)
+{
+	if (ft_strncmp(arg, "echo\0", 5) == 0)
+		return (1);
+	if (ft_strncmp(arg, "cd\0", 3) == 0)
+		return (1);
+	if (ft_strncmp(arg, "pwd\0", 4) == 0)
+		return (1);
+	if (ft_strncmp(arg, "export\0", 7) == 0)
+		return (1);
+	if (ft_strncmp(arg, "unset\0", 6) == 0)
+		return (1);
+	if (ft_strncmp(arg, "env\0", 4) == 0)
+		return (1);
+	if (ft_strncmp(arg, "exit\0", 5) == 0)
+		return (1);
+	return (0);
+}
+
+int	n_cmds_bonus(t_ast *ast_root)
+{
+	int	i;
+
+	if (!ast_root)
+		return (0);
+	i = 2;
+	// if (ast_root->left == NODE_CMD && is_builtin(ast_root->cmd->args[0]))
+	// 	i--;
+	// if (ast_root->right == NODE_CMD && is_builtin(ast_root->cmd->args[0]))
+	// 	i--;
+	return (i);
+}
+
 void	get_sizes(t_ast *ast_root, t_fds **fds, int inside_sshell)
 {
 	int	i;
