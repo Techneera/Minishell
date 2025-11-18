@@ -48,9 +48,18 @@ t_ast	*ft_cmd2();
 t_ast	*ft_cmd3();
 t_ast	*bonus_cmd();
 
+//---ft_execute_or
+int	execute_or(t_data	*data, char **envp);
+
+//---ft_execute_and
+int	execute_and(t_data	*data, char **envp);
+
+//---utils_bonus
+int		wait_bonus(t_data *data, t_fds *fds);
+void	free_fds_bonus(t_data	*data);
+
 //--ft_child_sshel
 void	ft_child_sshell(t_data *data, char **envp);
-
 
 //---ft_execute_pipe
 void ft_execute_pipe(t_data *data, char **envp);
