@@ -1,4 +1,5 @@
 #include "expansion.h"
+#include "libft.h"
 
 char	*expand_word(char *raw_str, char **envp, int status)
 {
@@ -27,7 +28,7 @@ char	*expand_word(char *raw_str, char **envp, int status)
 				state = EXP_DQUOTE;
 				start = i + 1;
 			}
-			else if (raw_str == "$")
+			else if (raw_str[i] == '$')
 			{
 				chunk = ft_get_expanded_value(&raw_str[i], envp, &i, status);
 				final_str = ft_strjoin_free_s1(final_str, chunk);
@@ -46,9 +47,10 @@ char	*expand_word(char *raw_str, char **envp, int status)
 			if (raw_str[i] == '\'')
 			{
 				state = EXP_GENERAL;
-				chunck = ft_substr(raw_str, start, i - start);
-				final_str = ft_strjoin_free_s1(final_str, chunck);
-				free(chunck);
+				chunk = ft_substr(raw_str, start, i - start);
+				final_str = ft_strjoin_free_s1(final_str, chunk);
+				free(chunk);
+				i++;
 				continue ;
 			}
 		}
@@ -94,22 +96,28 @@ char	*ft_get_expanded_value(char *s, char **envp, int *i, int status)
 	int		len;
 	char	*var_name;
 	char	*var_value;
+	(void) envp;
 
-	if (str[1] == '?')
+	if (s[1] == '?')
 	{
 		*i += 2;
-		return (ft_itoa(data->status)); 
+		return (ft_itoa(status)); 
+	}
+	if (ft_isdigit(s[1]))
+	{
+		*i += 2;
+		return (ft_strdup(""));
 	}
 	len = 1;
-	while (ft_isalnum(str[len]) || str[len] == '_')
+	while (ft_isalnum(s[len]) || s[len] == '_')
 		len++;
 	if (len == 1)
 	{
 		*i += 1;
 		return (ft_strdup("$"));
 	}
-	var_name = ft_substr(str, 1, len - 1);
-	var_value = ft_getenv(var_name, envp);
+	var_name = ft_substr(s, 1, len - 1);
+	var_value = getenv(var_name);
 	free(var_name);
 
 	*i += len;
