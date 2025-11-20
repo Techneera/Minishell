@@ -24,6 +24,8 @@ TESTER_DIR = $(SRC_DIR)/test_module
 
 EXEC_DIR = $(SRC_DIR)/execution
 
+EXP_DIR = $(SRC_DIR)/expansion
+
 #		---AST---				#
 
 SRCS_AST=  ft_ast.c core.c guards.c
@@ -57,6 +59,16 @@ OBJS_EXEC = $(SRCS_EXEC:.c=.o)
 PATH_SRCS_EXEC = $(patsubst %,$(EXEC_DIR)/%,$(SRCS_EXEC))
 
 PATH_OBJS_EXEC = $(patsubst %,$(OBJS_DIR)/execution/%,$(OBJS_EXEC))
+
+#		---EXPANSION---				#
+
+SRCS_EXP =  args_handle.c
+
+OBJS_EXP = $(SRCS_EXP:.c=.o)
+
+PATH_SRCS_EXP = $(patsubst %,$(EXP_DIR)/%,$(SRCS_EXP))
+
+PATH_OBJS_EXP = $(patsubst %,$(OBJS_DIR)/expansion/%,$(OBJS_EXP))
 
 #		---TESTER---			#
 
