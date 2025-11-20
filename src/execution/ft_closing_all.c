@@ -1,40 +1,14 @@
 #include "execution.h"
 
-static void	closing_pipes(t_fds **fds);
 static void	closing_docs(t_fds **fds);
-static void	closing_files(t_fds **fds);
+void	closing_files(t_fds **fds);
 
 void	ft_closing_all(t_fds **fds)
 {
 	if (!fds || !*fds)
 		return ;
-	closing_pipes(fds);
 	closing_docs(fds);
 	closing_files(fds);
-}
-
-static void	closing_pipes(t_fds **fds)
-{
-	int	i;
-
-	i = 0;
-	while (i < (*fds)->get.n_pipes)
-	{
-		if ((*fds)->pipe_fds && (*fds)->pipe_fds[i])
-		{
-			if ((*fds)->pipe_fds[i][0] != -1)
-			{
-				close((*fds)->pipe_fds[i][0]);
-				(*fds)->pipe_fds[i][0] = -1;
-			}
-			if ((*fds)->pipe_fds[i][1] != -1)
-			{
-				close((*fds)->pipe_fds[i][1]);
-				(*fds)->pipe_fds[i][1] = -1;
-			}
-		}
-		i++;
-	}
 }
 
 static void	closing_docs(t_fds **fds)
@@ -61,7 +35,7 @@ static void	closing_docs(t_fds **fds)
 	}
 }
 
-static void	closing_files(t_fds **fds)
+void	closing_files(t_fds **fds)
 {
 	int	i;
 

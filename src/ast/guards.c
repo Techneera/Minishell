@@ -47,6 +47,7 @@ void	ft_free_ast(t_ast *root)
 		ft_free_ast(root->body);
 	ft_free_cmd(root->cmd);
 	free(root);
+	root = NULL;
 }
 
 void    ft_free_redir_struct_only(void *content)
