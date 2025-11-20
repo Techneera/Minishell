@@ -19,10 +19,14 @@ int	main(int argc, char **argv, char **envp)
 
 void	loop(char **envp)
 {
-	char	*line;
-	t_lexer	*lexer;
-	t_ast	*head;
+	char				*line;
+	t_lexer				*lexer;
+	t_ast				*head;
+	struct sigaction	sa;
 
+	sa.sa_handler = &handle_sigstop;
+	sa.sa_flags = SA_RESTART;
+	sigaction(SIGINT, &sa, NULL);
 	line = NULL;
 	lexer = NULL;
 	while(1)

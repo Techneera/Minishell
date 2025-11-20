@@ -4,6 +4,7 @@
 # define CMD_NOT_FOUND 127
 # define FAIL_STATUS 1
 
+#include <signal.h>
 #include "libshell.h"
 #include "ast.h"
 
@@ -47,6 +48,9 @@ t_ast	*ft_cmd1();
 t_ast	*ft_cmd2();
 t_ast	*ft_cmd3();
 t_ast	*bonus_cmd();
+
+//---handle_signal
+void    handle_sigstop(int sig);
 
 //---ft_execute_or
 int	execute_or(t_data	*data, char **envp);
