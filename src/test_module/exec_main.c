@@ -2,23 +2,29 @@
 
 int	main(int argc, char *argv[], char **envp)
 {
-	t_ast	*cmd = ft_cmd4();
-	t_fds	*fds;
+	t_data	data;
+	int	g_signal;
+	int	i;
 
-	fds = NULL;
 	(void)argc;
 	(void)argv;
-	(void)envp;
-	if (!cmd)
+	data.root = bonus_cmd();
+	data.tree = data.root;
+	data.fds = NULL;
+	g_signal = 0;
+	if (!data.tree)
 		return (-1);
-	create_fds(&fds, cmd);
-	execute_tree(cmd, &fds, -1, envp);
-	ft_closing_all(&fds);
-	while (waitpid(-1, NULL, 0) > 0)
-		;
-	free_all((void **) fds->pipe_fds, number_of_cmds(cmd) - 1);
-	free_all((void **) fds->heredoc_fds, fds->n_docs);
-	free(fds->fd_files);
-	free(fds);
-	free_tree(cmd);
+	ft_create_fds(&data);
+	ft_exec_tree(&data, envp);
+	ft_closing_all(&data.fds);
+	i = 0;
+	while(i < data.fds->get.n_cmds && waitpid(data.fds->c_pids[i], &child_status, 0) > 0)
+	{
+		if (WIFEXITED(child_status))
+			g_signal = WEXITSTATUS(child_status);
+		i++;
+	}
+	free_fds(&data.fds);
+	free_tree(&data.root);
+	return(g_signal);
 }

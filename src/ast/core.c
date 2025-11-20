@@ -128,6 +128,9 @@ t_ast	*ft_parse_grain_with_redirs(t_parser *parser)
 		if (ft_handle_redirects(parser, cmd_to_fill) == false)
 			return (ft_free_ast(node), NULL);
 	}
+	cmd_to_fill = node->cmd;
+	if (ft_handle_redirects(parser, cmd_to_fill) == false)
+		return (ft_free_ast(node), NULL);
 	return (node);
 }
 
