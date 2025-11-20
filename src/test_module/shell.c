@@ -26,11 +26,11 @@ void	loop(char **envp)
 
 	sa.sa_handler = &handle_sigstop;
 	sa.sa_flags = SA_RESTART;
-	sigaction(SIGINT, &sa, NULL);
 	line = NULL;
 	lexer = NULL;
 	while(1)
 	{
+		sigaction(SIGINT, &sa, NULL);
 		head = NULL;
 		line = readline(PROMPT);
 		if (!line)

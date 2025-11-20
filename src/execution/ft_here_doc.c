@@ -42,10 +42,20 @@ int	here_doc(char *lim, int **fd)
 
 static int	reciving_string(char **str, char **line, char *new_lim)
 {
+	struct sigaction	sa;
+	int					stdin_cpy;
+
+	stdin_cpy = open("/dev/null", O_WRONLY);
+	sa.sa_handler = &handle_sigstop_heredoc;
+	sa.sa_flags = SA_RESTART;
+	stdin_cpy = dup(STDIN_FILENO);
 	ft_printf("> ");
 	while (1)
 	{
+		sigaction(SIGINT, &sa, NULL);
 		(*str) = get_next_line (0);
+		dup2(stdin_cpy, STDIN_FILENO);
+		close(stdin_cpy);
 		if (!((*str) && ft_strncmp((*str), new_lim, ft_max(
 						ft_strlen((*str)), ft_strlen(new_lim))) != 0))
 			break ;

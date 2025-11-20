@@ -51,6 +51,7 @@ t_ast	*bonus_cmd();
 
 //---handle_signal
 void    handle_sigstop(int sig);
+void    handle_sigstop_heredoc(int sig);
 
 //---ft_execute_or
 int	execute_or(t_data	*data, char **envp);
