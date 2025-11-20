@@ -59,13 +59,3 @@ void    ft_free_redir_struct_only(void *content)
 		return;
 	free(redir);
 }
-
-void    ft_free_redir_struct_only(void *content)
-{
-	t_redir *redir;
-
-	redir = (t_redir *)content;
-	if (!redir)
-		return;
-	free(redir);
-}
