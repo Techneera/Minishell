@@ -98,8 +98,8 @@ int main(void)
 
     // --- Category 6: Mixed Quotes & Complex Edge Cases ---
     assert_expansion("Mixed S and D Quotes", "\"$USER\"\'$USER\'", "tester$USER", mock_env, 0);
-    assert_expansion("Mixed S and D Quotes", "\'$USER\'\"$USER\"", "$USERtester", mock_env, 0);
-    assert_expansion("Mixed S and D Quotes", "\'$USER\'$USER\"$USER\"", "$USERtestertester", mock_env, 0);
+    assert_expansion("Mixed D and S Quotes", "\'$USER\'\"$USER\"", "$USERtester", mock_env, 0);
+    assert_expansion("Mixed S, D Quotes and S Quotes", "\'$USER\'$USER\"$USER\"", "$USERtestertester", mock_env, 0);
     assert_expansion("Quotes inside Quotes 1", "\"'hello'\"", "'hello'", mock_env, 0); // Double containing Single
     assert_expansion("Quotes inside Quotes 2", "'\"$USER\"'", "\"$USER\"", mock_env, 0); // Single containing Double
     assert_expansion("Lone Dollar", "$", "$", mock_env, 0);
