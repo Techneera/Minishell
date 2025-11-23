@@ -3,12 +3,10 @@
 int	wait_bonus(t_data *data, t_fds *fds)
 {
 	int	signal;
-    int value;
 	int	i;
 
 	signal = 0;
 	i = 0;
-    value = 0;
 	while(i < fds->get.n_cmds && fds->c_pids && waitpid(fds->c_pids[i], &child_status, 0) > 0)
 	{
 		if (WIFEXITED(child_status))

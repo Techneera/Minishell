@@ -27,23 +27,17 @@ int	execute_or(t_data	*data, char **envp)
 
 static void	redir_bonus(t_data	*data, char **envp)
 {
-	t_ast	*holder;
-
 	if (data->fds->fd_files)
 		free(data->fds->fd_files);
 	if (data->fds->c_pids)
 		free(data->fds->c_pids);
 	if (data->tree->type == NODE_AND)
 	{
-		holder = data->tree;
 		if (redir_to_and(data, envp) == -1)
 			return ;
 	}
 	if (data->tree->type == NODE_OR)
 	{
-		t_ast	*holder;
-
-		holder = data->tree;
 		if (redir_to_or(data, envp) == -1)
 			return ;
 	}

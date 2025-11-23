@@ -42,6 +42,7 @@ void ft_execute_pipe(t_data *data, char **envp)
 		}
 		secure_exit(data, data->status);
 	}
+	update_from_position(data->tree->left, data);
 	if (!init_pid(&pipe_pid[1], &data->fds))
 	{
 		close(pfd[0]);
@@ -70,6 +71,7 @@ void ft_execute_pipe(t_data *data, char **envp)
 		}
 		secure_exit(data, data->status);
 	}
+	update_from_position(data->tree->right, data);
 	close(pfd[0]);
 	close(pfd[1]);
 }

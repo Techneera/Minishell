@@ -45,7 +45,6 @@ static int	reciving_string(char **str, char **line, char *new_lim)
 	struct sigaction	sa;
 	int					stdin_cpy;
 
-	stdin_cpy = open("/dev/null", O_WRONLY);
 	sa.sa_handler = &handle_sigstop_heredoc;
 	sa.sa_flags = SA_RESTART;
 	stdin_cpy = dup(STDIN_FILENO);

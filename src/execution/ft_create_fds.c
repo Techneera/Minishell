@@ -6,9 +6,7 @@ void	ft_create_fds(t_data *data)
 {
 	t_fds	*fds;
 	t_ast	*ast_root;
-	int		i;
 
-	i = -1;
 	if (!data->tree)
 		return ;
 	ast_root = data->tree;

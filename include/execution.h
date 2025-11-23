@@ -71,6 +71,7 @@ void ft_execute_pipe(t_data *data, char **envp);
 
 //---ft_update_position
 void	update_positions(t_data *data);
+void	update_from_position(t_ast *node, t_data *data);
 
 //---ft_execute_sshell
 void	ft_execute_sshell(t_data *data, char **envp);
