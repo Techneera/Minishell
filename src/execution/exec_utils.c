@@ -98,19 +98,19 @@ int	docs_bonus(t_ast *ast_root, t_fds **fds)
 int	is_builtin(t_ast *node, char *arg)
 {
 	if (ft_strncmp(arg, "echo\0", 5) == 0)
-		return (1);
+		return (0);
 	if (ft_strncmp(arg, "cd\0", 3) == 0)
 		return (ft_cd(node), 1);
 	if (ft_strncmp(arg, "pwd\0", 4) == 0)
-		return (1);
+		return (ft_pwd(), 1);
 	if (ft_strncmp(arg, "export\0", 7) == 0)
-		return (1);
+		return (0);
 	if (ft_strncmp(arg, "unset\0", 6) == 0)
-		return (1);
+		return (0);
 	if (ft_strncmp(arg, "env\0", 4) == 0)
-		return (1);
+		return (0);
 	if (ft_strncmp(arg, "exit\0", 5) == 0)
-		return (1);
+		return (0);
 	return (0);
 }
 

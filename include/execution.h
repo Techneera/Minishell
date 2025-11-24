@@ -51,9 +51,11 @@ t_ast	*bonus_cmd();
 
 //---ft_cd
 void	ft_cd(t_ast *node);
+void	ft_pwd();
 
 //---errors_messages
 void	message_error(char	*str, char *file, int type);
+void	no_such_file(char *cmd, char *file);
 
 //---handle_signal
 void    handle_sigstop(int sig);
