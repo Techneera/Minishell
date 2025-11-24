@@ -30,6 +30,7 @@ void	loop(char **envp)
 	sh_sigt.sa_flags = SA_RESTART;
 	sigaction(SIGQUIT, &sh_sigt, NULL);
 	sa.sa_handler = &handle_sigstop;
+	sigemptyset(&sa.sa_mask);
 	sa.sa_flags = SA_RESTART;
 	line = NULL;
 	lexer = NULL;
