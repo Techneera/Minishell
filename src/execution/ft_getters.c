@@ -1,7 +1,5 @@
 #include "execution.h"
 
-void	message_error(char	*str, char *file, int type);
-
 void	ft_free_all(char **str)
 {
 	int	i;
@@ -16,23 +14,6 @@ void	ft_free_all(char **str)
 	}
 	free(str);
 	str = NULL;
-}
-
-void	message_error(char	*str, char *file, int type)
-{
-	ft_putstr_fd("minishell", 2);
-	if (type)
-	{
-		ft_putstr_fd(str, 2);
-		ft_putstr_fd(file, 2);
-	}
-	else
-	{
-		ft_putstr_fd(": ", 2);
-		ft_putstr_fd(file, 2);
-		ft_putstr_fd(str, 2);
-	}
-	ft_putstr_fd("\n\0", 2);
 }
 
 char	**get_paths(char **env)

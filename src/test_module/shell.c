@@ -23,7 +23,12 @@ void	loop(char **envp)
 	t_lexer				*lexer;
 	t_ast				*head;
 	struct sigaction	sa;
+	struct sigaction	sh_sigt;
 
+	sh_sigt.sa_handler = SIG_IGN;
+	sigemptyset(&sh_sigt.sa_mask);
+	sh_sigt.sa_flags = SA_RESTART;
+	sigaction(SIGQUIT, &sh_sigt, NULL);
 	sa.sa_handler = &handle_sigstop;
 	sa.sa_flags = SA_RESTART;
 	line = NULL;

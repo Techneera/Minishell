@@ -49,10 +49,15 @@ t_ast	*ft_cmd2();
 t_ast	*ft_cmd3();
 t_ast	*bonus_cmd();
 
+//---ft_cd
+void	ft_cd(t_ast *node);
+
+//---errors_messages
+void	message_error(char	*str, char *file, int type);
+
 //---handle_signal
 void    handle_sigstop(int sig);
 void    handle_sigstop_heredoc(int sig);
-int	condition_stop_heredoc(int	opt);
 
 //---ft_execute_or
 int	execute_or(t_data	*data, char **envp);
@@ -86,6 +91,7 @@ int	ft_execution(t_ast **root, char **envp);
 int		fill_fd_file(t_fds **fds, t_ast *ast_root, int i);
 
 //---exec_utils
+int		is_builtin(t_ast *node, char *arg);
 void	secure_exit(t_data *data, int status);
 void 	free_data(t_data *data);
 void	free_all(void **ptr, size_t rows);
