@@ -15,9 +15,15 @@ void	init_heredoc(t_data *data)
 	{
 		fds->heredoc_fds = ft_calloc(fds->get.n_docs, sizeof(int *));
 		if (!fds->heredoc_fds)
-			secure_exit(data, 1);
+		{
+			free_data(data);
+			return ;
+		}
 		if (!malloc_heredoc(&fds))
-			secure_exit(data, 1);
+		{
+			free_data(data);
+			return ;
+		}
 		fill_heredoc(data, node, 0);
 	}
 }
@@ -58,7 +64,7 @@ static int	fill_heredoc(t_data *data, t_ast *node, int i)
 		if (node->cmd->redirs[y].label == REDIR_HEREDOCK)
 		{
 			if (!here_doc(node->cmd->redirs[y].file_name, &fds->heredoc_fds[i]))
-				return (secure_exit(data, 1), -1);
+				return (free_data(data), -1);
 			i++;
 		}
 		y++;

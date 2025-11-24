@@ -8,6 +8,13 @@ void secure_exit(t_data *data, int status)
 	exit(status);
 }
 
+void free_data(t_data *data)
+{
+	free_tree(&data->root);
+	ft_closing_all(&data->fds);
+	free_fds(&data->fds);
+}
+
 void	free_tree(t_ast **ast_root)
 {
 	if (!(*ast_root))
