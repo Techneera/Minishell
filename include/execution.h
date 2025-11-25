@@ -49,6 +49,10 @@ t_ast	*ft_cmd2();
 t_ast	*ft_cmd3();
 t_ast	*bonus_cmd();
 
+//---error_handle
+void	failed_malloc(t_data *data, char *str);
+
+
 //---ft_cd
 void	ft_cd(t_ast *node);
 void	ft_pwd();
@@ -93,7 +97,7 @@ int	ft_execution(t_ast **root, char **envp);
 int		fill_fd_file(t_fds **fds, t_ast *ast_root, int i);
 
 //---exec_utils
-int		is_builtin(t_ast *node, char *arg);
+int		is_builtin(t_data *data, char *arg);
 void	secure_exit(t_data *data, int status);
 void 	free_data(t_data *data);
 void	free_all(void **ptr, size_t rows);
