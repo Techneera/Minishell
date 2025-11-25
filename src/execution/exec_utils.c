@@ -97,6 +97,8 @@ int	docs_bonus(t_ast *ast_root, t_fds **fds)
 
 int	is_builtin(t_ast *node, char *arg)
 {
+	if (!arg)
+		return (0);
 	if (ft_strncmp(arg, "echo\0", 5) == 0)
 		return (0);
 	if (ft_strncmp(arg, "cd\0", 3) == 0)

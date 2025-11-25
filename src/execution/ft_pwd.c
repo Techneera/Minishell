@@ -1,6 +1,5 @@
 # include "execution.h"
 
-
 void	ft_pwd()
 {
 	char	buff[10000];
