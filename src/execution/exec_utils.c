@@ -91,7 +91,7 @@ int	docs_bonus(t_ast *ast_root, t_fds **fds)
 int	is_builtin(char *arg)
 {
 	if (ft_strncmp(arg, "echo\0", 5) == 0)
-		return (1);
+		return (ft_echo);
 	if (ft_strncmp(arg, "cd\0", 3) == 0)
 		return (1);
 	if (ft_strncmp(arg, "pwd\0", 4) == 0)

@@ -7,6 +7,7 @@
 #include <signal.h>
 #include "libshell.h"
 #include "ast.h"
+#include "lexer.h"
 
 extern int child_status;
 
@@ -40,6 +41,8 @@ typedef struct s_data
 	t_fds	*fds;
 	char	**envp;
 	int		status;
+	char	*rl;
+	t_token	*head;
 }	t_data;
 
 
@@ -130,5 +133,7 @@ void	init_heredoc(t_data *data);
 //--exec_tree_bonus
 void	apply_redirs_subshell(t_data *data);
 
+//--ft_echo
+int		ft_echo(t_data *data)
 
 #endif
