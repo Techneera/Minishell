@@ -94,7 +94,7 @@ int	is_builtin(t_data *data)
 
 	arg = data->tree->cmd->args;
 	if (ft_strncmp(arg[0], "echo\0", 5) == 0)
-		return (ft_echo);
+		return (ft_echo(data));
 	if (ft_strncmp(arg[0], "cd\0", 3) == 0)
 		return (1);
 	if (ft_strncmp(arg[0], "pwd\0", 4) == 0)

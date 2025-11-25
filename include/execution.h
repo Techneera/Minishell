@@ -134,6 +134,7 @@ void	init_heredoc(t_data *data);
 void	apply_redirs_subshell(t_data *data);
 
 //--ft_echo
-int		ft_echo(t_data *data)
+int		is_builtin(t_data *data);
+int		ft_echo(t_data *data);
 
 #endif
