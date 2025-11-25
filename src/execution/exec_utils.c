@@ -88,21 +88,24 @@ int	docs_bonus(t_ast *ast_root, t_fds **fds)
 	return (i);
 }
 
-int	is_builtin(char *arg)
+int	is_builtin(t_data *data)
 {
-	if (ft_strncmp(arg, "echo\0", 5) == 0)
+	char	**arg;
+
+	arg = data->tree->cmd->args;
+	if (ft_strncmp(arg[0], "echo\0", 5) == 0)
 		return (ft_echo);
-	if (ft_strncmp(arg, "cd\0", 3) == 0)
+	if (ft_strncmp(arg[0], "cd\0", 3) == 0)
 		return (1);
-	if (ft_strncmp(arg, "pwd\0", 4) == 0)
+	if (ft_strncmp(arg[0], "pwd\0", 4) == 0)
 		return (1);
-	if (ft_strncmp(arg, "export\0", 7) == 0)
+	if (ft_strncmp(arg[0], "export\0", 7) == 0)
 		return (1);
-	if (ft_strncmp(arg, "unset\0", 6) == 0)
+	if (ft_strncmp(arg[0], "unset\0", 6) == 0)
 		return (1);
-	if (ft_strncmp(arg, "env\0", 4) == 0)
+	if (ft_strncmp(arg[0], "env\0", 4) == 0)
 		return (1);
-	if (ft_strncmp(arg, "exit\0", 5) == 0)
+	if (ft_strncmp(arg[0], "exit\0", 5) == 0)
 		return (1);
 	return (0);
 }
