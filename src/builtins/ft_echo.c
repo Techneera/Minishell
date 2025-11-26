@@ -7,7 +7,11 @@ int	is_valid_n_option(char *arg)
 	int		i;
 
 	i = 1;
-	if (!arg || arg[0] != '-' || arg[1] == '\0')
+	if (!arg)
+		return (0);
+	if (arg[0] != '-')
+		return (0);
+	if (arg[1] == '\0')
 		return (0);
 	while (arg[i])
 	{
