@@ -100,7 +100,7 @@ int	is_builtin(t_data *data, char *arg)
 	if (!arg)
 		return (0);
 	if (ft_strncmp(arg, "echo\0", 5) == 0)
-		return (ft_echo(data), 0);
+		return (ft_echo(data), 1);
 	if (ft_strncmp(arg, "cd\0", 3) == 0)
 		return (ft_cd(data->tree), 1);
 	if (ft_strncmp(arg, "pwd\0", 4) == 0)
