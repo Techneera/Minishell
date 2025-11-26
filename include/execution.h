@@ -52,6 +52,18 @@ t_ast	*ft_cmd2();
 t_ast	*ft_cmd3();
 t_ast	*bonus_cmd();
 
+//---error_handle
+void	failed_malloc(t_data *data, char *str);
+
+
+//---ft_cd
+void	ft_cd(t_ast *node);
+void	ft_pwd();
+
+//---errors_messages
+void	message_error(char	*str, char *file, int type);
+void	no_such_file(char *cmd, char *file);
+
 //---handle_signal
 void    handle_sigstop(int sig);
 void    handle_sigstop_heredoc(int sig);
@@ -88,7 +100,9 @@ int	ft_execution(t_ast **root, char **envp);
 int		fill_fd_file(t_fds **fds, t_ast *ast_root, int i);
 
 //---exec_utils
-void	 secure_exit(t_data *data, int status);
+int		is_builtin(t_data *data, char *arg);
+void	secure_exit(t_data *data, int status);
+void 	free_data(t_data *data);
 void	free_all(void **ptr, size_t rows);
 void	free_fds(t_fds **fds);
 void	free_tree(t_ast **ast_root);

@@ -8,6 +8,13 @@ void secure_exit(t_data *data, int status)
 	exit(status);
 }
 
+void free_data(t_data *data)
+{
+	free_tree(&data->root);
+	ft_closing_all(&data->fds);
+	free_fds(&data->fds);
+}
+
 void	free_tree(t_ast **ast_root)
 {
 	if (!(*ast_root))
@@ -88,40 +95,25 @@ int	docs_bonus(t_ast *ast_root, t_fds **fds)
 	return (i);
 }
 
-int	is_builtin(t_data *data)
+int	is_builtin(t_data *data, char *arg)
 {
-	char	**arg;
-
-	arg = data->tree->cmd->args;
-	if (ft_strncmp(arg[0], "echo\0", 5) == 0)
-		return (ft_echo(data));
-	if (ft_strncmp(arg[0], "cd\0", 3) == 0)
-		return (1);
-	if (ft_strncmp(arg[0], "pwd\0", 4) == 0)
-		return (1);
-	if (ft_strncmp(arg[0], "export\0", 7) == 0)
-		return (1);
-	if (ft_strncmp(arg[0], "unset\0", 6) == 0)
-		return (1);
-	if (ft_strncmp(arg[0], "env\0", 4) == 0)
-		return (1);
-	if (ft_strncmp(arg[0], "exit\0", 5) == 0)
-		return (1);
-	return (0);
-}
-
-int	n_cmds_bonus(t_ast *ast_root)
-{
-	int	i;
-
-	if (!ast_root)
+	if (!arg)
 		return (0);
-	i = 2;
-	// if (ast_root->left == NODE_CMD && is_builtin(ast_root->cmd->args[0]))
-	// 	i--;
-	// if (ast_root->right == NODE_CMD && is_builtin(ast_root->cmd->args[0]))
-	// 	i--;
-	return (i);
+	if (ft_strncmp(arg, "echo\0", 5) == 0)
+		return (ft_echo(data), 0);
+	if (ft_strncmp(arg, "cd\0", 3) == 0)
+		return (ft_cd(data->tree), 1);
+	if (ft_strncmp(arg, "pwd\0", 4) == 0)
+		return (ft_pwd(), 1);
+	if (ft_strncmp(arg, "export\0", 7) == 0)
+		return (0);
+	if (ft_strncmp(arg, "unset\0", 6) == 0)
+		return (0);
+	if (ft_strncmp(arg, "env\0", 4) == 0)
+		return (0);
+	if (ft_strncmp(arg, "exit\0", 5) == 0)
+		return (0);
+	return (0);
 }
 
 void	get_sizes(t_ast *ast_root, t_fds **fds, int inside_sshell)

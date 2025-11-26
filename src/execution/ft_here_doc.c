@@ -46,15 +46,13 @@ static int	reciving_string(char **str, char **line, char *new_lim)
 	int					stdin_cpy;
 
 	sa.sa_handler = &handle_sigstop_heredoc;
-	sa.sa_flags = SA_RESTART;
+	sa.sa_flags = 0;
+	sigaction(SIGINT, &sa, NULL);
 	stdin_cpy = dup(STDIN_FILENO);
 	ft_printf("> ");
 	while (1)
 	{
-		sigaction(SIGINT, &sa, NULL);
 		(*str) = get_next_line (0);
-		dup2(stdin_cpy, STDIN_FILENO);
-		close(stdin_cpy);
 		if (!((*str) && ft_strncmp((*str), new_lim, ft_max(
 						ft_strlen((*str)), ft_strlen(new_lim))) != 0))
 			break ;
@@ -64,6 +62,9 @@ static int	reciving_string(char **str, char **line, char *new_lim)
 		free((*str));
 		ft_printf("> ");
 	}
+	dup2(stdin_cpy, STDIN_FILENO);
+	if (stdin_cpy)
+		close(stdin_cpy);
 	return (1);
 }
 

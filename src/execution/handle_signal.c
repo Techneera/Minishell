@@ -4,12 +4,14 @@ void	handle_sigstop(int sig)
 {
 	(void)sig;
 	write(1, "\n", 1);
-	write(1, PROMPT, ft_strlen(PROMPT));
+	rl_on_new_line();
+	rl_replace_line("", 0);
+	rl_redisplay();
 }
 
 void	handle_sigstop_heredoc(int sig)
 {
 	(void)sig;
-	write(1, "\n", 1);
+	write(STDOUT_FILENO, "\n", 1);
 	close(STDIN_FILENO);
 }
