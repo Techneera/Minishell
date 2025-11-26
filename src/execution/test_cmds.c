@@ -69,15 +69,11 @@ t_ast *new_op_node(t_node_type type, t_ast *left, t_ast *right) {
 
 t_ast	*bonus_cmd()
 {
-    t_ast *ast_c1 = new_cmd_node(dup_args((const char *[]){"echo", "QUEM MECHER CODA EM PYTHON",NULL}));
-    t_ast *ast_c2 = new_cmd_node(dup_args((const char *[]){"cat", NULL}));
+    t_ast *ast_c1 = new_cmd_node(dup_args((const char *[]){"echo", "oi",NULL}));
 
-    ast_c2->cmd->redir_count = 1;
-    ast_c2->cmd->redirs = ft_calloc(sizeof(t_redir), 1);
-    ast_c2->cmd->redirs[0].file_name = strdup("a");
-    ast_c2->cmd->redirs[0].label = REDIR_IN;
-
-    t_ast *ast_sub = new_op_node(NODE_AND, ast_c1, ast_c2);
+    t_ast *ast_sub = new_op_node(NODE_SUBSHELL, NULL, NULL);
+    ast_sub->cmd = ft_calloc(sizeof(t_cmd), 1);
+    ast_sub->body = ast_c1;
     t_ast *ast_root = ast_sub;
     return (ast_root);
 }
@@ -105,7 +101,7 @@ t_ast	*bonus_cmd()
 
 t_ast	*ft_cmd1()
 {
-    t_ast *ast_c1 = new_cmd_node(dup_args((const char *[]){"cat", NULL}));
+    t_ast *ast_c1 = new_cmd_node(dup_args((const char *[]){"banana", NULL}));
     t_ast *ast_c2 = new_cmd_node(dup_args((const char *[]){"sort", "-r", NULL}));
     t_ast *ast_c3 = new_cmd_node(dup_args((const char *[]){"uniq", "-r", NULL}));
     t_ast *ast_c4 = new_cmd_node(dup_args((const char *[]){"head", "-n", "5", NULL}));
@@ -113,7 +109,7 @@ t_ast	*ft_cmd1()
     ast_c1->cmd->redir_count = 1;
     ast_c1->cmd->redirs = ft_calloc(sizeof(t_redir), 1);
     ast_c1->cmd->redirs[0].file_name = strdup("file_list.txt");
-    ast_c1->cmd->redirs[0].label = REDIR_IN;
+    ast_c1->cmd->redirs[0].label = REDIR_OUT;
 
     t_ast *ast_pipe1 = new_op_node(NODE_PIPE, ast_c1, ast_c2);
     t_ast *ast_pipe2 = new_op_node(NODE_PIPE, ast_pipe1, ast_c3);
@@ -130,7 +126,7 @@ t_ast	*ft_cmd2()
     ast_c1->cmd->redir_count = 3;
     ast_c1->cmd->redirs = ft_calloc(sizeof(t_redir), ast_c1->cmd->redir_count);
     ast_c1->cmd->redirs[0].file_name = strdup("o1");
-    ast_c1->cmd->redirs[0].label = REDIR_OUT;
+    ast_c1->cmd->redirs[0].label = REDIR_IN;
     ast_c1->cmd->redirs[1].file_name = strdup("o2");
     ast_c1->cmd->redirs[1].label = REDIR_OUT;
     ast_c1->cmd->redirs[2].file_name = strdup("o3");

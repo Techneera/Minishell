@@ -1,6 +1,5 @@
 #include "execution.h"
 
-
 int	main(int argc, char *argv[], char **envp)
 {
 	t_data	data;
@@ -9,14 +8,14 @@ int	main(int argc, char *argv[], char **envp)
 
 	(void)argc;
 	(void)argv;
-	data.root = ft_cmd3();
+	data.root = bonus_cmd();
 	data.tree = data.root;
 	data.fds = NULL;
 	g_signal = 0;
 	if (!data.tree)
 		return (-1);
 	ft_create_fds(&data);
-	ft_exec_tree(&data, 0, envp);
+	ft_exec_tree(&data, envp);
 	ft_closing_all(&data.fds);
 	i = 0;
 	while(i < data.fds->get.n_cmds && waitpid(data.fds->c_pids[i], &child_status, 0) > 0)
@@ -26,6 +25,6 @@ int	main(int argc, char *argv[], char **envp)
 		i++;
 	}
 	free_fds(&data.fds);
-	free_tree(&data.tree);
+	free_tree(&data.root);
 	return(g_signal);
 }

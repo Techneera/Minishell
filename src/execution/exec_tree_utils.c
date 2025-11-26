@@ -2,15 +2,11 @@
 
 int	init_pid(pid_t *pid, t_fds **fds)
 {
-	int	i;
-
-	i = 0;
 	*pid = fork();
 	if (*pid != 0)
 	{
-		while ((*fds)->c_pids[i])
-			i++;
-		(*fds)->c_pids[i] = *pid;
+		(*fds)->c_pids[(*fds)->pos.fork_id] = *pid;
+		(*fds)->pos.fork_id++;
 	}
 	if (*pid == -1)
 	{

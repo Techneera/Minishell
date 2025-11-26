@@ -10,7 +10,7 @@ void	apply_redirs_subshell(t_data *data)
 	r = -1;
 	fds = data->fds;
 	cmd = data->tree->cmd;
-	while (++r < cmd->redir_count)
+	while (cmd && ++r < cmd->redir_count)
 	{
 		heredoc_subshell(cmd, &fds, r);
 		if (cmd->redirs[r].label == REDIR_IN)
