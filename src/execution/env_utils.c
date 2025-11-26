@@ -1,30 +1,49 @@
-// #include "execution.h"
+#include "execution.h"
 
-// void	init_env(t_data *data, char **env)
-// {
-// 	int		i;
-// 	int		size;
-// 	char	**new_env;
+static t_list	*create_node_env(char *arg);
 
-// 	i = 0;
-// 	size = ft_arraylen((void **) env);
-// 	new_env = ft_calloc(size + 1, sizeof(char *));
-// 	if (!new_env)
-// 		failed_malloc(data, "Calloc Error: new_env");
-// 	while (env[i])
-// 	{
-// 		new_env[i] = ft_strdup(env[i]);
-// 		if (!new_env[i])
-// 		{
-// 			ft_free_array(new_env);
-// 			failed_malloc(data, "Strdup Error: new_env[i]");
-// 		}
-// 		i++;
-// 	}
-// 	data->envp = new_env;
-// }
+t_list	*init_env(char **env)
+{
+	t_list	*env_list;
+	t_list	*node;
+	int		i;
 
-// void	increment_shlv(t_data *data)
-// {
-	
-// }
+	if (!env)
+		return (NULL);
+	i = 0;
+	env_list = NULL;
+	node = NULL;
+	while (env[i])
+	{
+		node = create_node_env(env[i]);
+		if (!node)
+		{
+			// MAKE A FREE FOR ALL THE STRUCT, NOT ONLY FREE.
+			ft_lstclear(&env_list, &free);
+			return (NULL);
+		}
+		ft_lstadd_back(&env_list, node);
+		i++;
+	}
+	return (env_list);
+}
+
+static t_list	*create_node_env(char *arg)
+{
+	t_list	*new_list;
+	t_env	*new_node;
+
+	new_list = ft_calloc(1, sizeof(t_list));
+	if (!new_list)
+		return (NULL);
+	new_node = ft_calloc(1, sizeof(t_env));
+	if (!new_node)
+		return (free(new_list), NULL);
+	new_node->variable = ft_strdup(arg);
+	if (!new_node->variable)
+		return (free(new_node), free(new_list), NULL);
+	new_node->has_arg = 1;
+	new_list->content = (void *) new_node;
+	new_list->next = NULL;
+	return (new_list);
+}

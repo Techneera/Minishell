@@ -12,6 +12,12 @@
 
 extern int child_status;
 
+typedef struct s_env
+{
+	int		has_arg;
+	char	*variable;
+}	t_env;
+
 typedef struct s_get
 {
 	int	n_files;
@@ -41,6 +47,7 @@ typedef struct s_data
 	t_ast	*tree;
 	t_fds	*fds;
 	char	**envp;
+	t_list	*env_list;
 	int		status;
 	char	*rl;
 	t_token	*head;
@@ -52,6 +59,9 @@ t_ast	*ft_cmd1();
 t_ast	*ft_cmd2();
 t_ast	*ft_cmd3();
 t_ast	*bonus_cmd();
+
+//---env_utils
+t_list	*init_env(char **env);
 
 //---error_handle
 void	failed_malloc(t_data *data, char *str);

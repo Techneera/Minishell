@@ -11,6 +11,9 @@ int	ft_execution(t_ast **root, char **envp)
 	data.root = *root;
 	data.tree = data.root;
 	data.fds = (t_fds *){0};
+	data.env_list = init_env(envp);
+	if (!data.env_list)
+		return (0);
 	g_signal = 0;
 	if (!data.tree)
 		return (-1);
