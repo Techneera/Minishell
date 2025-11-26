@@ -113,7 +113,7 @@ refactor_parser: $(PATH_OBJS_AST) $(PATH_OBJS_LEXER) $(LFT)
 $(AST_NAME): $(PATH_OBJS_AST) $(PATH_OBJS_LEXER) $(LFT)
 	$(CC) $(CFLAGS) $(TESTER_DIR)/ast_tester.c $^ -o $@
 
-$(NAME): $(PATH_OBJS_AST) $(PATH_OBJS_LEXER) $(PATH_OBJS_EXEC) $(PATH_OBJS_BUILTINS) $(LFT)
+$(NAME): $(PATH_OBJS_AST) $(PATH_OBJS_LEXER) $(PATH_OBJS_EXEC) $(PATH_OBJS_EXP) $(PATH_OBJS_BUILTINS) $(LFT)
 	$(CC) $(CFLAGS) -lreadline src/test_module/shell.c $^ -o $(NAME)
 
 $(LFT):
@@ -132,6 +132,9 @@ $(OBJS_DIR)/ast/%.o:$(AST_DIR)/%.c | $(OBJS_DIR)/ast
 $(OBJS_DIR)/builtins/%.o:$(BUILTINS_DIR)/%.c | $(OBJS_DIR)/builtins
 	$(CC) $(CFLAGS) -c $< -o $@
 
+$(OBJS_DIR)/expansion/%.o:$(EXP_DIR)/%.c | $(OBJS_DIR)/expansion
+	$(CC) $(CFLAGS) -c $< -o $@
+
 $(OBJS_DIR):
 	@mkdir -p $@
 
@@ -145,6 +148,9 @@ $(OBJS_DIR)/execution: $(OBJS_DIR)
 	@mkdir -p $@
 
 $(OBJS_DIR)/builtins: $(OBJS_DIR)
+	@mkdir -p $@
+
+$(OBJS_DIR)/expansion: $(OBJS_DIR)
 	@mkdir -p $@
 
 clean:
