@@ -26,6 +26,8 @@ EXEC_DIR = $(SRC_DIR)/execution
 
 EXP_DIR = $(SRC_DIR)/expansion
 
+BUILTINS_DIR = $(SRC_DIR)/builtins
+
 #		---AST---				#
 
 SRCS_AST=  ft_ast.c core.c guards.c
@@ -70,6 +72,16 @@ PATH_SRCS_EXP = $(patsubst %,$(EXP_DIR)/%,$(SRCS_EXP))
 
 PATH_OBJS_EXP = $(patsubst %,$(OBJS_DIR)/expansion/%,$(OBJS_EXP))
 
+#		---BUILTINS---				#
+
+SRCS_BUILTINS =  ft_echo.c
+
+OBJS_BUILTINS = $(SRCS_BUILTINS:.c=.o)
+
+PATH_SRCS_BUILTINS = $(patsubst %,$(BUILTINS_DIR)/%,$(SRCS_BUILTINS))
+
+PATH_OBJS_BUILTINS = $(patsubst %,$(OBJS_DIR)/builtins/%,$(OBJS_BUILTINS))
+
 #		---TESTER---			#
 
 SRCS_TESTER = unit.c
@@ -101,7 +113,7 @@ refactor_parser: $(PATH_OBJS_AST) $(PATH_OBJS_LEXER) $(LFT)
 $(AST_NAME): $(PATH_OBJS_AST) $(PATH_OBJS_LEXER) $(LFT)
 	$(CC) $(CFLAGS) $(TESTER_DIR)/ast_tester.c $^ -o $@
 
-$(NAME): $(PATH_OBJS_AST) $(PATH_OBJS_LEXER) $(PATH_OBJS_EXEC) $(LFT)
+$(NAME): $(PATH_OBJS_AST) $(PATH_OBJS_LEXER) $(PATH_OBJS_EXEC) $(PATH_OBJS_BUILTINS) $(LFT)
 	$(CC) $(CFLAGS) -lreadline src/test_module/shell.c $^ -o $(NAME)
 
 $(LFT):
@@ -117,6 +129,9 @@ $(OBJS_DIR)/execution/%.o:$(EXEC_DIR)/%.c | $(OBJS_DIR)/execution
 $(OBJS_DIR)/ast/%.o:$(AST_DIR)/%.c | $(OBJS_DIR)/ast
 	$(CC) $(CFLAGS) -c $< -o $@
 
+$(OBJS_DIR)/builtins/%.o:$(BUILTINS_DIR)/%.c | $(OBJS_DIR)/builtins
+	$(CC) $(CFLAGS) -c $< -o $@
+
 $(OBJS_DIR):
 	@mkdir -p $@
 
@@ -127,6 +142,9 @@ $(OBJS_DIR)/ast: $(OBJS_DIR)
 	@mkdir -p $@
 
 $(OBJS_DIR)/execution: $(OBJS_DIR)
+	@mkdir -p $@
+
+$(OBJS_DIR)/builtins: $(OBJS_DIR)
 	@mkdir -p $@
 
 clean:
