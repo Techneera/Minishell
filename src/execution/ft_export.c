@@ -1,11 +1,8 @@
 #include "execution.h"
 
-void print_sroted_env(t_data *data);
-
-void	ft_export(t_data *data, char *arg)
+void	ft_export(t_list *list)
 {
-	(void ) arg;
-	if (!data->envp)
+	if (!list)
 		return ;
-
+	ft_print_sorted_export(list);
 }

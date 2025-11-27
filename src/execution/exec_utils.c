@@ -108,7 +108,7 @@ int	is_builtin(t_data *data, char *arg)
 	if (ft_strncmp(arg, "pwd\0", 4) == 0)
 		return (ft_pwd(), 1);
 	if (ft_strncmp(arg, "export\0", 7) == 0)
-		return (0);
+		return (ft_export(data->env_list), 1);
 	if (ft_strncmp(arg, "unset\0", 6) == 0)
 		return (0);
 	if (ft_strncmp(arg, "env\0", 4) == 0)
