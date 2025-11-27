@@ -62,12 +62,13 @@ t_ast	*bonus_cmd();
 
 
 //---ft_export
-void	ft_export(t_list *list);
+void	ft_export(t_list *list, t_ast *node);
 void	ft_print_sorted_export(t_list *list);
 
 
 //---env_utils
 t_list	*init_env(char **env);
+t_list	*create_node_env(char *arg, int has_arg);
 
 //---error_handle
 void	failed_malloc(t_data *data, char *str);

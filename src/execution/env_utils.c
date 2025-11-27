@@ -1,6 +1,6 @@
 #include "execution.h"
 
-static t_list	*create_node_env(char *arg);
+t_list	*create_node_env(char *arg, int has_arg);
 void	free_content(void *content);
 
 t_list	*init_env(char **env)
@@ -16,7 +16,7 @@ t_list	*init_env(char **env)
 	node = NULL;
 	while (env[i])
 	{
-		node = create_node_env(env[i]);
+		node = create_node_env(env[i], 1);
 		if (!node)
 		{
 			ft_lstclear(&env_list, &free_content);
@@ -44,7 +44,7 @@ void	free_content(void *content)
 	content = NULL;
 }
 
-static t_list	*create_node_env(char *arg)
+t_list	*create_node_env(char *arg, int has_arg)
 {
 	t_list	*new_list;
 	t_env	*new_node;
@@ -58,7 +58,7 @@ static t_list	*create_node_env(char *arg)
 	new_node->variable = ft_strdup(arg);
 	if (!new_node->variable)
 		return (free(new_node), free(new_list), NULL);
-	new_node->has_arg = 1;
+	new_node->has_arg = has_arg;
 	new_list->content = (void *) new_node;
 	new_list->next = NULL;
 	return (new_list);
