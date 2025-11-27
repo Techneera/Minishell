@@ -1,6 +1,7 @@
 #include "execution.h"
 
 static t_list	*create_node_env(char *arg);
+void	free_content(void *content);
 
 t_list	*init_env(char **env)
 {
@@ -18,14 +19,29 @@ t_list	*init_env(char **env)
 		node = create_node_env(env[i]);
 		if (!node)
 		{
-			// MAKE A FREE FOR ALL THE STRUCT, NOT ONLY FREE.
-			ft_lstclear(&env_list, &free);
+			ft_lstclear(&env_list, &free_content);
 			return (NULL);
 		}
 		ft_lstadd_back(&env_list, node);
 		i++;
 	}
 	return (env_list);
+}
+
+void	free_content(void *content)
+{
+	t_env *env;
+
+	env = (t_env *) content;
+	if (!env)
+		return ;
+	if (env->variable)
+	{
+		free(env->variable);
+		env->variable = NULL;
+	}
+	free(content);
+	content = NULL;
 }
 
 static t_list	*create_node_env(char *arg)
