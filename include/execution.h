@@ -60,11 +60,12 @@ t_ast	*ft_cmd2();
 t_ast	*ft_cmd3();
 t_ast	*bonus_cmd();
 
+//--ft_env
+void	ft_env(t_data *data);
 
 //---ft_export
 void	ft_export(t_list *list, t_ast *node);
 void	ft_print_sorted_export(t_list *list);
-
 
 //---env_utils
 t_list	*init_env(char **env);

@@ -112,7 +112,7 @@ int	is_builtin(t_data *data, char *arg)
 	if (ft_strncmp(arg, "unset\0", 6) == 0)
 		return (0);
 	if (ft_strncmp(arg, "env\0", 4) == 0)
-		return (0);
+		return (ft_env(data), 1);
 	if (ft_strncmp(arg, "exit\0", 5) == 0)
 		return (0);
 	return (0);
