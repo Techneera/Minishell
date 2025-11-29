@@ -1,8 +1,9 @@
 #include "libshell.h"
 #include "ast.h"
 #include "lexer.h"
+#include "execution.h"
 
-void				loop(void);
+void				loop(char **envp);
 static void			print_ast(t_ast *node, int depth);
 static void			print_indent(int depth);
 static void 		print_command_members(t_cmd *cmd, int depth);
@@ -12,41 +13,61 @@ int	main(int argc, char **argv, char **envp)
 {
 	(void)argc;
 	(void)argv;
-	(void)envp;
-	loop();
+	loop(envp);
 	return (0);
 }
 
-void	loop(void)
+void	loop(char **envp)
 {
-	char	*line;
-	t_lexer	*lexer;
-	t_ast	*head;
+	char				*line;
+	t_lexer				*lexer;
+	t_ast				*head;
+	struct sigaction	sa;
+	struct sigaction	sh_sigt;
 
+	sh_sigt.sa_handler = SIG_IGN;
+	sigemptyset(&sh_sigt.sa_mask);
+	sh_sigt.sa_flags = SA_RESTART;
+	sigaction(SIGQUIT, &sh_sigt, NULL);
+	sa.sa_handler = &handle_sigstop;
+	sigemptyset(&sa.sa_mask);
+	sa.sa_flags = SA_RESTART;
 	line = NULL;
 	lexer = NULL;
 	while(1)
 	{
+		sigaction(SIGINT, &sa, NULL);
 		head = NULL;
 		line = readline(PROMPT);
 		if (!line)
 			break ;
-		if (!ft_strcmp(line, "exit"))
-			return (free(line));
-		lexer = ft_state_lexer(line);
-		if (!lexer)
+		if (*line != '\0')
 		{
-			free(line);
-			break ;
+			add_history(line);
+			if (!ft_strcmp(line, "exit"))
+				return (free(line));
+			lexer = ft_state_lexer(line);
+			if (!lexer)
+			{
+				free(line);
+				break ;
+			}
+			head = ft_parser(lexer);
+			if (head == NULL)
+				fprintf(stderr, "Syntax error AST.\n");
+			else
+			{
+				print_ast(head, 0);
+				printf("\n\n");
+
+				ft_execution(&head, envp);
+			}
+			if (head)
+				ft_free_ast(head);
+			free_lexer(lexer);
 		}
-		head = ft_parser(lexer);
-		if (head == NULL)
-			fprintf(stderr, "Syntax error AST.\n");
-		else
-			print_ast(head, 0);
-		ft_free_ast(head);
-		free_lexer(lexer);
-		free(line);
+		if (line)
+			free(line);
 	}
 }
 

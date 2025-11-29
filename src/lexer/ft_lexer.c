@@ -255,21 +255,21 @@ void	ft_tokens_constructor(t_lexer **lex, t_token **head)
 	add_token_back(head, tmp);
 }
 
-void	free_all(char *line, t_lexer *lex, t_token **head)
-{
-	if (line)
-	{
-		free(line);
-		line = NULL;
-	}
-	if (lex)
-	{
-		free_lexer(lex);
-		lex = NULL;
-	}
-	if (head)
-	{
-		free_token_lst(head, &free_token);
-		head = NULL;
-	}
-}
+// void	free_all(char *line, t_lexer *lex, t_token **head)
+// {
+// 	if (line)
+// 	{
+// 		free(line);
+// 		line = NULL;
+// 	}
+// 	if (lex)
+// 	{
+// 		free_lexer(lex);
+// 		lex = NULL;
+// 	}
+// 	if (head)
+// 	{
+// 		free_token_lst(head, &free_token);
+// 		head = NULL;
+// 	}
+// }

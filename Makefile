@@ -24,6 +24,10 @@ TESTER_DIR = $(SRC_DIR)/test_module
 
 EXEC_DIR = $(SRC_DIR)/execution
 
+EXP_DIR = $(SRC_DIR)/expansion
+
+BUILTINS_DIR = $(SRC_DIR)/builtins
+
 #		---AST---				#
 
 SRCS_AST=  ft_ast.c core.c guards.c
@@ -46,13 +50,38 @@ PATH_OBJS_LEXER = $(patsubst %,$(OBJS_DIR)/lexer/%,$(OBJS_LEXER))
 
 #		---EXECUTION---			#
 
-SRCS_EXEC = ft_execution.c test_cmds.c  init_files.c exec_utils.c ft_getters.c ft_here_doc.c add_libft.c
+SRCS_EXEC = add_libft.c exec_tree_utils.c exec_utils.c files_utils.c ft_child_cmd.c ft_exec_tree.c \
+			ft_fill_fds_file.c ft_getters.c ft_here_doc.c here_doc_utils.c ft_fill_fds_file.c test_cmds.c \
+			ft_closing_all.c ft_create_fds.c exec_tree_bonus.c ft_execution.c ft_execute_cmd.c ft_execute_sshell.c \
+			ft_update_position.c ft_execute_pipe.c ft_child_sshell.c ft_create_fds_bonus.c utils_bonus.c ft_execute_and.c \
+			ft_execute_or.c handle_signal.c errors_messages.c ft_cd.c ft_pwd.c ft_env.c ft_export.c env_utils.c error_handler.c \
+			ft_print_sorted_export.c
 
 OBJS_EXEC = $(SRCS_EXEC:.c=.o)
 
 PATH_SRCS_EXEC = $(patsubst %,$(EXEC_DIR)/%,$(SRCS_EXEC))
 
 PATH_OBJS_EXEC = $(patsubst %,$(OBJS_DIR)/execution/%,$(OBJS_EXEC))
+
+#		---EXPANSION---				#
+
+SRCS_EXP =  args_handle.c
+
+OBJS_EXP = $(SRCS_EXP:.c=.o)
+
+PATH_SRCS_EXP = $(patsubst %,$(EXP_DIR)/%,$(SRCS_EXP))
+
+PATH_OBJS_EXP = $(patsubst %,$(OBJS_DIR)/expansion/%,$(OBJS_EXP))
+
+#		---BUILTINS---				#
+
+SRCS_BUILTINS =  ft_echo.c
+
+OBJS_BUILTINS = $(SRCS_BUILTINS:.c=.o)
+
+PATH_SRCS_BUILTINS = $(patsubst %,$(BUILTINS_DIR)/%,$(SRCS_BUILTINS))
+
+PATH_OBJS_BUILTINS = $(patsubst %,$(OBJS_DIR)/builtins/%,$(OBJS_BUILTINS))
 
 #		---TESTER---			#
 
@@ -85,7 +114,7 @@ refactor_parser: $(PATH_OBJS_AST) $(PATH_OBJS_LEXER) $(LFT)
 $(AST_NAME): $(PATH_OBJS_AST) $(PATH_OBJS_LEXER) $(LFT)
 	$(CC) $(CFLAGS) $(TESTER_DIR)/ast_tester.c $^ -o $@
 
-$(NAME): $(PATH_OBJS_AST) $(PATH_OBJS_LEXER) $(LFT)
+$(NAME): $(PATH_OBJS_AST) $(PATH_OBJS_LEXER) $(PATH_OBJS_EXEC) $(PATH_OBJS_EXP) $(PATH_OBJS_BUILTINS) $(LFT)
 	$(CC) $(CFLAGS) -lreadline src/test_module/shell.c $^ -o $(NAME)
 
 $(LFT):
@@ -101,6 +130,12 @@ $(OBJS_DIR)/execution/%.o:$(EXEC_DIR)/%.c | $(OBJS_DIR)/execution
 $(OBJS_DIR)/ast/%.o:$(AST_DIR)/%.c | $(OBJS_DIR)/ast
 	$(CC) $(CFLAGS) -c $< -o $@
 
+$(OBJS_DIR)/builtins/%.o:$(BUILTINS_DIR)/%.c | $(OBJS_DIR)/builtins
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(OBJS_DIR)/expansion/%.o:$(EXP_DIR)/%.c | $(OBJS_DIR)/expansion
+	$(CC) $(CFLAGS) -c $< -o $@
+
 $(OBJS_DIR):
 	@mkdir -p $@
 
@@ -111,6 +146,12 @@ $(OBJS_DIR)/ast: $(OBJS_DIR)
 	@mkdir -p $@
 
 $(OBJS_DIR)/execution: $(OBJS_DIR)
+	@mkdir -p $@
+
+$(OBJS_DIR)/builtins: $(OBJS_DIR)
+	@mkdir -p $@
+
+$(OBJS_DIR)/expansion: $(OBJS_DIR)
 	@mkdir -p $@
 
 clean:
