@@ -4,6 +4,7 @@ static int	has_arg(char *arg);
 void	insert_in_list(t_list *list, char *arg);
 int		insert_if_exist(t_list *list, char *arg);
 int		is_valid(char *arg);
+static int	exist_in_list(t_env *env, char *arg);
 
 void	ft_export(t_list *list, t_ast *node)
 {
@@ -69,28 +70,38 @@ int	insert_if_exist(t_list *list, char *arg)
 {
 	t_env	*env;
 	t_list	*actual;
-	int		i;
 
-	i = 0;
 	actual = list;
 	while (actual)
 	{
-		i = 0;
 		env = (t_env *) actual->content;
 		if (!env->variable || !arg)
 			return (0);
-		while (env->variable[i] && arg[i] && env->variable[i] != '=' && env->variable[i] == arg[i])
-			i++;
-		if ((!env->variable[i] && !arg[i]) || (env->variable[i] == '='))
+		if (exist_in_list(env, arg))
 		{
-			free (env->variable);
+			free(env->variable);
 			env->variable = ft_strdup(arg);
+			env->has_arg = has_arg(arg);
 			if (!env->variable)
 				perror("failed calloc on ft_strdup on export");
 			return (1);
 		}
 		actual = actual->next;
 	}
+	return (0);
+}
+
+static int	exist_in_list(t_env *env, char *arg)
+{
+	int		i;
+
+	i = 0;
+	while (env->variable[i] && arg[i] && env->variable[i] == arg[i]
+		&& env->variable[i] != '=' && arg[i] != '=')
+		i++;
+	if ((env->variable[i] == arg[i]) || (!env->variable[i] && arg[i] == '='
+		) || (!arg[i] && env->variable[i] == '='))
+		return (1);
 	return (0);
 }
 

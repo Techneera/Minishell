@@ -34,12 +34,14 @@ static void	print_export(char **array)
 	{
 		j = 0;
 		printf("declare -x ");
-		while (array[i][j] != '=')
+		while (array[i][j] && array[i][j] != '=')
 		{
 			printf("%c", array[i][j]);
 			j++;
 		}
-		printf("=\"%s\"\n", array[i] + j + 1);
+		if (array[i][j])
+			printf("=\"%s\"", array[i] + j + 1);
+		printf("\n");
 		i++;
 	}
 }
@@ -74,7 +76,7 @@ static int	ft_has_array_size(t_list *lst)
 	while (lst)
 	{
 		holder = (t_env *) lst->content;
-		if (holder && holder->has_arg)
+		if (holder)
 			i++;
 		lst = lst->next;
 	}
@@ -92,11 +94,8 @@ static void	to_array(t_list *head, char **array)
 	while (tmp)
 	{
 		redir_to_arr = (t_env *)tmp->content;
-		if (redir_to_arr->has_arg)
-		{
-			array[i] = redir_to_arr->variable;
-			i++;
-		}
+		array[i] = redir_to_arr->variable;
+		i++;
 		tmp = tmp->next;
 	}
 }

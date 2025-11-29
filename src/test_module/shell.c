@@ -19,7 +19,7 @@ int	main(int argc, char **argv, char **envp)
 
 void	loop(char **envp)
 {
-	t_data				data;
+	t_data	data;
 
 	signal(SIGQUIT, SIG_IGN);
 	data = (t_data) {0};
