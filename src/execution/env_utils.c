@@ -63,3 +63,46 @@ t_list	*create_node_env(char *arg, int has_arg)
 	new_list->next = NULL;
 	return (new_list);
 }
+
+void	to_array_env(t_list *head, char **array)
+{
+	int		i;
+	t_list	*tmp;
+	t_env	*redir_to_arr;
+
+	i = 0;
+	tmp = head;
+	while (tmp)
+	{
+		redir_to_arr = (t_env *)tmp->content;
+		array[i] = redir_to_arr->variable;
+		i++;
+		tmp = tmp->next;
+	}
+}
+
+char	**envlist_to_array(t_list *list)
+{
+	char	**array;
+	t_list	*tmp;
+	t_env	*redir_to_arr;
+	int		i;
+
+	i = 0;
+	array = ft_calloc(ft_lstsize(list) + 1, sizeof(char *));
+	if (!array)
+		return (NULL);
+	i = 0;
+	tmp = list;
+	while (tmp)
+	{
+		redir_to_arr = (t_env *)tmp->content;
+		if (redir_to_arr->has_arg)
+		{
+			array[i] = redir_to_arr->variable;
+			i++;
+		}
+		tmp = tmp->next;
+	}
+	return (array);
+}

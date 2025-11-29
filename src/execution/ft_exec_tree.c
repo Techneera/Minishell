@@ -10,7 +10,7 @@ int	ft_exec_tree(t_data	*data, char **envp)
 	if (node == NULL || !fds)
 		return (0);
 	if (node->type == NODE_CMD)
-		ft_execute_cmd(data, envp);
+		ft_execute_cmd(data);
 	else if (node->type == NODE_PIPE)
 		ft_execute_pipe(data, envp);
 	else if (node->type == NODE_SUBSHELL)

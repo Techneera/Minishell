@@ -24,7 +24,13 @@ void	loop(char **envp)
 	signal(SIGQUIT, SIG_IGN);
 	data = (t_data) {0};
 	data.env_list = init_env(envp);
-	data.envp = envp;
+	data.envp = envlist_to_array(data.env_list);
+	if (!data.envp)
+	{
+		perror("failled envlist_to_array malloc");
+		//---free env_list
+		return ;
+	}
 	while(1)
 	{
 		signal(SIGINT, &handle_sigstop);

@@ -65,12 +65,14 @@ t_ast	*bonus_cmd();
 void	ft_env(t_data *data);
 
 //---ft_export
-void	ft_export(t_list *list, t_ast *node);
+void	ft_export(t_list *list, t_ast *node, t_data *data);
 void	ft_print_sorted_export(t_list *list);
 
 //---env_utils
 t_list	*init_env(char **env);
 t_list	*create_node_env(char *arg, int has_arg);
+void	to_array_env(t_list *head, char **array);
+char	**envlist_to_array(t_list *list);
 
 //---error_handle
 void	failed_malloc(t_data *data, char *str);
@@ -111,7 +113,7 @@ void	update_from_position(t_ast *node, t_data *data);
 void	ft_execute_sshell(t_data *data, char **envp);
 
 //---ft_execute_cmd
-void	ft_execute_cmd(t_data *data, char **envp);
+void	ft_execute_cmd(t_data *data);
 
 int	ft_execution(t_data *data);
 

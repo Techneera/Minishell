@@ -6,7 +6,7 @@ int		insert_if_exist(t_list *list, char *arg);
 int		is_valid(char *arg);
 static int	exist_in_list(t_env *env, char *arg);
 
-void	ft_export(t_list *list, t_ast *node)
+void	ft_export(t_list *list, t_ast *node, t_data *data)
 {
 	int		n_args;
 	int 	i;
@@ -30,6 +30,9 @@ void	ft_export(t_list *list, t_ast *node)
 				ft_putstr_fd("': not a valid identifier\n", 2);
 			}
 		}
+		if (data->envp)
+			free(data->envp);
+		data->envp = envlist_to_array(data->env_list);
 	}
 }
 

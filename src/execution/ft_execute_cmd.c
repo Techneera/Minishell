@@ -1,6 +1,6 @@
 #include "execution.h"
 
-void	ft_execute_cmd(t_data *data, char **envp)
+void	ft_execute_cmd(t_data *data)
 {
 	pid_t	pid;
 	char	**args;
@@ -12,7 +12,7 @@ void	ft_execute_cmd(t_data *data, char **envp)
 	args = data->tree->cmd->args;
 	while (args[i])
 	{
-		args[i] = expand_word(args[i], envp, data->status);
+		args[i] = expand_word(args[i], data->envp, data->status);
 		i++;
 	}
 	if (!is_builtin(data, data->tree->cmd->args[0]))
@@ -20,7 +20,7 @@ void	ft_execute_cmd(t_data *data, char **envp)
 		if (!init_pid(&pid, &data->fds))
 			secure_exit(data, FAIL_STATUS);
 		if (pid == 0)
-			ft_child_cmd(data, envp);
+			ft_child_cmd(data, data->envp);
 	}
 	update_positions(data);
 }
