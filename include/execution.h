@@ -51,6 +51,7 @@ typedef struct s_data
 	int		status;
 	char	*rl;
 	t_token	*head;
+	t_lexer *lexer;
 }	t_data;
 
 
@@ -112,7 +113,7 @@ void	ft_execute_sshell(t_data *data, char **envp);
 //---ft_execute_cmd
 void	ft_execute_cmd(t_data *data, char **envp);
 
-int	ft_execution(t_ast **root, char **envp);
+int	ft_execution(t_data *data);
 
 //---init_files
 int		fill_fd_file(t_fds **fds, t_ast *ast_root, int i);

@@ -52,10 +52,8 @@ int	is_valid(char *arg)
 
 void	insert_in_list(t_list *list, char *arg)
 {
-	t_list	*actual;
 	t_list 	*new_arg;
 
-	actual = list;
 	if (!arg)
 		return ;
 	if (insert_if_exist(list, arg))
