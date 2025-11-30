@@ -55,7 +55,7 @@ SRCS_EXEC = add_libft.c exec_tree_utils.c exec_utils.c files_utils.c ft_child_cm
 			ft_closing_all.c ft_create_fds.c exec_tree_bonus.c ft_execution.c ft_execute_cmd.c ft_execute_sshell.c \
 			ft_update_position.c ft_execute_pipe.c ft_child_sshell.c ft_create_fds_bonus.c utils_bonus.c ft_execute_and.c \
 			ft_execute_or.c handle_signal.c errors_messages.c ft_cd.c ft_pwd.c ft_env.c ft_export.c env_utils.c error_handler.c \
-			ft_print_sorted_export.c
+			ft_print_sorted_export.c list_utils.c ft_getenv.c
 
 OBJS_EXEC = $(SRCS_EXEC:.c=.o)
 

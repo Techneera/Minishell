@@ -61,7 +61,13 @@ t_ast	*ft_cmd2();
 t_ast	*ft_cmd3();
 t_ast	*bonus_cmd();
 
-//--ft_env
+//---ft_getenv.c
+char	*ft_getenv(char **env, char *arg);
+
+//---list_utils.c
+int	exist_in_list(t_env *env, char *arg);
+
+//---ft_env
 void	ft_env(t_data *data);
 
 //---ft_export
@@ -78,7 +84,7 @@ char	**envlist_to_array(t_list *list);
 void	failed_malloc(t_data *data, char *str);
 
 //---ft_cd
-void	ft_cd(t_ast *node);
+void	ft_cd(t_ast *node, char **envp);
 void	ft_pwd();
 
 //---errors_messages

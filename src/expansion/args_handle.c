@@ -1,5 +1,6 @@
 #include "expansion.h"
 #include "libft.h"
+#include "execution.h"
 
 char	*expand_word(char *raw_str, char **envp, int status)
 {
@@ -96,7 +97,7 @@ char	*ft_get_expanded_value(char *s, char **envp, int *i, int status)
 	int		len;
 	char	*var_name;
 	char	*var_value;
-	(void) envp;
+	//(void) envp;
 
 	if (s[1] == '?')
 	{
@@ -117,7 +118,7 @@ char	*ft_get_expanded_value(char *s, char **envp, int *i, int status)
 		return (ft_strdup("$"));
 	}
 	var_name = ft_substr(s, 1, len - 1);
-	var_value = getenv(var_name);
+	var_value = ft_getenv(envp, var_name);
 	free(var_name);
 
 	*i += len;

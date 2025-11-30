@@ -2,7 +2,7 @@
 
 static int	is_home(char *argv);
 
-void	ft_cd(t_ast *node)
+void	ft_cd(t_ast *node, char **envp)
 {
 	int	size;
 
@@ -26,7 +26,7 @@ void	ft_cd(t_ast *node)
 			no_such_file(node->cmd->args[0], node->cmd->args[1]);	
 	}
 	else
-		chdir(getenv("HOME"));
+		chdir(ft_getenv(envp, "HOME"));
 }
 
 static int	is_home(char *argv)

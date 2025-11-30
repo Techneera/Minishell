@@ -4,7 +4,6 @@ static int	has_arg(char *arg);
 void	insert_in_list(t_list *list, char *arg);
 int		insert_if_exist(t_list *list, char *arg);
 int		is_valid(char *arg);
-static int	exist_in_list(t_env *env, char *arg);
 
 void	ft_export(t_list *list, t_ast *node, t_data *data)
 {
@@ -91,20 +90,6 @@ int	insert_if_exist(t_list *list, char *arg)
 		}
 		actual = actual->next;
 	}
-	return (0);
-}
-
-static int	exist_in_list(t_env *env, char *arg)
-{
-	int		i;
-
-	i = 0;
-	while (env->variable[i] && arg[i] && env->variable[i] == arg[i]
-		&& env->variable[i] != '=' && arg[i] != '=')
-		i++;
-	if ((env->variable[i] == arg[i]) || (!env->variable[i] && arg[i] == '='
-		) || (!arg[i] && env->variable[i] == '='))
-		return (1);
 	return (0);
 }
 
