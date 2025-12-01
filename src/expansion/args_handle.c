@@ -91,7 +91,7 @@ char	*expand_word(char *raw_str, char **envp, int status)
 				chunk = ft_get_expanded_value(&raw_str[i], envp, &i, status);
 				final_str = ft_strjoin_free_s1(final_str, chunk);
 				start = i;
-				continue;
+				continue ;
 			}
 		}
 		i++;
@@ -102,6 +102,7 @@ char	*expand_word(char *raw_str, char **envp, int status)
 char	*ft_strjoin_free_s1(char *s1, char *s2)
 {
 	char	*new_str;
+
 	if (!s1)
 		return (ft_strdup(s2));
 	if (!s2)
@@ -116,12 +117,11 @@ char	*ft_get_expanded_value(char *s, char **envp, int *i, int status)
 	int		len;
 	char	*var_name;
 	char	*var_value;
-	//(void) envp;
 
 	if (s[1] == '?')
 	{
 		*i += 2;
-		return (ft_itoa(status)); 
+		return (ft_itoa(status));
 	}
 	if (ft_isdigit(s[1]))
 	{
@@ -139,9 +139,7 @@ char	*ft_get_expanded_value(char *s, char **envp, int *i, int status)
 	var_name = ft_substr(s, 1, len - 1);
 	var_value = ft_getenv(envp, var_name);
 	free(var_name);
-
 	*i += len;
-
 	if (!var_value)
 		return (ft_strdup(""));
 	return (ft_strdup(var_value));
