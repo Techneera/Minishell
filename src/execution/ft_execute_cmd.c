@@ -3,16 +3,27 @@
 void	ft_execute_cmd(t_data *data)
 {
 	pid_t	pid;
-	char	**args;
 	int		i;
+	t_list	*matches;
 
 	if (!data->tree)
 		return ;
 	i = 0;
-	args = data->tree->cmd->args;
-	while (args[i])
+	while (data->tree->cmd->args[i])
 	{
-		args[i] = expand_word(args[i], data->envp, data->status);
+		data->tree->cmd->args[i] = expand_word(data->tree->cmd->args[i], data->envp, data->status);
+		if (ft_strchr(data->tree->cmd->args[i], '*'))
+		{
+			matches = get_wildcard_matches(data->tree->cmd->args[i]);
+			if (matches)
+			{
+				data->tree->cmd->args = insert_wildcard_args(data->tree->cmd->args, matches, i);
+				i += ft_lstsize(matches);
+				ft_lstclear(&matches, free);
+				continue ;
+			}
+		}
+		unmask_wildcards(data->tree->cmd->args[i]);
 		i++;
 	}
 	if (!is_builtin(data, data->tree->cmd->args[0]))
