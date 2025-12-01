@@ -11,7 +11,7 @@ void	ft_env(t_data *data)
 	while(list)
 	{
 		env = (t_env *) list->content;
-		if (env)
+		if (env->has_arg)
 			printf("%s\n", env->variable);
 		list = list->next;
 	}

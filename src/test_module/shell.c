@@ -19,55 +19,51 @@ int	main(int argc, char **argv, char **envp)
 
 void	loop(char **envp)
 {
-	char				*line;
-	t_lexer				*lexer;
-	t_ast				*head;
-	struct sigaction	sa;
-	struct sigaction	sh_sigt;
+	t_data	data;
 
-	sh_sigt.sa_handler = SIG_IGN;
-	sigemptyset(&sh_sigt.sa_mask);
-	sh_sigt.sa_flags = SA_RESTART;
-	sigaction(SIGQUIT, &sh_sigt, NULL);
-	sa.sa_handler = &handle_sigstop;
-	sigemptyset(&sa.sa_mask);
-	sa.sa_flags = SA_RESTART;
-	line = NULL;
-	lexer = NULL;
+	signal(SIGQUIT, SIG_IGN);
+	data = (t_data) {0};
+	data.env_list = init_env(envp);
+	data.envp = envlist_to_array(data.env_list);
+	if (!data.envp)
+	{
+		perror("failled envlist_to_array malloc");
+		//---free env_list
+		return ;
+	}
 	while(1)
 	{
-		sigaction(SIGINT, &sa, NULL);
-		head = NULL;
-		line = readline(PROMPT);
-		if (!line)
+		signal(SIGINT, &handle_sigstop);
+		data.rl = readline(PROMPT);
+		if (!data.rl)
 			break ;
-		if (*line != '\0')
+		if (*data.rl != '\0')
 		{
-			add_history(line);
-			if (!ft_strcmp(line, "exit"))
-				return (free(line));
-			lexer = ft_state_lexer(line);
-			if (!lexer)
+			add_history(data.rl);
+			if (!ft_strcmp(data.rl, "exit"))
+				return (free(data.rl));
+			data.lexer = ft_state_lexer(data.rl);
+			if (!data.lexer)
 			{
-				free(line);
+				free(data.rl);
 				break ;
 			}
-			head = ft_parser(lexer);
-			if (head == NULL)
+			data.root = ft_parser(data.lexer);
+			data.tree = data.root;
+			if (data.root == NULL)
 				fprintf(stderr, "Syntax error AST.\n");
 			else
 			{
-				print_ast(head, 0);
+				print_ast(data.root, 0);
 				printf("\n\n");
-
-				ft_execution(&head, envp);
+				ft_execution(&data);
 			}
-			if (head)
-				ft_free_ast(head);
-			free_lexer(lexer);
+			if (data.root)
+				ft_free_ast(data.root);
+			free_lexer(data.lexer);
 		}
-		if (line)
-			free(line);
+		if (data.rl)
+			free(data.rl);
 	}
 }
 

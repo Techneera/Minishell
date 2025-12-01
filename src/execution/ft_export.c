@@ -5,7 +5,7 @@ void	insert_in_list(t_list *list, char *arg);
 int		insert_if_exist(t_list *list, char *arg);
 int		is_valid(char *arg);
 
-void	ft_export(t_list *list, t_ast *node)
+void	ft_export(t_list *list, t_ast *node, t_data *data)
 {
 	int		n_args;
 	int 	i;
@@ -29,6 +29,9 @@ void	ft_export(t_list *list, t_ast *node)
 				ft_putstr_fd("': not a valid identifier\n", 2);
 			}
 		}
+		if (data->envp)
+			free(data->envp);
+		data->envp = envlist_to_array(data->env_list);
 	}
 }
 
@@ -52,10 +55,8 @@ int	is_valid(char *arg)
 
 void	insert_in_list(t_list *list, char *arg)
 {
-	t_list	*actual;
 	t_list 	*new_arg;
 
-	actual = list;
 	if (!arg)
 		return ;
 	if (insert_if_exist(list, arg))
@@ -71,22 +72,18 @@ int	insert_if_exist(t_list *list, char *arg)
 {
 	t_env	*env;
 	t_list	*actual;
-	int		i;
 
-	i = 0;
 	actual = list;
 	while (actual)
 	{
-		i = 0;
 		env = (t_env *) actual->content;
 		if (!env->variable || !arg)
 			return (0);
-		while (env->variable[i] && arg[i] && env->variable[i] != '=' && env->variable[i] == arg[i])
-			i++;
-		if ((!env->variable[i] && !arg[i]) || (env->variable[i] == '='))
+		if (exist_in_list(env, arg))
 		{
-			free (env->variable);
+			free(env->variable);
 			env->variable = ft_strdup(arg);
+			env->has_arg = has_arg(arg);
 			if (!env->variable)
 				perror("failed calloc on ft_strdup on export");
 			return (1);

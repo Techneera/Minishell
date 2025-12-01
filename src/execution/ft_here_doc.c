@@ -42,12 +42,9 @@ int	here_doc(char *lim, int **fd)
 
 static int	reciving_string(char **str, char **line, char *new_lim)
 {
-	struct sigaction	sa;
 	int					stdin_cpy;
 
-	sa.sa_handler = &handle_sigstop_heredoc;
-	sa.sa_flags = 0;
-	sigaction(SIGINT, &sa, NULL);
+	signal(SIGQUIT, &handle_sigstop_heredoc);
 	stdin_cpy = dup(STDIN_FILENO);
 	ft_printf("> ");
 	while (1)
