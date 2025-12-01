@@ -75,7 +75,7 @@ PATH_OBJS_EXP = $(patsubst %,$(OBJS_DIR)/expansion/%,$(OBJS_EXP))
 
 #		---BUILTINS---				#
 
-SRCS_BUILTINS =  ft_echo.c
+SRCS_BUILTINS =  ft_echo.c ft_exit_status.c ft_unset.c
 
 OBJS_BUILTINS = $(SRCS_BUILTINS:.c=.o)
 
