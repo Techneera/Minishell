@@ -5,6 +5,7 @@
 # define FAIL_STATUS 1
 
 #include <signal.h>
+#include <dirent.h>
 #include "libshell.h"
 #include "ast.h"
 #include "lexer.h"
@@ -179,9 +180,16 @@ int		ft_echo(t_data *data);
 
 //--ft_exit_status
 int		ft_exit(t_data *data);
-int	ft_exit_status(int state, int write_, int exit_);
+int		ft_exit_status(int state, int write_, int exit_);
 
 //--ft_unset
 int		ft_unset(t_data *data);
+
+//--WILDCARD
+int		ft_match_asterisk(char *pattern, char *str);
+int		ft_match_wildcard(char *pattern, char *name);
+t_list	*get_wildcard_matches(char *pattern);
+char	**insert_wildcard_args(char **old_args, t_list *files, int index);
+void	unmask_wildcards(char *str);
 
 #endif

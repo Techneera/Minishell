@@ -28,6 +28,8 @@ EXP_DIR = $(SRC_DIR)/expansion
 
 BUILTINS_DIR = $(SRC_DIR)/builtins
 
+WILDCARD_DIR = $(SRC_DIR)/wildcard
+
 #		---AST---				#
 
 SRCS_AST=  ft_ast.c core.c guards.c
@@ -83,6 +85,16 @@ PATH_SRCS_BUILTINS = $(patsubst %,$(BUILTINS_DIR)/%,$(SRCS_BUILTINS))
 
 PATH_OBJS_BUILTINS = $(patsubst %,$(OBJS_DIR)/builtins/%,$(OBJS_BUILTINS))
 
+#		---WILDCARD---				#
+
+SRCS_WILDCARD = ft_wildcard.c
+
+OBJS_WILDCARD = $(SRCS_WILDCARD:.c=.o)
+
+PATH_SRCS_WILDCARD = $(patsubst %,$(WILDCARD_DIR)/%,$(SRCS_WILDCARD))
+
+PATH_OBJS_WILDCARD = $(patsubst %,$(OBJS_DIR)/wildcard/%,$(OBJS_WILDCARD))
+
 #		---TESTER---			#
 
 SRCS_TESTER = unit.c
@@ -114,7 +126,7 @@ refactor_parser: $(PATH_OBJS_AST) $(PATH_OBJS_LEXER) $(LFT)
 $(AST_NAME): $(PATH_OBJS_AST) $(PATH_OBJS_LEXER) $(LFT)
 	$(CC) $(CFLAGS) $(TESTER_DIR)/ast_tester.c $^ -o $@
 
-$(NAME): $(PATH_OBJS_AST) $(PATH_OBJS_LEXER) $(PATH_OBJS_EXEC) $(PATH_OBJS_EXP) $(PATH_OBJS_BUILTINS) $(LFT)
+$(NAME): $(PATH_OBJS_AST) $(PATH_OBJS_LEXER) $(PATH_OBJS_EXEC) $(PATH_OBJS_EXP) $(PATH_OBJS_BUILTINS) $(PATH_OBJS_WILDCARD) $(LFT)
 	$(CC) $(CFLAGS) -lreadline src/test_module/shell.c $^ -o $(NAME)
 
 $(LFT):
@@ -136,6 +148,9 @@ $(OBJS_DIR)/builtins/%.o:$(BUILTINS_DIR)/%.c | $(OBJS_DIR)/builtins
 $(OBJS_DIR)/expansion/%.o:$(EXP_DIR)/%.c | $(OBJS_DIR)/expansion
 	$(CC) $(CFLAGS) -c $< -o $@
 
+$(OBJS_DIR)/wildcard/%.o:$(WILDCARD_DIR)/%.c | $(OBJS_DIR)/wildcard
+	$(CC) $(CFLAGS) -c $< -o $@
+
 $(OBJS_DIR):
 	@mkdir -p $@
 
@@ -152,6 +167,9 @@ $(OBJS_DIR)/builtins: $(OBJS_DIR)
 	@mkdir -p $@
 
 $(OBJS_DIR)/expansion: $(OBJS_DIR)
+	@mkdir -p $@
+
+$(OBJS_DIR)/wildcard: $(OBJS_DIR)
 	@mkdir -p $@
 
 clean:

@@ -2,6 +2,22 @@
 #include "libft.h"
 #include "execution.h"
 
+static
+void	mask_wildcards(char *str)
+{
+	int	i;
+
+	if (!str)
+		return ;
+	i = 0;
+	while (str[i])
+	{
+		if (str[i] == '*')
+			str[i] = '\001';
+		i++;
+	}
+}
+
 char	*expand_word(char *raw_str, char **envp, int status)
 {
 	char		*final_str;
@@ -49,6 +65,7 @@ char	*expand_word(char *raw_str, char **envp, int status)
 			{
 				state = EXP_GENERAL;
 				chunk = ft_substr(raw_str, start, i - start);
+				mask_wildcards(chunk);
 				final_str = ft_strjoin_free_s1(final_str, chunk);
 				free(chunk);
 				i++;
@@ -61,12 +78,14 @@ char	*expand_word(char *raw_str, char **envp, int status)
 			{
 				state = EXP_GENERAL;
 				chunk = ft_substr(raw_str, start, i - start);
+				mask_wildcards(chunk);
 				final_str = ft_strjoin_free_s1(final_str, chunk);
 				free(chunk);
 			}
 			else if (raw_str[i] == '$')
 			{
 				chunk = ft_substr(raw_str, start, i - start);
+				mask_wildcards(chunk);
 				final_str = ft_strjoin_free_s1(final_str, chunk);
 				free(chunk);
 				chunk = ft_get_expanded_value(&raw_str[i], envp, &i, status);
