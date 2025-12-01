@@ -32,7 +32,7 @@ WILDCARD_DIR = $(SRC_DIR)/wildcard
 
 #		---AST---				#
 
-SRCS_AST=  ft_ast.c core.c guards.c
+SRCS_AST=  ft_ast.c ft_ast_utils.c core.c guards.c
 
 OBJS_AST = $(SRCS_AST:.c=.o)
 
