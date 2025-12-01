@@ -177,4 +177,11 @@ void	apply_redirs_subshell(t_data *data);
 //--ft_echo
 int		ft_echo(t_data *data);
 
+//--ft_exit_status
+int		ft_exit(t_data *data);
+int	ft_exit_status(int state, int write_, int exit_);
+
+//--ft_unset
+int		ft_unset(t_data *data);
+
 #endif

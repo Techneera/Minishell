@@ -118,7 +118,7 @@ int	ft_unset(t_data *data)
 		return (0);
 	while (args[i])
 	{
-		if (!is_valid_identifier(args[i]))
+		if (!ft_is_valid_arguments(args[i]))
 		{
 			ft_putstr_fd("minishell: unset: `", 2);
 			ft_putstr_fd(args[i], 2);
