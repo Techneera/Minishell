@@ -1,4 +1,4 @@
-# Minishell - As beautiful as a shell
+# Minishell - Core Shell Program
 
 ## Summary
 This project involves creating a simple shell. It is a mini-Bash implementation that provides extensive knowledge about processes and file descriptors.
