@@ -28,7 +28,7 @@ t_ast	*ft_ast_generic_node(t_node_type type)
 		return (NULL);
 	new_node->type = type;
 	new_node->cmd = NULL;
-	new_node->body= NULL;
+	new_node->body = NULL;
 	new_node->left = NULL;
 	new_node->right = NULL;
 	return (new_node);
