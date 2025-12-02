@@ -22,6 +22,24 @@ int	is_valid_n_option(char *arg)
 	return (1);
 }
 
+static
+int	ft_target_fd(t_data *data)
+{
+	int	j;
+
+	j = data->tree->cmd->redir_count;
+	if (!j)
+		return (1);
+	while (--j >= 0)
+	{
+		if (data->tree->cmd->redirs[j].label == REDIR_OUT || \
+data->tree->cmd->redirs[j].label == REDIR_APPEND)
+			break ;
+	}
+	j += data->fds->pos.file_id;
+	return (data->fds->fd_files[j]);
+}
+
 int	ft_echo(t_data *data)
 {
 	char	**args;
@@ -30,25 +48,22 @@ int	ft_echo(t_data *data)
 
 	args = data->tree->cmd->args;
 	print_newline = 1;
-	i = 1;
-	while (args[i])
+	i = 0;
+	while (args[++i])
 	{
 		if (is_valid_n_option(args[i]) == 1)
-		{
 			print_newline = 0;
-			i++;
-		}
 		else
 			break ;
 	}
 	while (args[i])
 	{
-		ft_putstr_fd(args[i], 1);
+		ft_putstr_fd(args[i], ft_target_fd(data));
 		if (args[i + 1] != NULL)
-			ft_putstr_fd(" ", 1);
+			ft_putstr_fd(" ", ft_target_fd(data));
 		i++;
 	}
 	if (print_newline == 1)
-		ft_putstr_fd("\n", 1);
+		ft_putstr_fd("\n", ft_target_fd(data));
 	return (0);
 }
