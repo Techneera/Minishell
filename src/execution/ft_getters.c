@@ -48,6 +48,8 @@ char	*get_command_path(char **arg, char **env)
 		return (0);
 	if (**arg == '/' && access(*arg, X_OK) == 0)
 		return (ft_strdup(*arg));
+	if (**arg == '.' && (*arg)[1] == '/' && access(*arg, X_OK) == 0)
+		return (ft_strdup(*arg));
 	paths = get_paths(env);
 	while (paths && paths[++i])
 	{
