@@ -25,19 +25,23 @@ int	is_valid_n_option(char *arg)
 static
 int	ft_target_fd(t_data *data)
 {
+	int	i;
 	int	j;
+	int	fd;
 
-	j = data->tree->cmd->redir_count;
-	if (!j)
-		return (1);
-	while (--j >= 0)
+	i = 0;
+	j = 0;
+	fd = 1;
+	while (j < data->tree->cmd->redir_count)
 	{
 		if (data->tree->cmd->redirs[j].label == REDIR_OUT || \
 data->tree->cmd->redirs[j].label == REDIR_APPEND)
-			break ;
+			fd = data->fds->fd_files[data->fds->pos.file_id + i];
+		if (data->tree->cmd->redirs[j].label != REDIR_HEREDOCK)
+			i++;
+		j++;
 	}
-	j += data->fds->pos.file_id;
-	return (data->fds->fd_files[j]);
+	return (fd);
 }
 
 int	ft_echo(t_data *data)

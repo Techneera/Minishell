@@ -7,7 +7,7 @@ int	ft_pwd()
 	if(getcwd(buff, 10000))
 	{
 		printf("%s\n", buff);
-		return (1);
+		return (0);
 	}
-	return (0);
+	return (FAIL_STATUS);
 }

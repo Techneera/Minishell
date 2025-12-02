@@ -7,7 +7,7 @@ int	ft_env(t_data *data)
 
 	list = data->env_list;
 	if (!list)
-		return (0);
+		return (FAIL_STATUS);
 	while(list)
 	{
 		env = (t_env *) list->content;
@@ -15,5 +15,5 @@ int	ft_env(t_data *data)
 			printf("%s\n", env->variable);
 		list = list->next;
 	}
-	return (1);
+	return (0);
 }
