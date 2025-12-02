@@ -69,10 +69,10 @@ char	*ft_getenv(char **env, char *arg);
 int	exist_in_list(t_env *env, char *arg);
 
 //---ft_env
-void	ft_env(t_data *data);
+int	ft_env(t_data *data);
 
 //---ft_export
-void	ft_export(t_list *list, t_ast *node, t_data *data);
+int	ft_export(t_list *list, t_ast *node, t_data *data);
 void	ft_print_sorted_export(t_list *list);
 
 //---env_utils
@@ -85,8 +85,8 @@ char	**envlist_to_array(t_list *list);
 void	failed_malloc(t_data *data, char *str);
 
 //---ft_cd
-void	ft_cd(t_ast *node, char **envp);
-void	ft_pwd();
+int	ft_cd(t_ast *node, char **envp);
+int	ft_pwd();
 
 //---errors_messages
 void	message_error(char	*str, char *file, int type);

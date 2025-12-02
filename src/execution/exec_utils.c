@@ -102,19 +102,19 @@ int	is_builtin(t_data *data, char *arg)
 	if (!arg)
 		return (0);
 	if (ft_strncmp(arg, "echo\0", 5) == 0)
-		return (ft_echo(data));
+		return (ft_exit_status(ft_echo(data), 1, 0), 1);
 	if (ft_strncmp(arg, "cd\0", 3) == 0)
-		return (ft_cd(data->tree, data->envp), 1);
+		return (ft_exit_status(ft_cd(data->tree, data->envp), 1, 0), 1);
 	if (ft_strncmp(arg, "pwd\0", 4) == 0)
-		return (ft_pwd(), 1);
+		return (ft_exit_status(ft_pwd(), 1, 0), 1);
 	if (ft_strncmp(arg, "export\0", 7) == 0)
-		return (ft_export(data->env_list, data->tree, data), 1);
+		return (ft_exit_status(ft_export(data->env_list, data->tree, data), 1, 0), 1);
 	if (ft_strncmp(arg, "unset\0", 6) == 0)
-		return (ft_unset(data));
+		return (ft_exit_status(ft_unset(data), 1, 0), 1);
 	if (ft_strncmp(arg, "env\0", 4) == 0)
-		return (ft_env(data), 1);
+		return (ft_exit_status(ft_env(data), 1, 0), 1);
 	if (ft_strncmp(arg, "exit\0", 5) == 0)
-		return (ft_exit(data));
+		return (ft_exit_status(ft_exit(data), 1, 0), 1);
 	return (0);
 }
 
