@@ -38,7 +38,8 @@ void	ft_free_ast(t_ast *root)
 {
 	if (!root)
 		return ;
-	if (root->type == NODE_AND || root->type == NODE_PIPE || root->type == NODE_OR)
+	if (root->type == NODE_AND || root->type == NODE_PIPE \
+|| root->type == NODE_OR)
 	{
 		ft_free_ast(root->left);
 		ft_free_ast(root->right);
@@ -50,12 +51,12 @@ void	ft_free_ast(t_ast *root)
 	root = NULL;
 }
 
-void    ft_free_redir_struct_only(void *content)
+void	ft_free_redir_struct_only(void *content)
 {
-	t_redir *redir;
+	t_redir	*redir;
 
 	redir = (t_redir *)content;
 	if (!redir)
-		return;
+		return ;
 	free(redir);
 }

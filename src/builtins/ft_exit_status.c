@@ -87,7 +87,7 @@ int	ft_exit(t_data *data)
 	{
 		exit_code_l = ft_strtol(args[1]);
 		if (exit_code_l == 2)
-			secure_exit(data, 2); 
+			secure_exit(data, 2);
 		else
 			secure_exit(data, (int)exit_code_l);
 	}

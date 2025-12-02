@@ -13,10 +13,11 @@ t_ast	*ft_parser(t_lexer *l)
 		fprintf(stderr, "Error parser allocate.\n");
 		return (NULL);
 	}
-	ast_root = ft_parse_and_or(parser); // Search lowest precedence
+	ast_root = ft_parse_and_or(parser);
 	if (ast_root != NULL && parser->current_token->tok_label != TOKEN_EOF)
 	{
-		fprintf(stderr, "Syntax error near unexpected token: %s.\n", parser->current_token->str);
+		fprintf(stderr, "Syntax error near unexpected token: %s.\n", \
+parser->current_token->str);
 		ft_free_ast(ast_root);
 		ast_root = NULL;
 	}
@@ -37,7 +38,7 @@ t_ast	*ft_parse_and_or(t_parser *parser)
 	if (!ast_left)
 		return (NULL);
 	while (parser->current_token->tok_label == TOKEN_AND || \
-			parser->current_token->tok_label == TOKEN_OR)
+parser->current_token->tok_label == TOKEN_OR)
 	{
 		if (parser->current_token->tok_label == TOKEN_AND)
 			op_type = NODE_AND;
@@ -51,7 +52,7 @@ t_ast	*ft_parse_and_or(t_parser *parser)
 		if (!new_parent)
 			return (ft_free_ast(ast_left), ft_free_ast(ast_right), NULL);
 		new_parent->left = ast_left;
-		new_parent->right= ast_right;
+		new_parent->right = ast_right;
 		ast_left = new_parent;
 	}
 	return (ast_left);
@@ -76,7 +77,7 @@ t_ast	*ft_parse_pipeline(t_parser *parser)
 		if (!new_parent)
 			return (ft_free_ast(ast_left), ft_free_ast(ast_right), NULL);
 		new_parent->left = ast_left;
-		new_parent->right= ast_right;
+		new_parent->right = ast_right;
 		ast_left = new_parent;
 	}
 	return (ast_left);
@@ -86,9 +87,9 @@ static
 int	ft_isredir(t_parser *parser)
 {
 	return (parser->current_token->tok_label == TOKEN_REDIR_IN || \
-			parser->current_token->tok_label == TOKEN_REDIR_OUT || \
-			parser->current_token->tok_label == TOKEN_REDIR_APPEND || \
-			parser->current_token->tok_label == TOKEN_REDIR_HEREDOC);
+parser->current_token->tok_label == TOKEN_REDIR_OUT || \
+parser->current_token->tok_label == TOKEN_REDIR_APPEND || \
+parser->current_token->tok_label == TOKEN_REDIR_HEREDOC);
 }
 
 static
@@ -113,7 +114,8 @@ t_ast	*ft_parse_grain_with_redirs(t_parser *parser)
 	node = NULL;
 	if (parser->current_token->tok_label == TOKEN_LEFT_PAR)
 		node = ft_parse_subshell(parser);
-	else if (parser->current_token->tok_label == TOKEN_WORD || ft_isredir(parser))
+	else if (parser->current_token->tok_label == TOKEN_WORD \
+|| ft_isredir(parser))
 		node = ft_parse_simple_command(parser);
 	else
 		fprintf(stderr, "Error invalid token.\n");
@@ -276,7 +278,7 @@ int	ft_handle_redirects(t_parser *parser, t_cmd *cmd_to_fill)
 	t_list			*new_link;
 	t_label_redir	label;
 	char			*filename;
-	
+
 	tmp_lst_head = NULL;
 	while (ft_isredir(parser))
 	{
@@ -286,7 +288,8 @@ int	ft_handle_redirects(t_parser *parser, t_cmd *cmd_to_fill)
 		else
 		{
 			if (parser->peek->tok_label != TOKEN_WORD)
-				return (ft_lstclear(&tmp_lst_head, &ft_free_redir_content), false);
+				return (ft_lstclear(&tmp_lst_head, &ft_free_redir_content), \
+false);
 			filename = ft_strdup(parser->peek->str);
 		}
 		if (!filename)
@@ -297,7 +300,7 @@ int	ft_handle_redirects(t_parser *parser, t_cmd *cmd_to_fill)
 		new_link = ft_lstnew(new_redir);
 		if (!new_link)
 			return (ft_free_redir_content(new_redir), \
-					ft_lstclear(&tmp_lst_head, &ft_free_redir_content), false);
+ft_lstclear(&tmp_lst_head, &ft_free_redir_content), false);
 		ft_lstadd_back(&tmp_lst_head, new_link);
 		cmd_to_fill->redir_count++;
 		ft_parser_iter(parser);
@@ -307,7 +310,7 @@ int	ft_handle_redirects(t_parser *parser, t_cmd *cmd_to_fill)
 	if (cmd_to_fill->redir_count > 0)
 	{
 		cmd_to_fill->redirs = (t_redir *)ft_calloc(cmd_to_fill->redir_count, \
-				sizeof(t_redir));
+sizeof(t_redir));
 		if (!cmd_to_fill->redirs)
 			return (ft_lstclear(&tmp_lst_head, &ft_free_redir_content), false);
 		ft_copy_lst_to_array(tmp_lst_head, cmd_to_fill->redirs);
@@ -332,7 +335,8 @@ t_ast	*ft_parse_subshell(t_parser *parser)
 	if (!body)
 		return (fprintf(stderr, "Error in subshell body.\n"), NULL);
 	if (parser->current_token->tok_label != TOKEN_RIGHT_PAR)
-		return (fprintf(stderr, "Error unclosed parenthese.\n"), ft_free_ast(body), NULL);
+		return (fprintf(stderr, "Error unclosed parenthese.\n"), \
+ft_free_ast(body), NULL);
 	ft_parser_iter(parser);
 	node_subsh = ft_ast_generic_node(NODE_SUBSHELL);
 	if (!node_subsh)
