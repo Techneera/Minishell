@@ -138,7 +138,7 @@ void	get_sizes(t_ast *ast_root, t_fds **fds, int inside_sshell);
 int	docs_bonus(t_ast *ast_root, t_fds **fds);
 
 //---ft_getters
-char	*get_command_path(char **arg, char **env);
+char	*get_command_path(char **arg, char **env, t_data *data);
 char	**get_paths(char **env);
 void	message_error(char	*str, char *file, int type);
 

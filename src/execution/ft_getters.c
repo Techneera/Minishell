@@ -36,7 +36,7 @@ char	**get_paths(char **env)
 	return (NULL);
 }
 
-char	*get_command_path(char **arg, char **env)
+char	*get_command_path(char **arg, char **env, t_data *data)
 {
 	int		i;
 	char	*tmp;
@@ -48,8 +48,18 @@ char	*get_command_path(char **arg, char **env)
 		return (0);
 	if (**arg == '/' && access(*arg, X_OK) == 0)
 		return (ft_strdup(*arg));
-	if (**arg == '.' && (*arg)[1] == '/' && access(*arg, X_OK) == 0)
-		return (ft_strdup(*arg));
+	if (**arg == '.' && (*arg)[1] == '/')
+	{
+		if (access(*arg, F_OK) != 0)
+		{
+			message_error(arg[0], ": No such file or directory", 1);
+			secure_exit(data, 127);
+		}
+		if(access(*arg, X_OK) == 0)
+			return (ft_strdup(*arg));
+		message_error(arg[0], ": Permission denied", 1);
+		secure_exit(data, 126);
+	}
 	paths = get_paths(env);
 	while (paths && paths[++i])
 	{

@@ -9,7 +9,7 @@ int	ft_cd(t_ast *node, char **envp)
 	if (!node)
 		return (FAIL_STATUS);
 	size = ft_arraylen((void **) node->cmd->args);
-	if (size > 1)
+	if (size > 2)
 	{
 		message_error(": too many arguments", node->cmd->args[0], 0);
 		return (FAIL_STATUS);
