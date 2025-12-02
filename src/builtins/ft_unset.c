@@ -80,29 +80,14 @@ static void	remove_env_var(t_data *data, char *key)
 static
 void	refresh_env_array(t_data *data)
 {
-	int		i;
-	int		len;
-	t_list	*curr;
-	t_env	*content;
-
 	if (data->envp)
-		ft_free_array(data->envp);
-	len = ft_lstsize(data->env_list);
-	data->envp = malloc(sizeof(char *) * (len + 1));
-	if (!data->envp)
-		failed_malloc(data, "envp update");
-	curr = data->env_list;
-	i = 0;
-	while (curr)
 	{
-		content = (t_env *)curr->content;
-		data->envp[i] = ft_strdup(content->variable);
-		if (!data->envp[i])
-			failed_malloc(data, "envp duplication");
-		i++;
-		curr = curr->next;
+		ft_free_array(data->envp);
+		data->envp = NULL;
 	}
-	data->envp[i] = NULL;
+	data->envp = envlist_to_array(data->env_list);
+	if (!data->envp && ft_lstsize(data->env_list) > 0)
+		failed_malloc(data, "envp refresh");
 }
 
 int	ft_unset(t_data *data)

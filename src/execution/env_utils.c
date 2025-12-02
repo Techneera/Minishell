@@ -99,10 +99,13 @@ char	**envlist_to_array(t_list *list)
 		redir_to_arr = (t_env *)tmp->content;
 		if (redir_to_arr->has_arg)
 		{
-			array[i] = redir_to_arr->variable;
+			array[i] = ft_strdup(redir_to_arr->variable);
+			if (!array[i])
+				return (ft_free_array(array), NULL);
 			i++;
 		}
 		tmp = tmp->next;
 	}
+	array[i] = NULL;
 	return (array);
 }
