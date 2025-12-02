@@ -11,8 +11,6 @@
 #include "lexer.h"
 #include "expansion.h"
 
-extern int child_status;
-
 typedef struct s_env
 {
 	int		has_arg;

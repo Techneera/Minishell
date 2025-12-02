@@ -1,15 +1,13 @@
 #include "execution.h"
 
-int child_status = 0;
-
 int	ft_execution(t_data *data)
 {
-	int	g_signal;
 	int	i;
+	int child_status;
 
 	if (!data->env_list)
 		return (0);
-	g_signal = 0;
+	child_status = 0;
 	if (!data->tree)
 		return (-1);
 	ft_create_fds(data);
@@ -19,10 +17,10 @@ int	ft_execution(t_data *data)
 	while(data->fds && i < data->fds->get.n_cmds && data->fds->c_pids && waitpid(data->fds->c_pids[i], &child_status, 0) > 0)
 	{
 		if (WIFEXITED(child_status))
-			g_signal = WEXITSTATUS(child_status);
+			data->status = WEXITSTATUS(child_status);
 		i++;
 	}
 	free_fds(&data->fds);
 	free_tree(&data->root);
-	return(g_signal);
+	return(data->status);
 }
