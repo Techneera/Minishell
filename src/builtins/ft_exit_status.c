@@ -41,11 +41,11 @@ long	ft_strtol(char *str)
 		i++;
 	}
 	if (str[i] == '\0')
-		return (ft_error(2, str, "numeric argument required."));
+		return (ft_error(2, str, "numeric argument required"));
 	while (str[i])
 	{
 		if (!ft_isdigit(str[i]))
-			return (ft_error(2, str, "numeric argument required."));
+			return (ft_error(2, str, "numeric argument required"));
 		res = res * 10 + str[i] - '0';
 		if (res < -214783648 || res >= 2147483647)
 		{
