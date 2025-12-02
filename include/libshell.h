@@ -44,27 +44,27 @@ typedef enum e_label_redir
 typedef enum e_token_label
 {
 	TOKEN_ERROR,
-	TOKEN_WORD, // Literal alpha string ("ls", "-la", "infile.txt")
-	TOKEN_PIPE, // Pipe character
+	TOKEN_WORD,
+	TOKEN_PIPE,
 	TOKEN_AND,
 	TOKEN_OR,
-	TOKEN_RIGHT_PAR, // Right parenthesis character
-	TOKEN_LEFT_PAR, // Left parenthesis character
-	TOKEN_REDIR_IN, // Redirection input character
-	TOKEN_REDIR_OUT, // Redirection output character
-	TOKEN_REDIR_APPEND, // Append character
-	TOKEN_REDIR_HEREDOC, // Heredoc character
-	TOKEN_EOF // End Of File
+	TOKEN_RIGHT_PAR,
+	TOKEN_LEFT_PAR,
+	TOKEN_REDIR_IN,
+	TOKEN_REDIR_OUT,
+	TOKEN_REDIR_APPEND,
+	TOKEN_REDIR_HEREDOC,
+	TOKEN_EOF
 }	t_token_label;
 
 typedef enum e_node_type
 {
 	NODE_EMPTY,
-	NODE_CMD, // Command type node
-	NODE_PIPE, // Pipe type node
-	NODE_SUBSHELL, // Collection of tokens
-	NODE_AND, // '&&' type node
-	NODE_OR // '||' type node
+	NODE_CMD,
+	NODE_PIPE,
+	NODE_SUBSHELL,
+	NODE_AND,
+	NODE_OR
 }	t_node_type;
 
 typedef struct s_token
