@@ -49,7 +49,11 @@ int	ft_echo(t_data *data)
 	char	**args;
 	int		i;
 	int		print_newline;
+	int		fd;
 
+	fd = ft_target_fd(data);
+	if (fd == -1)
+		return (1);
 	args = data->tree->cmd->args;
 	print_newline = 1;
 	i = 0;
@@ -62,12 +66,12 @@ int	ft_echo(t_data *data)
 	}
 	while (args[i])
 	{
-		ft_putstr_fd(args[i], ft_target_fd(data));
+		ft_putstr_fd(args[i], fd);
 		if (args[i + 1] != NULL)
-			ft_putstr_fd(" ", ft_target_fd(data));
+			ft_putstr_fd(" ", fd);
 		i++;
 	}
 	if (print_newline == 1)
-		ft_putstr_fd("\n", ft_target_fd(data));
+		ft_putstr_fd("\n", fd);
 	return (0);
 }

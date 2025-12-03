@@ -121,7 +121,7 @@ void	ft_execute_cmd(t_data *data);
 int	ft_execution(t_data *data);
 
 //---init_files
-int		fill_fd_file(t_fds **fds, t_ast *ast_root, int i);
+int		fill_fd_file(t_data *data, t_ast *ast_root, int i);
 
 //---exec_utils
 int		is_builtin(t_data *data, char *arg);

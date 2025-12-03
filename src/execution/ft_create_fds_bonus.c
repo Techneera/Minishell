@@ -65,5 +65,5 @@ static void	create_files(t_data *data)
 		while (++i < fds->get.n_files)		
 			fds->fd_files[i] = -1;
 	}
-	fill_fd_file(&data->fds, data->tree, 0);	
+	fill_fd_file(data, data->tree, 0);	
 }
