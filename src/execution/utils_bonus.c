@@ -11,14 +11,11 @@ int	wait_bonus(t_data *data, t_fds *fds)
 	while(i < fds->get.n_cmds && fds->c_pids && waitpid(fds->c_pids[i], &status, 0) > 0)
 	{
 		if (WIFEXITED(status))
-		{
-			signal = WEXITSTATUS(status);
-			data->status = signal;
-		}
+			ft_exit_status(WEXITSTATUS(status), 1, 0);
 		i++;
 	}
 	free_fds_bonus(data);
-	return(signal);
+	return(ft_exit_status(0, 0, 0));
 }
 
 void	free_fds_bonus(t_data	*data)

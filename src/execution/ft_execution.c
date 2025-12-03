@@ -17,10 +17,10 @@ int	ft_execution(t_data *data)
 	while(data->fds && i < data->fds->get.n_cmds && data->fds->c_pids && waitpid(data->fds->c_pids[i], &child_status, 0) > 0)
 	{
 		if (WIFEXITED(child_status))
-			data->status = WEXITSTATUS(child_status);
+			ft_exit_status(WEXITSTATUS(child_status), 1, 0);
 		i++;
 	}
 	free_fds(&data->fds);
 	free_tree(&data->root);
-	return(data->status);
+	return(0);
 }

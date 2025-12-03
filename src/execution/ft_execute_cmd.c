@@ -11,7 +11,7 @@ void	ft_execute_cmd(t_data *data)
 	i = 0;
 	while (data->tree->cmd->args[i])
 	{
-		data->tree->cmd->args[i] = expand_word(data->tree->cmd->args[i], data->envp, data->status);
+		data->tree->cmd->args[i] = expand_word(data->tree->cmd->args[i], data->envp, ft_exit_status(0, 0, 0));
 		if (ft_strchr(data->tree->cmd->args[i], '*'))
 		{
 			matches = get_wildcard_matches(data->tree->cmd->args[i]);
@@ -34,10 +34,6 @@ void	ft_execute_cmd(t_data *data)
 			ft_child_cmd(data, data->envp);
 	}
 	else
-	{
-		if (data->fds->c_pids[data->fds->pos.fork_id])
-			data->fds->c_pids[data->fds->pos.fork_id] = ft_exit_status(0, 0, 0);
 		data->fds->pos.fork_id++;
-	}
 	update_positions(data);
 }

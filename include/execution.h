@@ -47,9 +47,7 @@ typedef struct s_data
 	t_fds	*fds;
 	char	**envp;
 	t_list	*env_list;
-	int		status;
 	char	*rl;
-	t_token	*head;
 	t_lexer *lexer;
 }	t_data;
 
