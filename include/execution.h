@@ -10,6 +10,7 @@
 #include "ast.h"
 #include "lexer.h"
 #include "expansion.h"
+#include <sys/stat.h>
 
 typedef struct s_env
 {

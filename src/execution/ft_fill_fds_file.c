@@ -73,7 +73,7 @@ static int	create_redir_in(t_fds **fds, t_ast *ast_root, int i, int r)
 	if (access(ast_root->cmd->redirs[r].file_name, F_OK) != 0)
 	{
 		(*fds)->fd_files[i] = -1;
-		message_error(": no such file or directory: ",
+		message_error(": No such file or directory",
 			ast_root->cmd->redirs[r].file_name, 0);
 		return (0);
 	}

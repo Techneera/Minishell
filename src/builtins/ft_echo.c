@@ -36,7 +36,13 @@ int	ft_target_fd(t_data *data)
 	{
 		if (data->tree->cmd->redirs[j].label == REDIR_OUT || \
 data->tree->cmd->redirs[j].label == REDIR_APPEND)
+		{
+			if (data->fds->fd_files[data->fds->pos.file_id + i] == -1)
+				return (-1);
 			fd = data->fds->fd_files[data->fds->pos.file_id + i];
+		}
+		if (data->fds->fd_files[data->fds->pos.file_id + i] == -1)
+			return (-1);
 		if (data->tree->cmd->redirs[j].label != REDIR_HEREDOCK)
 			i++;
 		j++;
