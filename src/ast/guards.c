@@ -12,6 +12,7 @@ void	ft_free_array(char **arr)
 	while (arr[i])
 		free(arr[i++]);
 	free(arr);
+	arr = NULL;
 }
 
 void	ft_free_cmd(t_cmd *cmd)
@@ -32,6 +33,7 @@ void	ft_free_cmd(t_cmd *cmd)
 		free(cmd->redirs);
 	}
 	free(cmd);
+	cmd = NULL;
 }
 
 void	ft_free_ast(t_ast *root)
@@ -59,4 +61,5 @@ void	ft_free_redir_struct_only(void *content)
 	if (!redir)
 		return ;
 	free(redir);
+	redir = NULL;
 }

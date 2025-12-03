@@ -67,15 +67,15 @@ int	ft_exit(t_data *data)
 	i = 1;
 	if (!args[1])
 		secure_exit(data, data->status);
-	if (ft_strcmp(args[1], "--") == 0)
+	if (!ft_strncmp(args[1], "--", 3))
 	{
 		i = 2;
-		if (!args[2])
+		if (!args[i])
 			secure_exit(data, data->status);
 	}
 	if (!ft_safe_atoll(args[i], &exit_val))
 	{
-		ft_error(2, args[i], "numeric argument required");
+		ft_exit_status(ft_error(2, args[i], "numeric argument required"), 1, 0);
 		secure_exit(data, 2);
 	}
 	if (args[i + 1])
