@@ -77,6 +77,7 @@ t_list	*init_env(char **env);
 t_list	*create_node_env(char *arg, int has_arg);
 void	to_array_env(t_list *head, char **array);
 char	**envlist_to_array(t_list *list);
+void	ft_free_content(void *content);
 
 //---error_handle
 void	failed_malloc(t_data *data, char *str);

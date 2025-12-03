@@ -1,7 +1,7 @@
 #include "execution.h"
 
 t_list	*create_node_env(char *arg, int has_arg);
-void	free_content(void *content);
+void	ft_free_content(void *content);
 
 t_list	*init_env(char **env)
 {
@@ -19,7 +19,7 @@ t_list	*init_env(char **env)
 		node = create_node_env(env[i], 1);
 		if (!node)
 		{
-			ft_lstclear(&env_list, &free_content);
+			ft_lstclear(&env_list, &ft_free_content);
 			return (NULL);
 		}
 		ft_lstadd_back(&env_list, node);
@@ -28,7 +28,7 @@ t_list	*init_env(char **env)
 	return (env_list);
 }
 
-void	free_content(void *content)
+void	ft_free_content(void *content)
 {
 	t_env *env;
 

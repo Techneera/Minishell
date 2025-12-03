@@ -2,11 +2,9 @@
 
 int	wait_bonus(t_data *data, t_fds *fds)
 {
-	int	signal;
 	int	i;
 	int	status;
 
-	signal = 0;
 	i = 0;
 	while(i < fds->get.n_cmds && fds->c_pids && waitpid(fds->c_pids[i], &status, 0) > 0)
 	{

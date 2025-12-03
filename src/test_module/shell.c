@@ -60,7 +60,8 @@ void	loop(char **envp)
 			}
 			if (data.root)
 				ft_free_ast(data.root);
-			free_lexer(data.lexer);
+			if (data.lexer)
+				free_lexer(data.lexer);
 		}
 		if (data.rl)
 			free(data.rl);

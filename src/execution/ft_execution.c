@@ -20,7 +20,6 @@ int	ft_execution(t_data *data)
 			ft_exit_status(WEXITSTATUS(child_status), 1, 0);
 		i++;
 	}
-	free_fds(&data->fds);
-	free_tree(&data->root);
+	free_data(data);
 	return(0);
 }

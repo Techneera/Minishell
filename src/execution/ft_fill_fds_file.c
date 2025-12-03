@@ -7,9 +7,6 @@ static int	fill_files(t_data *data, t_ast *ast_root, int i);
 
 int	fill_fd_file(t_data *data, t_ast *ast_root, int i)
 {
-	t_fds	*fds;
-
-	fds = data->fds;
 	if (!ast_root)
 		return (i);
 	if (ast_root->type == NODE_AND || ast_root -> type == NODE_OR)
@@ -28,9 +25,7 @@ static int	fill_files(t_data *data, t_ast *ast_root, int i)
 {
 	int		j;
 	int		r;
-	t_fds	*fds;
 
-	fds = data->fds;
 	r = 0;
 	j = 0;
 	if (ast_root->cmd->redirs)
