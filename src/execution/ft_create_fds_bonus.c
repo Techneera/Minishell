@@ -12,8 +12,8 @@ void	ft_create_fds_bonus(t_data *data)
 		return ;
 	ast_root = data->tree;
 	fds = data->fds;
-	fds->get.n_files = 0;
-	fds->get.n_cmds = 0;
+	fds->get = (t_get){0};
+	fds->pos = (t_pos){0};
 	get_sizes_bonus(ast_root, &fds, 0);
 	if (fds->get.n_cmds > 0)
 	{
@@ -65,5 +65,5 @@ static void	create_files(t_data *data)
 		while (++i < fds->get.n_files)		
 			fds->fd_files[i] = -1;
 	}
-	fill_fd_file(&data->fds, data->tree, 0);	
+	fill_fd_file(data, data->tree, 0);	
 }

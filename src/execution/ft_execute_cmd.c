@@ -11,7 +11,7 @@ void	ft_execute_cmd(t_data *data)
 	i = 0;
 	while (data->tree->cmd->args[i])
 	{
-		data->tree->cmd->args[i] = expand_word(data->tree->cmd->args[i], data->envp, data->status);
+		data->tree->cmd->args[i] = expand_word(data->tree->cmd->args[i], data->envp, ft_exit_status(0, 0, 0));
 		if (ft_strchr(data->tree->cmd->args[i], '*'))
 		{
 			matches = get_wildcard_matches(data->tree->cmd->args[i]);
@@ -26,6 +26,7 @@ void	ft_execute_cmd(t_data *data)
 		unmask_wildcards(data->tree->cmd->args[i]);
 		i++;
 	}
+	data->tree->cmd->args = ft_realloc_empty(data->tree->cmd->args);
 	if (!is_builtin(data, data->tree->cmd->args[0]))
 	{
 		if (!init_pid(&pid, &data->fds))
@@ -33,5 +34,7 @@ void	ft_execute_cmd(t_data *data)
 		if (pid == 0)
 			ft_child_cmd(data, data->envp);
 	}
+	else
+		data->fds->pos.fork_id++;
 	update_positions(data);
 }

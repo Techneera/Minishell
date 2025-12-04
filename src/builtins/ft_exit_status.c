@@ -5,7 +5,7 @@ static
 int	ft_error(int err_no, char *arg, char *err_msg)
 {
 	ft_putstr_fd("minishell: exit: ", 2);
-	if (arg != NULL)
+	if (arg)
 	{
 		ft_putstr_fd(arg, 2);
 		ft_putstr_fd(": ", 2);
@@ -18,79 +18,71 @@ int	ft_error(int err_no, char *arg, char *err_msg)
 static
 void	ft_exit_print(void)
 {
-	if (isatty(STDIN_FILENO) || isatty(STDOUT_FILENO))
-		ft_putstr_fd("exit", 2);
+	if (isatty(STDIN_FILENO))
+		ft_putstr_fd("exit\n", 2);
 }
 
-static
-long	ft_strtol(char *str)
+static int	ft_safe_atoll(char *str, long long *out)
 {
-	int			i;
-	long long	res;
-	long long	sign;
+	int					i;
+	int					sign;
+	unsigned long long	res;
 
 	i = 0;
+	res = 0;
+	sign = 1;
 	while (ft_isspace(str[i]))
 		i++;
-	sign = 1;
-	res = 0;
 	if (str[i] == '-' || str[i] == '+')
 	{
 		if (str[i] == '-')
 			sign = -1;
 		i++;
 	}
-	if (str[i] == '\0')
-		return (ft_error(2, str, "numeric argument required."));
+	if (!ft_isdigit(str[i]))
+		return (0);
 	while (str[i])
 	{
 		if (!ft_isdigit(str[i]))
-			return (ft_error(2, str, "numeric argument required."));
-		res = res * 10 + str[i] - '0';
-		if (res < -214783648 || res >= 2147483647)
-		{
-			if (res < -214783648)
-				return (-214783648);
-			else
-				return (214783647);
-		}
+			return (0);
+		if (res > (unsigned long long)LLONG_MAX / 10 || \
+(res == (unsigned long long)LLONG_MAX / 10 && \
+(str[i] - '0') > (LLONG_MAX % 10 + (sign == -1))))
+			return (0);
+		res = res * 10 + (str[i] - '0');
 		i++;
 	}
-	return ((long)(res * sign));
-}
-
-static
-int	ft_check_num_args(char **args)
-{
-	int	i;
-
-	i = 0;
-	while (args[i])
-		i++;
-	return (i - 1);
+	*out = (long long)(res * sign);
+	return (1);
 }
 
 int	ft_exit(t_data *data)
 {
-	char	**args;
-	int		n_args;
-	long	exit_code_l;
+	char		**args;
+	long long	exit_val;
+	int			i;
 
 	ft_exit_print();
+	i = 1;
+	if (!data->tree)
+		secure_exit(data, 0);
 	args = data->tree->cmd->args;
-	n_args = ft_check_num_args(args);
-	if (n_args > 1)
-		return (ft_error(1, NULL, "too many arguments"));
-	if (n_args == 0)
-		secure_exit(data, data->status);
-	else
+	if (!args[1])
+		secure_exit(data, ft_exit_status(0, 0, 0));
+	if (!ft_strncmp(args[1], "--", 3))
 	{
-		exit_code_l = ft_strtol(args[1]);
-		if (exit_code_l == 2)
-			secure_exit(data, 2);
-		else
-			secure_exit(data, (int)exit_code_l);
+		i = 2;
+		if (!args[i])
+			secure_exit(data, ft_exit_status(0, 0, 0));
 	}
+	if (!ft_safe_atoll(args[i], &exit_val))
+	{
+		ft_exit_status(ft_error(2, args[i], "numeric argument required"), 1, 0);
+		secure_exit(data, 2);
+	}
+	if (args[i + 1])
+		return (ft_error(1, NULL, "too many arguments"));
+	secure_exit(data, (int)(exit_val % 256));
 	return (0);
 }
 

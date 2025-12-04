@@ -1,13 +1,13 @@
 # include "execution.h"
 
-void	ft_env(t_data *data)
+int	ft_env(t_data *data)
 {
 	t_list	*list;
 	t_env	*env;
 
 	list = data->env_list;
 	if (!list)
-		return ;
+		return (FAIL_STATUS);
 	while(list)
 	{
 		env = (t_env *) list->content;
@@ -15,4 +15,5 @@ void	ft_env(t_data *data)
 			printf("%s\n", env->variable);
 		list = list->next;
 	}
+	return (0);
 }

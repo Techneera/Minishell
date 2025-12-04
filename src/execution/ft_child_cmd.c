@@ -15,7 +15,7 @@ void	ft_child_cmd(t_data	*data, char **envp)
 	node = data->tree;
 	apply_redirs_dup(data, &node);
 	args = node->cmd->args;
-	cmd_path = get_command_path(args, envp);
+	cmd_path = get_command_path(args, envp, data);
 	ft_closing_all(&fds);
 	if (args && args[0] && cmd_path)
 		execve(cmd_path, args, envp);

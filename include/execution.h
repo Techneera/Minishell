@@ -10,8 +10,7 @@
 #include "ast.h"
 #include "lexer.h"
 #include "expansion.h"
-
-extern int child_status;
+#include <sys/stat.h>
 
 typedef struct s_env
 {
@@ -49,9 +48,7 @@ typedef struct s_data
 	t_fds	*fds;
 	char	**envp;
 	t_list	*env_list;
-	int		status;
 	char	*rl;
-	t_token	*head;
 	t_lexer *lexer;
 }	t_data;
 
@@ -69,10 +66,10 @@ char	*ft_getenv(char **env, char *arg);
 int	exist_in_list(t_env *env, char *arg);
 
 //---ft_env
-void	ft_env(t_data *data);
+int	ft_env(t_data *data);
 
 //---ft_export
-void	ft_export(t_list *list, t_ast *node, t_data *data);
+int	ft_export(t_list *list, t_ast *node, t_data *data);
 void	ft_print_sorted_export(t_list *list);
 
 //---env_utils
@@ -80,13 +77,14 @@ t_list	*init_env(char **env);
 t_list	*create_node_env(char *arg, int has_arg);
 void	to_array_env(t_list *head, char **array);
 char	**envlist_to_array(t_list *list);
+void	ft_free_content(void *content);
 
 //---error_handle
 void	failed_malloc(t_data *data, char *str);
 
 //---ft_cd
-void	ft_cd(t_ast *node, char **envp);
-void	ft_pwd();
+int		ft_cd(t_ast *node, char **envp);
+int		ft_pwd();
 
 //---errors_messages
 void	message_error(char	*str, char *file, int type);
@@ -97,10 +95,10 @@ void    handle_sigstop(int sig);
 void    handle_sigstop_heredoc(int sig);
 
 //---ft_execute_or
-int	execute_or(t_data	*data, char **envp);
+int		execute_or(t_data	*data, char **envp);
 
 //---ft_execute_and
-int	execute_and(t_data	*data, char **envp);
+int		execute_and(t_data	*data, char **envp);
 
 //---utils_bonus
 int		wait_bonus(t_data *data, t_fds *fds);
@@ -122,10 +120,10 @@ void	ft_execute_sshell(t_data *data, char **envp);
 //---ft_execute_cmd
 void	ft_execute_cmd(t_data *data);
 
-int	ft_execution(t_data *data);
+int		ft_execution(t_data *data);
 
 //---init_files
-int		fill_fd_file(t_fds **fds, t_ast *ast_root, int i);
+int		fill_fd_file(t_data *data, t_ast *ast_root, int i);
 
 //---exec_utils
 int		is_builtin(t_data *data, char *arg);
@@ -137,16 +135,17 @@ void	free_tree(t_ast **ast_root);
 int		ft_arraylen(void **ptr);
 int		init_pid(pid_t *pid, t_fds **fds);
 void	get_sizes(t_ast *ast_root, t_fds **fds, int inside_sshell);
-int	docs_bonus(t_ast *ast_root, t_fds **fds);
+int		docs_bonus(t_ast *ast_root, t_fds **fds);
 
 //---ft_getters
-char	*get_command_path(char **arg, char **env);
+char	*get_command_path(char **arg, char **env, t_data *data);
 char	**get_paths(char **env);
 void	message_error(char	*str, char *file, int type);
 
 //---add_libft
-int	ft_max(int a, int b);
+int		ft_max(int a, int b);
 void	secure_close(int *fd);
+char	**ft_realloc_empty(char **args);
 
 //---ft_here_doc
 int	here_doc(char *lim, int **fd);
@@ -177,6 +176,7 @@ void	apply_redirs_subshell(t_data *data);
 
 //--ft_echo
 int		ft_echo(t_data *data);
+int		ft_target_fd(t_data *data);
 
 //--ft_exit_status
 int		ft_exit(t_data *data);

@@ -5,14 +5,14 @@ void	insert_in_list(t_list *list, char *arg);
 int		insert_if_exist(t_list *list, char *arg);
 int		is_valid(char *arg);
 
-void	ft_export(t_list *list, t_ast *node, t_data *data)
+int	ft_export(t_list *list, t_ast *node, t_data *data)
 {
 	int		n_args;
 	int 	i;
 
 	i = 0;
 	if (!list || !node)
-		return ;
+		return (FAIL_STATUS);
 	n_args = ft_arraylen((void **) node->cmd->args);
 	if (n_args == 1)
 		ft_print_sorted_export(list);
@@ -27,12 +27,14 @@ void	ft_export(t_list *list, t_ast *node, t_data *data)
 				ft_putstr_fd("minishell: export: `", 2);
 				ft_putstr_fd(node->cmd->args[i], 2);
 				ft_putstr_fd("': not a valid identifier\n", 2);
+				return (FAIL_STATUS);
 			}
 		}
 		if (data->envp)
 			free(data->envp);
 		data->envp = envlist_to_array(data->env_list);
 	}
+	return (0);
 }
 
 int	is_valid(char *arg)
