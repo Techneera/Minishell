@@ -110,4 +110,21 @@ typedef struct s_ast
 	struct s_ast	*right;
 }	t_ast;
 
+typedef struct s_wrapper
+{
+	t_redir			*new_redir;
+	t_list			*tmp_lst_head;
+	t_list			*new_link;
+	t_label_redir	label;
+	char			*filename;
+}	t_wrapper;
+
+typedef struct s_container
+{
+	t_list	*args_lst;
+	t_list	*redirs_lst;
+	t_redir	*new_redir;
+	t_list	*new_link;
+	char	*arg_cpy;
+}	t_container;
 #endif

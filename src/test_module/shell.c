@@ -17,6 +17,23 @@ int	main(int argc, char **argv, char **envp)
 	return (0);
 }
 
+static
+int	ft_onlyspace(char *line)
+{
+	int	i;
+
+	if (!line)
+		return (false);
+	i = 0;
+	while (line[i])
+	{
+		if (!ft_isspace(line[i]))
+			return (false);
+		i++;
+	}
+	return (true);
+}
+
 void	loop(char **envp)
 {
 	t_data	data;
@@ -35,10 +52,15 @@ void	loop(char **envp)
 	{
 		signal(SIGINT, &handle_sigstop);
 		data.rl = readline(PROMPT);
-		if (!data.rl)
+		if (!data.rl )
 		{
 			ft_exit(&data);
 			break ;
+		}
+		if (ft_onlyspace(data.rl))
+		{
+			free_data(&data);
+			continue ;
 		}
 		if (*data.rl != '\0')
 		{
