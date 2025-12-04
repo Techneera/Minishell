@@ -18,8 +18,6 @@ void free_data(t_data *data)
 	free_tree(&data->root);
 	ft_closing_all(&data->fds);
 	free_fds(&data->fds);
-	ft_lstclear(&data->env_list, &ft_free_content);
-	ft_free_array(data->envp);
 	free_lexer(data->lexer);
 	data->lexer = NULL;
 	free(data->rl);
@@ -36,7 +34,7 @@ void	free_tree(t_ast **ast_root)
 	if ((*ast_root)->cmd)
 	{
 		free_all((void **) (*ast_root)->cmd->args,
-			ft_arraylen((void **) (*ast_root)->cmd->args) + 1);
+			ft_arraylen((void **) (*ast_root)->cmd->args));
 		while ((*ast_root)->cmd->redir_count-- > 0)
 			if ((*ast_root)->cmd->redirs[(*ast_root)->cmd->redir_count].file_name)
 				free((*ast_root)->cmd
