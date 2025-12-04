@@ -24,6 +24,8 @@ This project involves creating a simple shell. It is a mini-Bash implementation 
 - **Pipes (`|`):** Connects the output of one command to the input of the next.
 - **Environment Variables:** Expands `$` followed by a sequence of characters to their values.
 - **Exit Status:** Handles `$?` which expands to the exit status of the most recently executed foreground pipeline.
+- **Logical Operators:** `&&` and `||` with parenthesis for priorities.
+- **Wildcards:** Glob pattern `*`, works for the current working directory.
 
 ### Built-in Commands
 Your shell must implement the following built-ins:
@@ -35,21 +37,19 @@ Your shell must implement the following built-ins:
 - `env` (with no options or arguments)
 - `exit` (with no options)
 
-### Bonus Part
-- **Logical Operators:** `&&` and `||` with parenthesis for priorities.
-- **Wildcards:** `*` works for the current working directory.
-
 ## Technical Requirements
 - **Language:** C
-- **Norm:** Written in accordance with the Norm.
 - **Memory Management:** All heap-allocated memory is properly freed. No memory leaks tolerated.
-- **Global Variables:** At most one global variable allowed (for signal handling).
+- **Global Variables:** One global variable allowed (for signal handling).
 
 ## Installation & Usage
 
 Test the program as if it was bash.
 
 To compile the project, run:
+
+1. Clone the repository's main branch.
+2. Run the following command:
+
 ```bash
-make
-./minishell
+make && ./minishell
