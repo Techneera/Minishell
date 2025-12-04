@@ -3,6 +3,7 @@
 void secure_exit(t_data *data, int status)
 {
 	free_tree(&data->root);
+	data->tree = NULL;
 	ft_closing_all(&data->fds);
 	free_fds(&data->fds);
 	ft_lstclear(&data->env_list, &ft_free_content);
@@ -22,6 +23,7 @@ void free_data(t_data *data)
 	data->lexer = NULL;
 	free(data->rl);
 	data->rl = NULL;
+	data->tree = NULL;
 }
 
 void	free_tree(t_ast **ast_root)
