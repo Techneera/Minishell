@@ -96,6 +96,8 @@ char	*expand_word(char *raw_str, char **envp, int status)
 		}
 		i++;
 	}
+	if (raw_str)
+		free(raw_str);
 	return (final_str);
 }
 
