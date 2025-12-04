@@ -17,6 +17,32 @@ int	main(int argc, char **argv, char **envp)
 	return (0);
 }
 
+void	increase_shlv(t_data *data)
+{
+	char 	*str;
+	char 	*arg[3];
+	char	*level;
+
+	arg[0] = "export";
+	arg[2] = NULL;
+	str = getenv("SHLVL");
+	if (!str)
+		return ;
+	level = ft_itoa(ft_atoi(str) + 1);
+	if (!level)
+		return ;
+	str = ft_strjoin("SHLVL=", level);
+	if (!str)
+	{
+		free(level);
+		return ;
+	}
+	arg[1] = str;
+	free(level);
+	ft_export(data->env_list, arg, data);
+	free(str);
+}
+
 void	loop(char **envp)
 {
 	t_data	data;
@@ -25,10 +51,11 @@ void	loop(char **envp)
 	data = (t_data) {0};
 	data.env_list = init_env(envp);
 	data.envp = envlist_to_array(data.env_list);
+	increase_shlv(&data);
 	if (!data.envp)
 	{
 		perror("failled envlist_to_array malloc");
-		//---free env_list
+		free_data(&data);
 		return ;
 	}
 	while(1)

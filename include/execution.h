@@ -69,7 +69,7 @@ int	exist_in_list(t_env *env, char *arg);
 int	ft_env(t_data *data);
 
 //---ft_export
-int	ft_export(t_list *list, t_ast *node, t_data *data);
+int	ft_export(t_list *list, char **args, t_data *data);
 void	ft_print_sorted_export(t_list *list);
 
 //---env_utils

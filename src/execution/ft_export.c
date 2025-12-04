@@ -5,33 +5,33 @@ void	insert_in_list(t_list *list, char *arg);
 int		insert_if_exist(t_list *list, char *arg);
 int		is_valid(char *arg);
 
-int	ft_export(t_list *list, t_ast *node, t_data *data)
+int	ft_export(t_list *list, char **args, t_data *data)
 {
 	int		n_args;
 	int 	i;
 
 	i = 0;
-	if (!list || !node)
+	if (!list || !args)
 		return (FAIL_STATUS);
-	n_args = ft_arraylen((void **) node->cmd->args);
+	n_args = ft_arraylen((void **) args);
 	if (n_args == 1)
 		ft_print_sorted_export(list);
 	else
 	{
 		while (++i < n_args)
 		{
-			if (is_valid(node->cmd->args[i]))
-				insert_in_list(list, node->cmd->args[i]);
+			if (is_valid(args[i]))
+				insert_in_list(list, args[i]);
 			else
 			{
 				ft_putstr_fd("minishell: export: `", 2);
-				ft_putstr_fd(node->cmd->args[i], 2);
+				ft_putstr_fd(args[i], 2);
 				ft_putstr_fd("': not a valid identifier\n", 2);
 				return (FAIL_STATUS);
 			}
 		}
 		if (data->envp)
-			free(data->envp);
+			ft_free_array(data->envp);
 		data->envp = envlist_to_array(data->env_list);
 	}
 	return (0);
