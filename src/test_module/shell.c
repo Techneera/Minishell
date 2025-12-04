@@ -36,16 +36,17 @@ void	loop(char **envp)
 		signal(SIGINT, &handle_sigstop);
 		data.rl = readline(PROMPT);
 		if (!data.rl)
+		{
+			ft_exit(&data);
 			break ;
+		}
 		if (*data.rl != '\0')
 		{
 			add_history(data.rl);
-			if (!ft_strcmp(data.rl, "exit"))
-				return (free(data.rl));
 			data.lexer = ft_state_lexer(data.rl);
 			if (!data.lexer)
 			{
-				free(data.rl);
+				free_data(&data);
 				break ;
 			}
 			data.root = ft_parser(data.lexer);

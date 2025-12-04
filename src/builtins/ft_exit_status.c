@@ -63,8 +63,10 @@ int	ft_exit(t_data *data)
 	int			i;
 
 	ft_exit_print();
-	args = data->tree->cmd->args;
 	i = 1;
+	if (!data->tree)
+		secure_exit(data, 0);
+	args = data->tree->cmd->args;
 	if (!args[1])
 		secure_exit(data, ft_exit_status(0, 0, 0));
 	if (!ft_strncmp(args[1], "--", 3))
