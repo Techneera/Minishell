@@ -5,12 +5,13 @@
 # define FAIL_STATUS 1
 
 #include <signal.h>
+#include <sys/stat.h>
 #include <dirent.h>
+#include <limits.h>
 #include "libshell.h"
 #include "ast.h"
 #include "lexer.h"
 #include "expansion.h"
-#include <sys/stat.h>
 
 typedef struct s_env
 {
@@ -83,8 +84,8 @@ void	ft_free_content(void *content);
 void	failed_malloc(t_data *data, char *str);
 
 //---ft_cd
-int		ft_cd(t_ast *node, char **envp);
-int		ft_pwd();
+int		ft_cd(t_ast *node, char **envp, t_data *data);
+int		ft_pwd(t_data *data);
 
 //---errors_messages
 void	message_error(char	*str, char *file, int type);
