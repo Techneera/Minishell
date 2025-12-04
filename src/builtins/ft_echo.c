@@ -22,7 +22,6 @@ int	is_valid_n_option(char *arg)
 	return (1);
 }
 
-static
 int	ft_target_fd(t_data *data)
 {
 	int	i;
