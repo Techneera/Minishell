@@ -91,6 +91,7 @@ char	*expand_word(char *raw_str, char **envp, int status)
 				free(chunk);
 				chunk = ft_get_expanded_value(&raw_str[i], envp, &i, status);
 				final_str = ft_strjoin_free_s1(final_str, chunk);
+				free(chunk);
 				start = i;
 				continue ;
 			}

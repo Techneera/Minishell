@@ -26,6 +26,7 @@ void	ft_execute_cmd(t_data *data)
 		unmask_wildcards(data->tree->cmd->args[i]);
 		i++;
 	}
+	data->tree->cmd->args = ft_realloc_empty(data->tree->cmd->args);
 	if (!is_builtin(data, data->tree->cmd->args[0]))
 	{
 		if (!init_pid(&pid, &data->fds))

@@ -83,8 +83,8 @@ void	ft_free_content(void *content);
 void	failed_malloc(t_data *data, char *str);
 
 //---ft_cd
-int	ft_cd(t_ast *node, char **envp);
-int	ft_pwd();
+int		ft_cd(t_ast *node, char **envp);
+int		ft_pwd();
 
 //---errors_messages
 void	message_error(char	*str, char *file, int type);
@@ -95,10 +95,10 @@ void    handle_sigstop(int sig);
 void    handle_sigstop_heredoc(int sig);
 
 //---ft_execute_or
-int	execute_or(t_data	*data, char **envp);
+int		execute_or(t_data	*data, char **envp);
 
 //---ft_execute_and
-int	execute_and(t_data	*data, char **envp);
+int		execute_and(t_data	*data, char **envp);
 
 //---utils_bonus
 int		wait_bonus(t_data *data, t_fds *fds);
@@ -120,7 +120,7 @@ void	ft_execute_sshell(t_data *data, char **envp);
 //---ft_execute_cmd
 void	ft_execute_cmd(t_data *data);
 
-int	ft_execution(t_data *data);
+int		ft_execution(t_data *data);
 
 //---init_files
 int		fill_fd_file(t_data *data, t_ast *ast_root, int i);
@@ -135,7 +135,7 @@ void	free_tree(t_ast **ast_root);
 int		ft_arraylen(void **ptr);
 int		init_pid(pid_t *pid, t_fds **fds);
 void	get_sizes(t_ast *ast_root, t_fds **fds, int inside_sshell);
-int	docs_bonus(t_ast *ast_root, t_fds **fds);
+int		docs_bonus(t_ast *ast_root, t_fds **fds);
 
 //---ft_getters
 char	*get_command_path(char **arg, char **env, t_data *data);
@@ -143,8 +143,9 @@ char	**get_paths(char **env);
 void	message_error(char	*str, char *file, int type);
 
 //---add_libft
-int	ft_max(int a, int b);
+int		ft_max(int a, int b);
 void	secure_close(int *fd);
+char	**ft_realloc_empty(char **args);
 
 //---ft_here_doc
 int	here_doc(char *lim, int **fd);
