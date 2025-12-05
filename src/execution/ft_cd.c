@@ -32,10 +32,8 @@ int	ft_cd(t_ast *node, char **envp, t_data *data)
 	else
 		chdir(ft_getenv(envp, "HOME"));
 	if(!getcwd(buff, sizeof(buff)))
-	{
 		ft_putstr_fd("cd: error retrieving current directory: \
 getcwd: cannot access parent directories: No such file or directory\n", 2);
-	}
 	change_pwd(data, buff);
 	return (0);
 }
@@ -62,10 +60,16 @@ static void	change_pwd(t_data *data,  char *path)
 		return ;
 	ft_export(data->env_list, args, data);
 	free (str);
-	if (path)
+	if (path && *path)
 		str = ft_strjoin("PWD=", path);
 	else
-		str = ft_strjoin("PWD=", "..");
+	{
+		pwd = ft_strjoin(ft_getenv(data->envp, "PWD"), "/..");
+		if (!pwd)
+			return ;
+		str = ft_strjoin("PWD=", pwd);
+		free (pwd);
+	}
 	args[1] = str;
 	if (!str)
 		return ;
