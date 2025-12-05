@@ -30,4 +30,6 @@ char	*ft_expand_env_var_aux(char *s, char **envp, int *i);
 void	ft_handle_general(t_exp_ctx *ctx);
 void	ft_handle_squote(t_exp_ctx *ctx);
 void	ft_handle_dquote(t_exp_ctx *ctx);
+void	ft_general_dollar_aux(t_exp_ctx *ctx);
+void	ft_general_char_aux(t_exp_ctx *ctx);
 #endif

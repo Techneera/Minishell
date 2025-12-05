@@ -25,37 +25,6 @@ char	*ft_expand_env_var_aux(char *s, char **envp, int *i)
 	return (ft_strdup(""));
 }
 
-void	ft_handle_general(t_exp_ctx *ctx)
-{
-	char	tmp[2];
-	char	*chunk;
-
-	if (ctx->raw[ctx->i] == '\'')
-	{
-		ctx->state = EXP_SQUOTE;
-		ctx->start = ctx->i++ + 1;
-	}
-	else if (ctx->raw[ctx->i] == '"')
-	{
-		ctx->state = EXP_DQUOTE;
-		ctx->start = ctx->i++ + 1;
-	}
-	else if (ctx->raw[ctx->i] == '$')
-	{
-		chunk = ft_get_expanded_value(&ctx->raw[ctx->i],
-				ctx->envp, &ctx->i, ctx->status);
-		ctx->final = ft_strjoin_free_s1(ctx->final, chunk);
-		free(chunk);
-		ctx->start = ctx->i;
-	}
-	else
-	{
-		tmp[0] = ctx->raw[ctx->i++];
-		tmp[1] = 0;
-		ctx->final = ft_strjoin_free_s1(ctx->final, tmp);
-	}
-}
-
 void	ft_handle_squote(t_exp_ctx *ctx)
 {
 	char	*chunk;

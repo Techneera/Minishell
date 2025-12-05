@@ -67,7 +67,7 @@ PATH_OBJS_EXEC = $(patsubst %,$(OBJS_DIR)/execution/%,$(OBJS_EXEC))
 
 #		---EXPANSION---				#
 
-SRCS_EXP =  args_handle.c args_handle_utils.c
+SRCS_EXP =  args_handle.c args_handle_utils.c general_state.c
 
 OBJS_EXP = $(SRCS_EXP:.c=.o)
 
