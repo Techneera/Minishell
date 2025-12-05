@@ -21,8 +21,8 @@ void	ft_create_fds(t_data *data)
 			secure_exit(data, FAIL_STATUS);
 	}
 	data->fds = fds;
-	create_files(data);
 	init_heredoc(data);
+	create_files(data);
 }
 
 static void	create_files(t_data *data)
