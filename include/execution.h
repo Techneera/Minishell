@@ -160,7 +160,6 @@ int	here_doc(char *lim, int **fd);
 
 //---ft_child_cmd
 void	ft_child_cmd(t_data	*data, char **envp);
-void	apply_redirs_dup(t_data *data, t_ast **node);
 
 //--ft_closing_all
 void	ft_closing_all(t_fds **fds);
