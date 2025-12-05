@@ -88,3 +88,34 @@ char	*get_command_path(char **arg, char **env, t_data *data)
 	}
 	return (ft_free_all(paths), NULL);
 }
+
+void	get_sizes(t_ast *ast_root, t_fds **fds, int inside_sshell)
+{
+	int	i;
+
+	if (!ast_root)
+		return ;
+	if (ast_root->type == NODE_AND || ast_root->type == NODE_OR)
+	{
+		(*fds)->get.n_docs += docs_bonus(ast_root, fds);
+		return ;
+	}
+	i = 0;
+	if (ast_root->type == NODE_SUBSHELL)
+		get_sizes(ast_root->body, fds, 1);
+	get_sizes(ast_root->left, fds, inside_sshell);
+	get_sizes(ast_root->right, fds, inside_sshell);
+	if (ast_root->type == NODE_CMD || ast_root->type == NODE_SUBSHELL)
+	{
+		if (!inside_sshell)
+			(*fds)->get.n_cmds++;
+		while (i < ast_root->cmd->redir_count)
+		{
+			if (ast_root->cmd->redirs[i].label != REDIR_HEREDOCK)
+				(*fds)->get.n_files++;
+			if (ast_root->cmd->redirs[i].label == REDIR_HEREDOCK)
+				(*fds)->get.n_docs++;
+			i++;
+		}
+	}
+}

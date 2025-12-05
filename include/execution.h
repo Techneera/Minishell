@@ -60,6 +60,14 @@ t_ast	*ft_cmd2();
 t_ast	*ft_cmd3();
 t_ast	*bonus_cmd();
 
+//---wildcards_utils.c
+char	**insert_wildcard_args(char **old_args, t_list *files, int index);
+void	unmask_wildcards(char *str);
+
+
+//---ft_is_builtin
+int	ft_is_builtin(t_data *data, char *arg);
+
 //---ft_getenv.c
 char	*ft_getenv(char **env, char *arg);
 
@@ -70,7 +78,7 @@ int	exist_in_list(t_env *env, char *arg);
 int	ft_env(t_data *data);
 
 //---ft_export
-int	ft_export(t_list *list, char **args, t_data *data);
+int		ft_export(t_list *list, char **args, t_data *data);
 void	ft_print_sorted_export(t_list *list);
 
 //---env_utils
@@ -104,6 +112,7 @@ int		execute_and(t_data	*data, char **envp);
 //---utils_bonus
 int		wait_bonus(t_data *data, t_fds *fds);
 void	free_fds_bonus(t_data	*data);
+int		docs_bonus(t_ast *ast_root, t_fds **fds);
 
 //--ft_child_sshel
 void	ft_child_sshell(t_data *data, char **envp);
@@ -127,7 +136,6 @@ int		ft_execution(t_data *data);
 int		fill_fd_file(t_data *data, t_ast *ast_root, int i);
 
 //---exec_utils
-int		is_builtin(t_data *data, char *arg);
 void	secure_exit(t_data *data, int status);
 void 	free_data(t_data *data);
 void	free_all(void **ptr, size_t rows);
@@ -135,13 +143,12 @@ void	free_fds(t_fds **fds);
 void	free_tree(t_ast **ast_root);
 int		ft_arraylen(void **ptr);
 int		init_pid(pid_t *pid, t_fds **fds);
-void	get_sizes(t_ast *ast_root, t_fds **fds, int inside_sshell);
-int		docs_bonus(t_ast *ast_root, t_fds **fds);
 
 //---ft_getters
 char	*get_command_path(char **arg, char **env, t_data *data);
 char	**get_paths(char **env);
 void	message_error(char	*str, char *file, int type);
+void	get_sizes(t_ast *ast_root, t_fds **fds, int inside_sshell);
 
 //---add_libft
 int		ft_max(int a, int b);

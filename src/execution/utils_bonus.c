@@ -26,3 +26,27 @@ void	free_fds_bonus(t_data	*data)
 	data->fds->fd_files = NULL;
 	data->fds->c_pids = NULL;
 }
+
+int	docs_bonus(t_ast *ast_root, t_fds **fds)
+{
+	int	i;
+	int	j;
+
+	i = 0;
+	j = 0;
+	if (!ast_root)
+		return (i);
+	i += docs_bonus(ast_root->body, fds);
+	i += docs_bonus(ast_root->left, fds);
+	i += docs_bonus(ast_root->right, fds);
+	if (ast_root->type == NODE_CMD || ast_root->type == NODE_SUBSHELL)
+	{
+		while (j < ast_root->cmd->redir_count)
+		{
+			if (ast_root->cmd->redirs[j].label == REDIR_HEREDOCK)
+				i++;
+			j++;
+		}
+	}
+	return (i);
+}
