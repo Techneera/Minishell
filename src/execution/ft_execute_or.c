@@ -43,7 +43,6 @@ static void	redir_bonus(t_data	*data, char **envp)
 	}
 }
 
-
 static int	redir_to_and(t_data	*data, char **envp)
 {
 	t_ast	*holder;

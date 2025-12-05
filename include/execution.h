@@ -118,7 +118,7 @@ int		docs_bonus(t_ast *ast_root, t_fds **fds);
 void	ft_child_sshell(t_data *data, char **envp);
 
 //---ft_execute_pipe
-void ft_execute_pipe(t_data *data, char **envp);
+void ft_execute_pipe(t_data *data);
 
 //---ft_update_position
 void	update_positions(t_data *data);

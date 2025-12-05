@@ -37,8 +37,8 @@ static void	create_files(t_data *data)
 		fds->fd_files = ft_calloc(fds->get.n_files, sizeof(int));
 		if (!fds->fd_files)
 			secure_exit(data, FAIL_STATUS);
-		while (++i < fds->get.n_files)		
+		while (++i < fds->get.n_files)
 			fds->fd_files[i] = -1;
 	}
-	fill_fd_file(data, data->tree, 0);	
+	fill_fd_file(data, data->tree, 0);
 }

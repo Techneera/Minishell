@@ -1,4 +1,4 @@
-# include "execution.h"
+#include "execution.h"
 
 int	ft_env(t_data *data)
 {
@@ -8,7 +8,7 @@ int	ft_env(t_data *data)
 	list = data->env_list;
 	if (!list)
 		return (FAIL_STATUS);
-	while(list)
+	while (list)
 	{
 		env = (t_env *) list->content;
 		if (env->has_arg)

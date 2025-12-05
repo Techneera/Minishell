@@ -12,12 +12,12 @@ int	ft_exec_tree(t_data	*data, char **envp)
 	if (node->type == NODE_CMD)
 		ft_execute_cmd(data);
 	else if (node->type == NODE_PIPE)
-		ft_execute_pipe(data, envp);
+		ft_execute_pipe(data);
 	else if (node->type == NODE_SUBSHELL)
 		ft_execute_sshell(data, envp);
 	else if (node->type == NODE_AND)
 		execute_and(data, envp);
 	else if (node->type == NODE_OR)
-	 	execute_or(data, envp);
+		execute_or(data, envp);
 	return (0);
 }
