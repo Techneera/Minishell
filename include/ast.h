@@ -9,6 +9,16 @@ t_parser	*ft_init_parser(t_lexer *l);
 t_cmd		*ft_create_command(char **av, t_redir *redirs, int count);
 void		ft_parser_iter(t_parser *parser);
 
+void			ft_init_simp_ctx(t_simp_ctx *ctx);
+void			*ft_free_simp_ctx(t_simp_ctx *ctx);
+int				ft_handle_word_token(t_parser *p, t_simp_ctx *ctx);
+int				ft_handle_redir_token(t_parser *p, t_simp_ctx *ctx);
+t_ast			*ft_finalize_simp_cmd(t_simp_ctx *ctx);
+int				ft_isredir(t_parser *parser);
+int				ft_proc_redir_loop(t_parser *p, t_list **lst, t_cmd *cmd);
+t_redir			*ft_extract_redir_info(t_parser *p, t_label_redir label);
+t_label_redir	ft_label_map(t_token_label label);
+
 t_ast		*ft_parser(t_lexer *l);
 t_ast		*ft_parse_and_or(t_parser *parser);
 t_ast		*ft_parse_pipeline(t_parser *parser);

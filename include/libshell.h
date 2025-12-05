@@ -110,4 +110,13 @@ typedef struct s_ast
 	struct s_ast	*right;
 }	t_ast;
 
+typedef struct s_simp_ctx
+{
+	t_list	*args;
+	t_list	*redirs;
+	t_cmd	*cmd;
+	t_ast	*node;
+	t_redir	*tmp_redir;
+}	t_simp_ctx;
+
 #endif

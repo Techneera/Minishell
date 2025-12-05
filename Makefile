@@ -32,7 +32,7 @@ WILDCARD_DIR = $(SRC_DIR)/wildcard
 
 #		---AST---				#
 
-SRCS_AST=  ft_ast.c ft_ast_utils.c core.c guards.c
+SRCS_AST=  ft_ast.c ft_ast_utils.c core.c guards.c core_utils.c redir_utils.c subshell_utils.c
 
 OBJS_AST = $(SRCS_AST:.c=.o)
 
@@ -42,7 +42,7 @@ PATH_OBJS_AST = $(patsubst %,$(OBJS_DIR)/ast/%,$(OBJS_AST))
 
 #		---LEXER---				#
 
-SRCS_LEXER = ft_lexer.c
+SRCS_LEXER = ft_lexer.c ft_lexer_guards.c ft_lexer_utils.c ft_redir_utils.c
 
 OBJS_LEXER = $(SRCS_LEXER:.c=.o)
 
@@ -67,7 +67,7 @@ PATH_OBJS_EXEC = $(patsubst %,$(OBJS_DIR)/execution/%,$(OBJS_EXEC))
 
 #		---EXPANSION---				#
 
-SRCS_EXP =  args_handle.c
+SRCS_EXP =  args_handle.c args_handle_utils.c general_state.c
 
 OBJS_EXP = $(SRCS_EXP:.c=.o)
 
