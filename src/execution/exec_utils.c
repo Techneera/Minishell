@@ -3,8 +3,14 @@
 void secure_exit(t_data *data, int status)
 {
 	free_tree(&data->root);
+	data->tree = NULL;
 	ft_closing_all(&data->fds);
 	free_fds(&data->fds);
+	ft_lstclear(&data->env_list, &ft_free_content);
+	ft_free_array(data->envp);
+	free_lexer(data->lexer);
+	free(data->rl);
+	data->rl = NULL;
 	exit(status);
 }
 
@@ -13,6 +19,11 @@ void free_data(t_data *data)
 	free_tree(&data->root);
 	ft_closing_all(&data->fds);
 	free_fds(&data->fds);
+	free_lexer(data->lexer);
+	data->lexer = NULL;
+	free(data->rl);
+	data->rl = NULL;
+	data->tree = NULL;
 }
 
 void	free_tree(t_ast **ast_root)
@@ -100,19 +111,19 @@ int	is_builtin(t_data *data, char *arg)
 	if (!arg)
 		return (0);
 	if (ft_strncmp(arg, "echo\0", 5) == 0)
-		return (ft_echo(data), 1);
+		return (ft_exit_status(ft_echo(data), 1, 0), 1);
 	if (ft_strncmp(arg, "cd\0", 3) == 0)
-		return (ft_cd(data->tree), 1);
+		return (ft_exit_status(ft_cd(data->tree, data->envp, data), 1, 0), 1);
 	if (ft_strncmp(arg, "pwd\0", 4) == 0)
-		return (ft_pwd(), 1);
+		return (ft_exit_status(ft_pwd(data), 1, 0), 1);
 	if (ft_strncmp(arg, "export\0", 7) == 0)
-		return (0);
+		return (ft_exit_status(ft_export(data->env_list, data->tree->cmd->args, data), 1, 0), 1);
 	if (ft_strncmp(arg, "unset\0", 6) == 0)
-		return (0);
+		return (ft_exit_status(ft_unset(data), 1, 0), 1);
 	if (ft_strncmp(arg, "env\0", 4) == 0)
-		return (0);
+		return (ft_exit_status(ft_env(data), 1, 0), 1);
 	if (ft_strncmp(arg, "exit\0", 5) == 0)
-		return (0);
+		return (ft_exit_status(ft_exit(data), 1, 0), 1);
 	return (0);
 }
 
@@ -144,6 +155,53 @@ void	get_sizes(t_ast *ast_root, t_fds **fds, int inside_sshell)
 				(*fds)->get.n_docs++;
 			i++;
 		}
+	}
+}
+
+char	**insert_wildcard_args(char **old_args, t_list *files, int index)
+{
+	char	**new_args;
+	int		old_len;
+	int		files_len;
+	int		j;
+	int		k;
+
+	old_len = 0;
+	while (old_args[old_len])
+		old_len++;
+	files_len = ft_lstsize(files);
+	new_args = malloc(sizeof(char *) * (old_len + files_len + 1));
+	if (!new_args)
+		return (NULL);
+	j = 0;
+	while (j < index)
+	{
+		new_args[j] = old_args[j];
+		j++;
+	}
+	while (files)
+	{
+		new_args[j++] = ft_strdup(files->content);
+		files = files->next;
+	}
+	k = index + 1;
+	while (old_args[k])
+		new_args[j++] = old_args[k++];
+	new_args[j] = NULL;
+	free(old_args[index]); 
+	free(old_args);
+	return (new_args);
+}
+
+/* Helper to restore masked chars if no expansion occurred */
+void	unmask_wildcards(char *str)
+{
+	int	i = 0;
+	while (str[i])
+	{
+		if (str[i] == '\001')
+			str[i] = '*';
+		i++;
 	}
 }
 

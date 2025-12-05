@@ -5,9 +5,11 @@ static int	ft_n_cmds_sshell(t_ast *ast_root, t_fds **fds);
 void	ft_child_sshell(t_data *data, char **envp)
 {
 	int		n_cmds;
+	int		child_status;
 	int		i;
 
 	i = 0;
+	child_status = 0;
 	n_cmds = ft_n_cmds_sshell(data->tree->body, &data->fds);
 	apply_redirs_subshell(data);
 	if (data->fds->c_pids)
@@ -17,13 +19,13 @@ void	ft_child_sshell(t_data *data, char **envp)
 		secure_exit(data, 0);
 	data->tree = data->tree->body;
 	ft_exec_tree(data, envp);
-	while(data->fds && i < n_cmds && waitpid(data->fds->c_pids[i], &data->status, 0) > 0)
+	while(data->fds && i < n_cmds && waitpid(data->fds->c_pids[i], &child_status, 0) > 0)
 	{	
 		if (WIFEXITED(child_status))
-			data->status = WEXITSTATUS(child_status);
+			ft_exit_status(WEXITSTATUS(child_status), 1, 0);
 		i++;
 	}
-	secure_exit(data, data->status);
+	secure_exit(data, ft_exit_status(0, 0, 0));
 }
 
 static int	ft_n_cmds_sshell(t_ast *ast_root, t_fds **fds)

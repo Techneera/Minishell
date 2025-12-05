@@ -1,0 +1,15 @@
+#include "execution.h"
+
+int	exist_in_list(t_env *env, char *arg)
+{
+	int		i;
+
+	i = 0;
+	while (env->variable[i] && arg[i] && env->variable[i] == arg[i]
+		&& env->variable[i] != '=' && arg[i] != '=')
+		i++;
+	if ((env->variable[i] == arg[i]) || (!env->variable[i] && arg[i] == '='
+		) || (!arg[i] && env->variable[i] == '='))
+		return (1);
+	return (0);
+}

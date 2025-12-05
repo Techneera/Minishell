@@ -7,10 +7,12 @@ void ft_execute_pipe(t_data *data, char **envp)
 	int		pfd[2];
 	pid_t	pipe_pid[2];
 	t_ast	*holder;
+	int		child_status;
 	int		i;
 	int		n_cmds;
 
 	i = 0;
+	child_status = 0;
 	holder = data->tree;
 	if (pipe(pfd) == -1)
 		return ;
@@ -34,13 +36,13 @@ void ft_execute_pipe(t_data *data, char **envp)
 			secure_exit(data, 0);
 		data->fds->pos.fork_id = 0;
 		ft_exec_tree(data, envp);
-		while(data->fds && i < n_cmds && waitpid(data->fds->c_pids[i], &data->status, 0) > 0)
+		while(data->fds && i < n_cmds && waitpid(data->fds->c_pids[i], &child_status, 0) > 0)
 		{	
 			if (WIFEXITED(child_status))
-				data->status = WEXITSTATUS(child_status);
+				ft_exit_status(WEXITSTATUS(child_status), 1, 0);
 			i++;
 		}
-		secure_exit(data, data->status);
+		secure_exit(data, ft_exit_status(0, 0, 0));
 	}
 	update_from_position(data->tree->left, data);
 	if (!init_pid(&pipe_pid[1], &data->fds))
@@ -63,13 +65,13 @@ void ft_execute_pipe(t_data *data, char **envp)
 			secure_exit(data, 0);
 		data->fds->pos.fork_id = 0;
 		ft_exec_tree(data, envp);
-		while(data->fds && i < n_cmds && waitpid(data->fds->c_pids[i], &data->status, 0) > 0)
+		while(data->fds && i < n_cmds && waitpid(data->fds->c_pids[i], &child_status, 0) > 0)
 		{	
 			if (WIFEXITED(child_status))
-				data->status = WEXITSTATUS(child_status);
+				ft_exit_status(WEXITSTATUS(child_status), 1, 0);
 			i++;
 		}
-		secure_exit(data, data->status);
+		secure_exit(data, ft_exit_status(0, 0, 0));
 	}
 	update_from_position(data->tree->right, data);
 	close(pfd[0]);

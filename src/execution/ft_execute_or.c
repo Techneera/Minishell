@@ -14,7 +14,7 @@ int	execute_or(t_data	*data, char **envp)
 		return (0);
 	ft_create_fds_bonus(data);
 	if (node->type == NODE_CMD)
-		ft_execute_cmd(data, envp);
+		ft_execute_cmd(data);
 	if (node->type == NODE_PIPE || node->type == NODE_SUBSHELL)
 		ft_exec_tree(data, envp);
 	closing_files(&data->fds);

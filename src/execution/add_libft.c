@@ -48,3 +48,32 @@ int	ft_arraylen(void **ptr)
 		i++;
 	return (i);
 }
+
+char	**ft_realloc_empty(char **args)
+{
+	char	**res;
+	int		i;
+	int		j;
+
+	i = 0;
+	j = 0;
+	while (args[i])
+	{
+		if (*args[i] == '\0')
+			j++;
+		i++;
+	}
+	res = ft_calloc(i - j + 1, sizeof(char *));
+	if (!res)
+		return (NULL);
+	i = 0;
+	j = -1;
+	while (args[i])
+	{
+		if (*args[i] != '\0')
+			res[++j] = ft_strdup(args[i]);
+		i++;
+	}
+	ft_free_array(args);
+	return (res);
+}

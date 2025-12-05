@@ -1,9 +1,14 @@
 # include "execution.h"
 
-void	ft_pwd()
+int	ft_pwd(t_data *data)
 {
-	char	buff[10000];
+	char	*path;
 
-	if(getcwd(buff, 10000))
-		printf("%s\n", buff);
+	path = ft_getenv(data->envp, "PWD");
+	if (path)
+	{
+		printf("%s\n", ft_getenv(data->envp, "PWD"));
+		return (0);
+	}
+	return (FAIL_STATUS);
 }
