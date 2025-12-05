@@ -1,14 +1,14 @@
 #include "execution.h"
 
 static int	has_arg(char *arg);
-void	insert_in_list(t_list *list, char *arg);
-int		insert_if_exist(t_list *list, char *arg);
-int		is_valid(char *arg);
+void		insert_in_list(t_list *list, char *arg);
+int			insert_if_exist(t_list *list, char *arg);
+int			is_valid(char *arg);
 
 int	ft_export(t_list *list, char **args, t_data *data)
 {
 	int		n_args;
-	int 	i;
+	int		i;
 
 	i = 0;
 	if (!list || !args)
@@ -23,12 +23,7 @@ int	ft_export(t_list *list, char **args, t_data *data)
 			if (is_valid(args[i]))
 				insert_in_list(list, args[i]);
 			else
-			{
-				ft_putstr_fd("minishell: export: `", 2);
-				ft_putstr_fd(args[i], 2);
-				ft_putstr_fd("': not a valid identifier\n", 2);
-				return (FAIL_STATUS);
-			}
+				return (export_error(args[i]), FAIL_STATUS);
 		}
 		if (data->envp)
 			ft_free_array(data->envp);
@@ -57,7 +52,7 @@ int	is_valid(char *arg)
 
 void	insert_in_list(t_list *list, char *arg)
 {
-	t_list 	*new_arg;
+	t_list	*new_arg;
 
 	if (!arg)
 		return ;

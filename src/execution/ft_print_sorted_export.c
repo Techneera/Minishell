@@ -81,4 +81,3 @@ static int	ft_has_array_size(t_list *lst)
 	}
 	return (i);
 }
-

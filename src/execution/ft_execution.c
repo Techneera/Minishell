@@ -3,7 +3,7 @@
 int	ft_execution(t_data *data)
 {
 	int	i;
-	int child_status;
+	int	child_status;
 
 	if (!data->env_list)
 		return (0);
@@ -26,5 +26,5 @@ int	ft_execution(t_data *data)
 		i++;
 	}
 	free_data(data);
-	return(0);
+	return (0);
 }

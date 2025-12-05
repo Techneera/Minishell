@@ -53,17 +53,12 @@ typedef struct s_data
 	t_lexer *lexer;
 }	t_data;
 
-
-//---test_cmds
-t_ast	*ft_cmd1();
-t_ast	*ft_cmd2();
-t_ast	*ft_cmd3();
-t_ast	*bonus_cmd();
+//---ft_get_command_path.c
+char	*get_command_path(char **arg, char **env, t_data *data);
 
 //---wildcards_utils.c
 char	**insert_wildcard_args(char **old_args, t_list *files, int index);
 void	unmask_wildcards(char *str);
-
 
 //---ft_is_builtin
 int	ft_is_builtin(t_data *data, char *arg);
@@ -98,6 +93,7 @@ int		ft_pwd(t_data *data);
 //---errors_messages
 void	message_error(char	*str, char *file, int type);
 void	no_such_file(char *cmd, char *file);
+void	export_error(char *str);
 
 //---handle_signal
 void    handle_sigstop(int sig);
@@ -145,7 +141,6 @@ int		ft_arraylen(void **ptr);
 int		init_pid(pid_t *pid, t_fds **fds);
 
 //---ft_getters
-char	*get_command_path(char **arg, char **env, t_data *data);
 char	**get_paths(char **env);
 void	message_error(char	*str, char *file, int type);
 void	get_sizes(t_ast *ast_root, t_fds **fds, int inside_sshell);

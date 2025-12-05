@@ -37,7 +37,8 @@ void	update_from_position(t_ast *node, t_data *data)
 		return ;
 	update_from_position(node->left, data);
 	update_from_position(node->right, data);
-	if (node->type == NODE_AND || node->type == NODE_OR || node->type == NODE_SUBSHELL)
+	if (node->type == NODE_AND || node->type == NODE_OR \
+		|| node->type == NODE_SUBSHELL)
 	{
 		update_doc_in_bonus(node, data);
 		return ;
@@ -62,7 +63,7 @@ void	update_doc_in_bonus(t_ast *node, t_data *data)
 	update_doc_in_bonus(node->right, data);
 	if (node->type == NODE_CMD || node->type == NODE_SUBSHELL)
 	{
-		while(i < node->cmd->redir_count)
+		while (i < node->cmd->redir_count)
 		{
 			if (node->cmd->redirs[i].label == REDIR_HEREDOCK)
 				data->fds->get.n_docs++;

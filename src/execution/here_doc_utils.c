@@ -37,9 +37,11 @@ static int	malloc_heredoc(t_fds **fds)
 	{
 		(*fds)->heredoc_fds[i] = malloc(2 * sizeof(int));
 		if (!(*fds)->heredoc_fds[i])
-			return (free_all((void **)(*fds)->heredoc_fds, (*fds)->get.n_docs), 0);
+			return (free_all((void **)(*fds)->heredoc_fds, \
+			(*fds)->get.n_docs), 0);
 		if (pipe((*fds)->heredoc_fds[i]) == -1)
-			return (free_all((void **)(*fds)->heredoc_fds, (*fds)->get.n_docs), 0);
+			return (free_all((void **)(*fds)->heredoc_fds, \
+			(*fds)->get.n_docs), 0);
 		i++;
 	}
 	return (1);
@@ -54,7 +56,7 @@ static int	fill_heredoc(t_data *data, t_ast *node, int i)
 	y = 0;
 	if (!node)
 		return (i);
-	i = fill_heredoc(data, node->body, i);	
+	i = fill_heredoc(data, node->body, i);
 	i = fill_heredoc(data, node->left, i);
 	i = fill_heredoc(data, node->right, i);
 	if (!node->cmd || !node->cmd->redirs)
