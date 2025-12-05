@@ -47,7 +47,6 @@ void	loop(char **envp)
 {
 	t_data	data;
 
-	signal(SIGQUIT, SIG_IGN);
 	data = (t_data) {0};
 	data.env_list = init_env(envp);
 	data.envp = envlist_to_array(data.env_list);
@@ -60,6 +59,7 @@ void	loop(char **envp)
 	}
 	while(1)
 	{
+		signal(SIGQUIT, SIG_IGN);
 		signal(SIGINT, &handle_sigstop);
 		data.rl = readline(PROMPT);
 		if (!data.rl)

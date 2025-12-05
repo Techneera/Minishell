@@ -7,6 +7,7 @@ void	handle_sigstop(int sig)
 	rl_on_new_line();
 	rl_replace_line("", 0);
 	rl_redisplay();
+	ft_exit_status(130, 1, 0);
 }
 
 void	handle_sigstop_heredoc(int sig)
@@ -14,4 +15,5 @@ void	handle_sigstop_heredoc(int sig)
 	(void)sig;
 	write(STDOUT_FILENO, "\n", 1);
 	close(STDIN_FILENO);
+	ft_exit_status(130, 1, 0);
 }
