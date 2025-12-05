@@ -4,13 +4,14 @@
 # define CMD_NOT_FOUND 127
 # define FAIL_STATUS 1
 
-# include <signal.h>
-# include <dirent.h>
-# include "libshell.h"
-# include "ast.h"
-# include "lexer.h"
-# include "expansion.h"
-# include <sys/stat.h>
+#include <signal.h>
+#include <sys/stat.h>
+#include <dirent.h>
+#include <limits.h>
+#include "libshell.h"
+#include "ast.h"
+#include "lexer.h"
+#include "expansion.h"
 
 typedef struct s_env
 {
@@ -49,8 +50,9 @@ typedef struct s_data
 	char	**envp;
 	t_list	*env_list;
 	char	*rl;
-	t_lexer	*lexer;
+	t_lexer *lexer;
 }	t_data;
+
 
 //---test_cmds
 t_ast	*ft_cmd1();
@@ -62,13 +64,13 @@ t_ast	*bonus_cmd();
 char	*ft_getenv(char **env, char *arg);
 
 //---list_utils.c
-int		exist_in_list(t_env *env, char *arg);
+int	exist_in_list(t_env *env, char *arg);
 
 //---ft_env
-int		ft_env(t_data *data);
+int	ft_env(t_data *data);
 
 //---ft_export
-int		ft_export(t_list *list, t_ast *node, t_data *data);
+int	ft_export(t_list *list, char **args, t_data *data);
 void	ft_print_sorted_export(t_list *list);
 
 //---env_utils
@@ -82,16 +84,16 @@ void	ft_free_content(void *content);
 void	failed_malloc(t_data *data, char *str);
 
 //---ft_cd
-int		ft_cd(t_ast *node, char **envp);
-int		ft_pwd();
+int		ft_cd(t_ast *node, char **envp, t_data *data);
+int		ft_pwd(t_data *data);
 
 //---errors_messages
 void	message_error(char	*str, char *file, int type);
 void	no_such_file(char *cmd, char *file);
 
 //---handle_signal
-void	handle_sigstop(int sig);
-void	handle_sigstop_heredoc(int sig);
+void    handle_sigstop(int sig);
+void    handle_sigstop_heredoc(int sig);
 
 //---ft_execute_or
 int		execute_or(t_data	*data, char **envp);
@@ -107,7 +109,7 @@ void	free_fds_bonus(t_data	*data);
 void	ft_child_sshell(t_data *data, char **envp);
 
 //---ft_execute_pipe
-void	ft_execute_pipe(t_data *data, char **envp);
+void ft_execute_pipe(t_data *data, char **envp);
 
 //---ft_update_position
 void	update_positions(t_data *data);
@@ -127,7 +129,7 @@ int		fill_fd_file(t_data *data, t_ast *ast_root, int i);
 //---exec_utils
 int		is_builtin(t_data *data, char *arg);
 void	secure_exit(t_data *data, int status);
-void	free_data(t_data *data);
+void 	free_data(t_data *data);
 void	free_all(void **ptr, size_t rows);
 void	free_fds(t_fds **fds);
 void	free_tree(t_ast **ast_root);
@@ -147,7 +149,7 @@ void	secure_close(int *fd);
 char	**ft_realloc_empty(char **args);
 
 //---ft_here_doc
-int		here_doc(char *lim, int **fd);
+int	here_doc(char *lim, int **fd);
 
 //---ft_child_cmd
 void	ft_child_cmd(t_data	*data, char **envp);

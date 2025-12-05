@@ -113,11 +113,11 @@ int	is_builtin(t_data *data, char *arg)
 	if (ft_strncmp(arg, "echo\0", 5) == 0)
 		return (ft_exit_status(ft_echo(data), 1, 0), 1);
 	if (ft_strncmp(arg, "cd\0", 3) == 0)
-		return (ft_exit_status(ft_cd(data->tree, data->envp), 1, 0), 1);
+		return (ft_exit_status(ft_cd(data->tree, data->envp, data), 1, 0), 1);
 	if (ft_strncmp(arg, "pwd\0", 4) == 0)
-		return (ft_exit_status(ft_pwd(), 1, 0), 1);
+		return (ft_exit_status(ft_pwd(data), 1, 0), 1);
 	if (ft_strncmp(arg, "export\0", 7) == 0)
-		return (ft_exit_status(ft_export(data->env_list, data->tree, data), 1, 0), 1);
+		return (ft_exit_status(ft_export(data->env_list, data->tree->cmd->args, data), 1, 0), 1);
 	if (ft_strncmp(arg, "unset\0", 6) == 0)
 		return (ft_exit_status(ft_unset(data), 1, 0), 1);
 	if (ft_strncmp(arg, "env\0", 4) == 0)

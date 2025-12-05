@@ -2,31 +2,36 @@
 #include "ast.h"
 #include "lexer.h"
 
-t_ast	*ft_parse_grain_with_redirs(t_parser *parser)
+int	ft_proc_redir_loop(t_parser *p, t_list **lst, t_cmd *cmd)
 {
-	t_ast	*node;
-	t_cmd	*cmd_to_fill;
+	t_redir			*new_r;
+	t_list			*link;
+	t_label_redir	label;
 
-	node = NULL;
-	if (parser->current_token->tok_label == TOKEN_LEFT_PAR)
-		node = ft_parse_subshell(parser);
-	else if (parser->current_token->tok_label == TOKEN_WORD \
-|| ft_isredir(parser))
-		node = ft_parse_simple_command(parser);
-	else
-		fprintf(stderr, "Error invalid token.\n");
-	if (!node)
-		return (NULL);
-	if (node->type == NODE_SUBSHELL)
+	label = ft_label_map(p->current_token->tok_label);
+	new_r = ft_extract_redir_info(p, label);
+	if (!new_r)
+		return (0);
+	link = ft_lstnew(new_r);
+	if (!link)
 	{
-		node->cmd = ft_create_command(NULL, NULL, 0);
-		if (!node->cmd)
-			return (ft_free_ast(node), NULL);
-		cmd_to_fill = node->cmd;
-		if (ft_handle_redirects(parser, cmd_to_fill) == false)
-			return (ft_free_ast(node), NULL);
+		ft_free_redir_content(new_r);
+		return (0);
 	}
-	return (node);
+	ft_lstadd_back(lst, link);
+	cmd->redir_count++;
+	ft_parser_iter(p);
+	if (label != REDIR_HEREDOCK)
+		ft_parser_iter(p);
+	return (1);
+}
+
+int	ft_isredir(t_parser *parser)
+{
+	return (parser->current_token->tok_label == TOKEN_REDIR_IN || \
+parser->current_token->tok_label == TOKEN_REDIR_OUT || \
+parser->current_token->tok_label == TOKEN_REDIR_APPEND || \
+parser->current_token->tok_label == TOKEN_REDIR_HEREDOC);
 }
 
 void	ft_parse_args(t_parser *parser, t_list **head)
@@ -41,32 +46,6 @@ void	ft_parse_args(t_parser *parser, t_list **head)
 	}
 	ft_lstadd_back(head, ft_lstnew(arg_cpy));
 	ft_parser_iter(parser);
-}
-
-t_redir	*ft_parse_single_redir(t_parser *parser)
-{
-	t_label_redir	label;
-	char			*filename;
-	t_redir			*redir;
-
-	label = ft_label_map(parser->current_token->tok_label);
-	if (label == REDIR_HEREDOCK)
-	{
-		filename = ft_strdup(parser->current_token->str);
-		ft_parser_iter(parser);
-	}
-	else
-	{
-		if (parser->peek->tok_label != TOKEN_WORD)
-			return (ft_putstr_fd("Unexpected token.\n", 2), NULL);
-		filename = ft_strdup(parser->peek->str);
-		ft_parser_iter(parser);
-		ft_parser_iter(parser);
-	}
-	if (!filename)
-		return (NULL);
-	redir = ft_create_redir(label, filename);
-	return (redir);
 }
 
 char	**ft_lst_to_args(t_list **head, int size)

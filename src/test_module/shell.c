@@ -17,21 +17,30 @@ int	main(int argc, char **argv, char **envp)
 	return (0);
 }
 
-static
-int	ft_onlyspace(char *line)
+void	increase_shlv(t_data *data)
 {
-	int	i;
+	char 	*str;
+	char 	*arg[3];
+	char	*level;
 
-	if (!line)
-		return (false);
-	i = 0;
-	while (line[i])
+	arg[0] = "export";
+	arg[2] = NULL;
+	str = getenv("SHLVL");
+	if (!str)
+		return ;
+	level = ft_itoa(ft_atoi(str) + 1);
+	if (!level)
+		return ;
+	str = ft_strjoin("SHLVL=", level);
+	if (!str)
 	{
-		if (!ft_isspace(line[i]))
-			return (false);
-		i++;
+		free(level);
+		return ;
 	}
-	return (true);
+	arg[1] = str;
+	free(level);
+	ft_export(data->env_list, arg, data);
+	free(str);
 }
 
 void	loop(char **envp)
@@ -42,25 +51,21 @@ void	loop(char **envp)
 	data = (t_data) {0};
 	data.env_list = init_env(envp);
 	data.envp = envlist_to_array(data.env_list);
+	increase_shlv(&data);
 	if (!data.envp)
 	{
 		perror("failled envlist_to_array malloc");
-		//---free env_list
+		free_data(&data);
 		return ;
 	}
 	while(1)
 	{
 		signal(SIGINT, &handle_sigstop);
 		data.rl = readline(PROMPT);
-		if (!data.rl )
+		if (!data.rl)
 		{
 			ft_exit(&data);
 			break ;
-		}
-		if (ft_onlyspace(data.rl))
-		{
-			free_data(&data);
-			continue ;
 		}
 		if (*data.rl != '\0')
 		{
