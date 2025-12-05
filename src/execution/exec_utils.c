@@ -204,3 +204,4 @@ void	unmask_wildcards(char *str)
 		i++;
 	}
 }
+

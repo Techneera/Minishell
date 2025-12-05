@@ -20,7 +20,6 @@ void	mask_wildcards(char *str)
 char	*ft_strjoin_free_s1(char *s1, char *s2)
 {
 	char	*new_str;
-
 	if (!s1)
 		return (ft_strdup(s2));
 	if (!s2)
