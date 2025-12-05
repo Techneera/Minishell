@@ -42,7 +42,7 @@ PATH_OBJS_AST = $(patsubst %,$(OBJS_DIR)/ast/%,$(OBJS_AST))
 
 #		---LEXER---				#
 
-SRCS_LEXER = ft_lexer.c
+SRCS_LEXER = ft_lexer.c ft_lexer_guards.c ft_lexer_utils.c ft_redir_utils.c
 
 OBJS_LEXER = $(SRCS_LEXER:.c=.o)
 
