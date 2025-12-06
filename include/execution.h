@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   execution.h                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rluis-ya <rluis-ya@student.42porto.com>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/12/06 16:41:45 by rluis-ya          #+#    #+#             */
+/*   Updated: 2025/12/06 16:56:25 by rluis-ya@stud    ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 #ifndef EXECUTION_H
 # define EXECUTION_H
 
@@ -54,7 +65,7 @@ typedef struct s_data
 }	t_data;
 
 //---shell_helpers.c
-int	process_rl(t_data *data);
+int		process_rl(t_data *data);
 
 //---ft_get_command_path.c
 char	*get_command_path(char **arg, char **env, t_data *data);

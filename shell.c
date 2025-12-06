@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   shell.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rluis-ya <rluis-ya@student.42porto.com>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/12/06 16:57:06 by rluis-ya          #+#    #+#             */
+/*   Updated: 2025/12/06 16:59:09 by rluis-ya         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "libshell.h"
 #include "ast.h"
 #include "lexer.h"
@@ -7,8 +19,8 @@
 // static void			print_indent(int depth);
 // static void 		print_command_members(t_cmd *cmd, int depth);
 // static const char	*redir_map(t_label_redir label);
-static
-void	loop(char **envp);
+
+static void	loop(char **envp);
 
 int	main(int argc, char **argv, char **envp)
 {
