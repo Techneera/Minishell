@@ -1,18 +1,25 @@
-# include "execution.h"
+#include "execution.h"
 
 int	ft_env(t_data *data)
 {
 	t_list	*list;
 	t_env	*env;
+	int		fd;
 
+	fd = ft_target_fd(data);
+	if (fd == -1)
+		return (1);
 	list = data->env_list;
 	if (!list)
 		return (FAIL_STATUS);
-	while(list)
+	while (list)
 	{
 		env = (t_env *) list->content;
 		if (env->has_arg)
-			printf("%s\n", env->variable);
+		{
+			ft_putstr_fd(env->variable, fd);
+			ft_putstr_fd("\n", fd);
+		}
 		list = list->next;
 	}
 	return (0);

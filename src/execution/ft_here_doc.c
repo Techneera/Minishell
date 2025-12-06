@@ -19,24 +19,28 @@ int	here_doc(char *lim, int **fd)
 {
 	char	*str;
 	char	*line;
-	char	*new_lim;
 
 	str = NULL;
 	line = NULL;
-	if (!make_lim(&new_lim, lim))
-		return (0);
-	if (!reciving_string(&str, &line, new_lim))
+	if (!reciving_string(&str, &line, lim))
 		return (0);
 	if (line)
+	{
 		ft_putstr_fd(line, (*fd)[1]);
+		ft_putstr_fd("\n", (*fd)[1]);
+	}
 	if (str)
 		free(str);
 	if (line)
 		free(line);
-	if (new_lim)
-		free(new_lim);
 	close((*fd)[1]);
 	(*fd)[1] = -1;
+	if (ft_exit_status(0, 0, 0) == 130)
+	{
+		close((*fd)[1]);
+		(*fd)[0] = -1;
+		return (0);
+	}
 	return (1);
 }
 
@@ -44,20 +48,20 @@ static int	reciving_string(char **str, char **line, char *new_lim)
 {
 	int					stdin_cpy;
 
-	signal(SIGQUIT, &handle_sigstop_heredoc);
+	signal(SIGINT, &handle_sigstop_heredoc);
 	stdin_cpy = dup(STDIN_FILENO);
-	ft_printf("> ");
 	while (1)
 	{
-		(*str) = get_next_line (0);
+		signal(SIGQUIT, SIG_IGN);
+		(*str) = readline("> ");
 		if (!((*str) && ft_strncmp((*str), new_lim, ft_max(
 						ft_strlen((*str)), ft_strlen(new_lim))) != 0))
 			break ;
 		(*line) = my_strjoin(line, (*str));
+		(*line) = my_strjoin(line, "\n");
 		if (!*line)
-			return (0);
+			return (free((*str)), 0);
 		free((*str));
-		ft_printf("> ");
 	}
 	dup2(stdin_cpy, STDIN_FILENO);
 	if (stdin_cpy)

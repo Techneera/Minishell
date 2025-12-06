@@ -22,7 +22,7 @@ int	execute_or(t_data	*data, char **envp)
 		return (wait_bonus(data, data->fds));
 	else
 		redir_bonus(data, envp);
-	return (0);
+	return (ft_exit_status(0, 0, 0));
 }
 
 static void	redir_bonus(t_data	*data, char **envp)
@@ -42,7 +42,6 @@ static void	redir_bonus(t_data	*data, char **envp)
 			return ;
 	}
 }
-
 
 static int	redir_to_and(t_data	*data, char **envp)
 {

@@ -42,4 +42,3 @@ static void	update_fds_subshell(t_ast *ast_root, t_fds **fds)
 		}
 	}
 }
-

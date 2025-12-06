@@ -1,7 +1,7 @@
 #include "execution.h"
 
 static void	closing_docs(t_fds **fds);
-void	closing_files(t_fds **fds);
+void		closing_files(t_fds **fds);
 
 void	ft_closing_all(t_fds **fds)
 {

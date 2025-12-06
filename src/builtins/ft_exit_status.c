@@ -2,58 +2,11 @@
 #include "execution.h"
 
 static
-int	ft_error(int err_no, char *arg, char *err_msg)
+void	ft_handle_overflow(t_data *data, int i)
 {
-	ft_putstr_fd("minishell: exit: ", 2);
-	if (arg)
-	{
-		ft_putstr_fd(arg, 2);
-		ft_putstr_fd(": ", 2);
-	}
-	ft_putstr_fd(err_msg, 2);
-	ft_putstr_fd("\n", 2);
-	return (err_no);
-}
-
-static
-void	ft_exit_print(void)
-{
-	if (isatty(STDIN_FILENO))
-		ft_putstr_fd("exit\n", 2);
-}
-
-static int	ft_safe_atoll(char *str, long long *out)
-{
-	int					i;
-	int					sign;
-	unsigned long long	res;
-
-	i = 0;
-	res = 0;
-	sign = 1;
-	while (ft_isspace(str[i]))
-		i++;
-	if (str[i] == '-' || str[i] == '+')
-	{
-		if (str[i] == '-')
-			sign = -1;
-		i++;
-	}
-	if (!ft_isdigit(str[i]))
-		return (0);
-	while (str[i])
-	{
-		if (!ft_isdigit(str[i]))
-			return (0);
-		if (res > (unsigned long long)LLONG_MAX / 10 || \
-(res == (unsigned long long)LLONG_MAX / 10 && \
-(str[i] - '0') > (LLONG_MAX % 10 + (sign == -1))))
-			return (0);
-		res = res * 10 + (str[i] - '0');
-		i++;
-	}
-	*out = (long long)(res * sign);
-	return (1);
+	ft_exit_status(ft_error(2, data->tree->cmd->args[i], \
+"numeric argument required"), 1, 0);
+	secure_exit(data, 2);
 }
 
 int	ft_exit(t_data *data)
@@ -76,10 +29,7 @@ int	ft_exit(t_data *data)
 			secure_exit(data, ft_exit_status(0, 0, 0));
 	}
 	if (!ft_safe_atoll(args[i], &exit_val))
-	{
-		ft_exit_status(ft_error(2, args[i], "numeric argument required"), 1, 0);
-		secure_exit(data, 2);
-	}
+		ft_handle_overflow(data, i);
 	if (args[i + 1])
 		return (ft_error(1, NULL, "too many arguments"));
 	secure_exit(data, (int)(exit_val % 256));

@@ -30,7 +30,7 @@ t_list	*init_env(char **env)
 
 void	ft_free_content(void *content)
 {
-	t_env *env;
+	t_env	*env;
 
 	env = (t_env *) content;
 	if (!env)

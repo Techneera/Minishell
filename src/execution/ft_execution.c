@@ -3,7 +3,7 @@
 int	ft_execution(t_data *data)
 {
 	int	i;
-	int child_status;
+	int	child_status;
 
 	if (!data->env_list)
 		return (0);
@@ -13,13 +13,18 @@ int	ft_execution(t_data *data)
 	ft_create_fds(data);
 	ft_exec_tree(data, data->envp);
 	ft_closing_all(&data->fds);
-	i = 0;
-	while(data->fds && i < data->fds->get.n_cmds && data->fds->c_pids && waitpid(data->fds->c_pids[i], &child_status, 0) > 0)
+	i = -1;
+	while (data->fds && ++i < data->fds->get.n_cmds && data->fds->c_pids)
 	{
-		if (WIFEXITED(child_status))
-			ft_exit_status(WEXITSTATUS(child_status), 1, 0);
-		i++;
+		signal(SIGINT, &handle_sigint_wait);
+		if (waitpid(data->fds->c_pids[i], &child_status, 0) > 0)
+		{
+			if (WIFEXITED(child_status))
+				ft_exit_status(WEXITSTATUS(child_status), 1, 0);
+			else if (WIFSIGNALED(child_status))
+				ft_exit_status(WTERMSIG(child_status) + 128, 1, 0);
+		}
 	}
 	free_data(data);
-	return(0);
+	return (0);
 }

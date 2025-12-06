@@ -33,7 +33,7 @@ static char	*ft_env_value(char *env)
 	i = 0;
 	if (!env)
 		return (NULL);
-	while(env[i] && env[i] != '=')
+	while (env[i] && env[i] != '=')
 		i++;
 	if (env[i] == '=')
 		i++;

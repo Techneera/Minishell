@@ -25,3 +25,10 @@ void	no_such_file(char *cmd, char *file)
 	ft_putstr_fd(file, 2);
 	ft_putstr_fd(": No such file or directory\n", 2);
 }
+
+void	export_error(char *str)
+{
+	ft_putstr_fd("minishell: export: `", 2);
+	ft_putstr_fd(str, 2);
+	ft_putstr_fd("': not a valid identifier\n", 2);
+}

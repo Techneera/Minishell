@@ -6,8 +6,8 @@
 void				loop(char **envp);
 // static void			print_ast(t_ast *node, int depth);
 // static void			print_indent(int depth);
-// // static void 		print_command_members(t_cmd *cmd, int depth);
-// // static const char	*redir_map(t_label_redir label);
+// static void 		print_command_members(t_cmd *cmd, int depth);
+// static const char	*redir_map(t_label_redir label);
 
 int	main(int argc, char **argv, char **envp)
 {
@@ -47,7 +47,6 @@ void	loop(char **envp)
 {
 	t_data	data;
 
-	signal(SIGQUIT, SIG_IGN);
 	data = (t_data) {0};
 	data.env_list = init_env(envp);
 	data.envp = envlist_to_array(data.env_list);
@@ -60,7 +59,9 @@ void	loop(char **envp)
 	}
 	while(1)
 	{
+		signal(SIGQUIT, SIG_IGN);
 		signal(SIGINT, &handle_sigstop);
+		signal(SIGPIPE, SIG_IGN);
 		data.rl = readline(PROMPT);
 		if (!data.rl)
 		{
