@@ -13,7 +13,7 @@ void	ft_insert_aux(int *j, int index, char **new_args, char **old_args)
 static
 void	ft_cpy_aux(t_list **files, int *j, char **new_args)
 {
-	while (files)
+	while (*files)
 	{
 		new_args[*j] = ft_strdup((*files)->content);
 		(*files) = (*files)->next;
