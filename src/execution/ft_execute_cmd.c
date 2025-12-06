@@ -1,6 +1,7 @@
 #include "execution.h"
 
 static void	expand_args(t_data *data);
+static void	ft_handle_empty_quote(void);
 
 void	ft_execute_cmd(t_data *data)
 {
@@ -8,8 +9,16 @@ void	ft_execute_cmd(t_data *data)
 
 	if (!data->tree)
 		return ;
+	if (data->tree->cmd->args[0][0] == '\"' && \
+data->tree->cmd->args[0][1] == '\"' && \
+data->tree->cmd->args[0][2] == '\0')
+	{
+		ft_handle_empty_quote();
+		return ;
+	}
 	expand_args(data);
-	if (!ft_is_builtin(data, data->tree->cmd->args[0]))
+	if (data->tree->cmd->args[0] && \
+!ft_is_builtin(data, data->tree->cmd->args[0]))
 	{
 		if (!init_pid(&pid, &data->fds))
 			secure_exit(data, FAIL_STATUS);
@@ -51,4 +60,12 @@ static void	expand_args(t_data *data)
 		i++;
 	}
 	data->tree->cmd->args = ft_realloc_empty(data->tree->cmd->args);
+}
+
+static
+void	ft_handle_empty_quote(void)
+{
+	ft_putstr_fd("\"\"", 2);
+	ft_putstr_fd(": command not found\n", 2);
+	ft_exit_status(127, 1, 1);
 }
