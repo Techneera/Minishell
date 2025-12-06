@@ -14,7 +14,7 @@ int	ft_cd(t_ast *node, char **envp, t_data *data)
 	size = ft_arraylen((void **) node->cmd->args);
 	if (size > 2)
 		return (message_error(": too many arguments", node->cmd->args[0], 0), \
-		2);
+		1);
 	if (size == 2 && !is_home(node->cmd->args[1]))
 	{
 		if (node->cmd->args[1][0] == '"' && \
