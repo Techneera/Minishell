@@ -53,6 +53,8 @@ LFT = libft/libft.a
 
 all: $(NAME)
 
+bonus: $(NAME)
+
 $(NAME): $(OBJECTS) $(LFT)
 	$(CC) $(filter-out $(LFT), $^) $(LFT) -o $(NAME) $(CFLAGS) -lreadline
 
