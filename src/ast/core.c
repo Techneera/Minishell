@@ -9,12 +9,13 @@ t_ast	*ft_parser(t_lexer *l)
 
 	parser = ft_init_parser(l);
 	if (!parser)
-		return (fprintf(stderr, "Error parser allocate.\n"), NULL);
+		return (ft_putstr_fd("Error parser allocate.\n", 2), NULL);
 	ast_root = ft_parse_and_or(parser);
 	if (ast_root != NULL && parser->current_token->tok_label != TOKEN_EOF)
 	{
-		fprintf(stderr, "Syntax error near unexpected token: %s.\n", \
-parser->current_token->str);
+		ft_putstr_fd("Syntax error near unexpected token: ", 2 );
+		ft_putstr_fd(parser->current_token->str, 2);
+		ft_putstr_fd(".\n", 2);
 		ft_free_ast(ast_root);
 		ast_root = NULL;
 	}
@@ -97,7 +98,7 @@ t_ast	*ft_parse_grain_with_redirs(t_parser *parser)
 ft_isredir(parser))
 		node = ft_parse_simple_command(parser);
 	else
-		fprintf(stderr, "Error invalid token.\n");
+		ft_putstr_fd("Error invalid token.\n", 2);
 	if (!node)
 		return (NULL);
 	if (node->type == NODE_SUBSHELL)
