@@ -37,6 +37,7 @@ t_token	*get_next_token(t_lexer *l)
 t_token	*ft_handle_operator(t_lexer *l)
 {
 	char	current;
+
 	current = l->input[l->pos];
 	if (current == '|')
 		return (ft_which_or(l));

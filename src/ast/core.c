@@ -24,33 +24,41 @@ parser->current_token->str);
 	return (ast_root);
 }
 
+static
+void	ft_which_logic_op(t_node_type *op, t_parser *parser)
+{
+	if (parser->current_token->tok_label == TOKEN_AND)
+		*op = NODE_AND;
+	else
+		*op = NODE_OR;
+}
+
 t_ast	*ft_parse_and_or(t_parser *parser)
 {
 	t_ast		*node;
+	t_ast		*l_node;
 	t_ast		*r_node;
 	t_node_type	op;
 
-	node = ft_parse_pipeline(parser);
-	if (!node)
+	l_node = ft_parse_pipeline(parser);
+	if (!l_node)
 		return (NULL);
 	while (parser->current_token->tok_label == TOKEN_AND || \
 parser->current_token->tok_label == TOKEN_OR)
 	{
-		if (parser->current_token->tok_label == TOKEN_AND)
-			op = NODE_AND;
-		else
-			op = NODE_OR;
+		ft_which_logic_op(&op, parser);
 		ft_parser_iter(parser);
 		r_node = ft_parse_pipeline(parser);
 		if (!r_node)
-			return (ft_free_ast(node), NULL);
+			return (ft_free_ast(l_node), NULL);
 		node = ft_ast_generic_node(op);
 		if (!node)
-			return (ft_free_ast(node), ft_free_ast(r_node), NULL);
-		node->left = node;
+			return (ft_free_ast(l_node), ft_free_ast(r_node), NULL);
+		node->left = l_node;
 		node->right = r_node;
+		l_node = node;
 	}
-	return (node);
+	return (l_node);
 }
 
 t_ast	*ft_parse_pipeline(t_parser *parser)

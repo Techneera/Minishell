@@ -6,8 +6,8 @@
 void				loop(char **envp);
 // static void			print_ast(t_ast *node, int depth);
 // static void			print_indent(int depth);
-// // static void 		print_command_members(t_cmd *cmd, int depth);
-// // static const char	*redir_map(t_label_redir label);
+// static void 		print_command_members(t_cmd *cmd, int depth);
+// static const char	*redir_map(t_label_redir label);
 
 int	main(int argc, char **argv, char **envp)
 {
