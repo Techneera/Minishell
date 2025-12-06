@@ -35,6 +35,12 @@ int	here_doc(char *lim, int **fd)
 		free(line);
 	close((*fd)[1]);
 	(*fd)[1] = -1;
+	if (ft_exit_status(0, 0, 0) == 130)
+	{
+		close((*fd)[1]);
+		(*fd)[0] = -1;
+		return (0);
+	}
 	return (1);
 }
 

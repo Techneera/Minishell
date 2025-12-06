@@ -98,6 +98,7 @@ void	export_error(char *str);
 //---handle_signal
 void    handle_sigstop(int sig);
 void    handle_sigstop_heredoc(int sig);
+void	handle_sigint_wait(int sig);
 
 //---ft_execute_or
 int		execute_or(t_data	*data, char **envp);
@@ -171,7 +172,7 @@ void	ft_create_fds_bonus(t_data *data);
 
 int		ft_exec_tree(t_data	*data, char **envp);
 void	ft_closing_all(t_fds **fds);
-void	init_heredoc(t_data *data);
+int		init_heredoc(t_data *data);
 
 //--exec_tree_bonus
 void	apply_redirs_subshell(t_data *data);

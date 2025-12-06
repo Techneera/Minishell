@@ -16,6 +16,7 @@ int	ft_execution(t_data *data)
 	i = 0;
 	while (data->fds && i < data->fds->get.n_cmds && data->fds->c_pids)
 	{
+		signal(SIGINT, &handle_sigint_wait);
 		if (waitpid(data->fds->c_pids[i], &child_status, 0) > 0)
 		{
 			if (WIFEXITED(child_status))

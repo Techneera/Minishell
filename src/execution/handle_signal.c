@@ -10,6 +10,13 @@ void	handle_sigstop(int sig)
 	ft_exit_status(130, 1, 0);
 }
 
+void	handle_sigint_wait(int sig)
+{
+	(void)sig;
+	write(1, "\n", 1);
+	ft_exit_status(130, 1, 0);
+}
+
 void	handle_sigstop_heredoc(int sig)
 {
 	(void)sig;

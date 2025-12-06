@@ -3,7 +3,7 @@
 static int	malloc_heredoc(t_fds **fds);
 static int	fill_heredoc(t_data *data, t_ast *node, int i);
 
-void	init_heredoc(t_data *data)
+int	init_heredoc(t_data *data)
 {
 	t_fds	*fds;
 	t_ast	*node;
@@ -17,15 +17,16 @@ void	init_heredoc(t_data *data)
 		if (!fds->heredoc_fds)
 		{
 			free_data(data);
-			return ;
+			return (-1);
 		}
 		if (!malloc_heredoc(&fds))
 		{
 			free_data(data);
-			return ;
+			return (-1);
 		}
-		fill_heredoc(data, node, 0);
+		return (fill_heredoc(data, node, 0));
 	}
+	return (0);
 }
 
 static int	malloc_heredoc(t_fds **fds)
@@ -57,11 +58,13 @@ static int	fill_heredoc(t_data *data, t_ast *node, int i)
 	if (!node)
 		return (i);
 	i = fill_heredoc(data, node->body, i);
-	i = fill_heredoc(data, node->left, i);
-	i = fill_heredoc(data, node->right, i);
-	if (!node->cmd || !node->cmd->redirs)
+	if (i != -1)
+		i = fill_heredoc(data, node->left, i);
+	if (i != -1)
+		i = fill_heredoc(data, node->right, i);
+	if (i != -1 && (!node->cmd || !node->cmd->redirs))
 		return (i);
-	while (y < node->cmd->redir_count)
+	while (i != -1 && y < node->cmd->redir_count)
 	{
 		if (node->cmd->redirs[y].label == REDIR_HEREDOCK)
 		{
