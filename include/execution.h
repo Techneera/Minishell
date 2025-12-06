@@ -190,6 +190,11 @@ int		ft_safe_atoll(char *str, long long *out);
 
 //--ft_unset
 int		ft_unset(t_data *data);
+int		ft_is_valid_arguments(char *str);
+int		is_key_match(char *env_var, char *key);
+void	free_env_node(t_list *node);
+void	remove_env_var(t_data *data, char *key);
+void	refresh_env_array(t_data *data);
 
 //--WILDCARD
 int		ft_match_asterisk(char *pattern, char *str);
