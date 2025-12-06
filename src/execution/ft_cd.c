@@ -11,6 +11,7 @@ int	ft_cd(t_ast *node, char **envp, t_data *data)
 
 	if (!node)
 		return (FAIL_STATUS);
+	ft_memset(buff, 0, PATH_MAX);
 	size = ft_arraylen((void **) node->cmd->args);
 	if (size > 2)
 		return (message_error(": too many arguments", node->cmd->args[0], 0), \
@@ -43,7 +44,10 @@ static int	is_home(char *argv)
 static void	change_pwd(t_data *data, char *path)
 {
 	char	*pwd;
+	char	*env;
 
+	env = NULL;
+	pwd = NULL;
 	create_path("OLDPWD=", ft_getenv(data->envp, "PWD"), data);
 	if (path && *path)
 	{
@@ -52,7 +56,9 @@ static void	change_pwd(t_data *data, char *path)
 	}
 	else
 	{
-		pwd = ft_strjoin(ft_getenv(data->envp, "PWD"), "/..");
+		env = ft_getenv(data->envp, "PWD");
+		if (env)
+			pwd = ft_strjoin(ft_getenv(data->envp, "PWD"), "/..");
 		if (!pwd)
 			return ;
 		create_path("PWD=", pwd, data);
@@ -66,6 +72,8 @@ int	create_path(char *env, char *env_value, t_data *data)
 	char	*args[3];
 	char	*str;
 
+	if (!env_value)
+		return (1);
 	args[0] = "export";
 	args[2] = NULL;
 	str = ft_strjoin(env, env_value);
