@@ -7,7 +7,7 @@ int	wait_bonus(t_data *data, t_fds *fds)
 
 	i = 0;
 	while (i < fds->get.n_cmds && fds->c_pids && \
-		waitpid(fds->c_pids[i], &status, 0) > 0)
+waitpid(fds->c_pids[i], &status, 0) > 0)
 	{
 		if (WIFEXITED(status))
 			ft_exit_status(WEXITSTATUS(status), 1, 0);

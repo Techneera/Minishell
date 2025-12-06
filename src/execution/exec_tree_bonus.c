@@ -31,7 +31,8 @@ void	apply_redirs_subshell(t_data *data)
 	}
 }
 
-static void	heredoc_subshell(t_cmd *cmd, t_fds **fds, int r)
+static
+void	heredoc_subshell(t_cmd *cmd, t_fds **fds, int r)
 {
 	if (cmd->redirs[r].label == REDIR_HEREDOCK)
 	{

@@ -43,14 +43,14 @@ static void	expand_args(t_data *data)
 	while (data->tree->cmd->args[i])
 	{
 		data->tree->cmd->args[i] = expand_word(data->tree->cmd->args[i], \
-			data->envp, ft_exit_status(0, 0, 0));
+data->envp, ft_exit_status(0, 0, 0));
 		if (ft_strchr(data->tree->cmd->args[i], '*'))
 		{
 			matches = get_wildcard_matches(data->tree->cmd->args[i]);
 			if (matches)
 			{
 				data->tree->cmd->args = insert_wildcard_args(\
-					data->tree->cmd->args, matches, i);
+data->tree->cmd->args, matches, i);
 				i += ft_lstsize(matches);
 				ft_lstclear(&matches, free);
 				continue ;

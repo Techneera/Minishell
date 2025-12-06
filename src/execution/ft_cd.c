@@ -14,13 +14,13 @@ int	ft_cd(t_ast *node, char **envp, t_data *data)
 	size = ft_arraylen((void **) node->cmd->args);
 	if (size > 2)
 		return (message_error(": too many arguments", node->cmd->args[0], 0), \
-		1);
+1);
 	if (size == 2 && !is_home(node->cmd->args[1]))
 	{
 		if (node->cmd->args[1][0] == '"' && \
 node->cmd->args[1][1] == '"' && node->cmd->args[1][2] == '\0')
 			return (message_error(": null directory", node->cmd->args[0], 0), \
-			FAIL_STATUS);
+FAIL_STATUS);
 		if (chdir(node->cmd->args[1]) != 0)
 			return (no_such_file(node->cmd->args[0], node->cmd->args[1]), 1);
 	}

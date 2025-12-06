@@ -13,7 +13,7 @@ t_ast	*ft_parser(t_lexer *l)
 	ast_root = ft_parse_and_or(parser);
 	if (ast_root != NULL && parser->current_token->tok_label != TOKEN_EOF)
 	{
-		ft_putstr_fd("Syntax error near unexpected token: ", 2 );
+		ft_putstr_fd("Syntax error near unexpected token: ", 2);
 		ft_putstr_fd(parser->current_token->str, 2);
 		ft_putstr_fd(".\n", 2);
 		ft_free_ast(ast_root);

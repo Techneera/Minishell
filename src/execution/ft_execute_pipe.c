@@ -57,7 +57,7 @@ static void	child_pipe(t_data *data, int *pfd, t_ast *node)
 	data->fds->pos.fork_id = 0;
 	ft_exec_tree(data, data->envp);
 	while (data->fds && ++i < n_cmds && \
-		waitpid(data->fds->c_pids[i], &child_status, 0) > 0)
+waitpid(data->fds->c_pids[i], &child_status, 0) > 0)
 		if (WIFEXITED(child_status))
 			ft_exit_status(WEXITSTATUS(child_status), 1, 0);
 	secure_exit(data, ft_exit_status(0, 0, 0));

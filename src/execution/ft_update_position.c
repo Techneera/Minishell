@@ -38,7 +38,7 @@ void	update_from_position(t_ast *node, t_data *data)
 	update_from_position(node->left, data);
 	update_from_position(node->right, data);
 	if (node->type == NODE_AND || node->type == NODE_OR \
-		|| node->type == NODE_SUBSHELL)
+|| node->type == NODE_SUBSHELL)
 	{
 		update_doc_in_bonus(node, data);
 		return ;

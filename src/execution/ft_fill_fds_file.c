@@ -56,8 +56,8 @@ static int	open_files(t_data *data, t_ast *ast_root, int i, int r)
 	fds = data->fds;
 	if (ast_root->cmd->redirs[r].label != REDIR_HEREDOCK)
 		ast_root->cmd->redirs[r].file_name = \
-		expand_word(ast_root->cmd->redirs[r].file_name, \
-			data->envp, ft_exit_status(0, 0, 0));
+expand_word(ast_root->cmd->redirs[r].file_name, \
+data->envp, ft_exit_status(0, 0, 0));
 	if (ast_root->cmd->redirs[r].label == REDIR_IN)
 		return (create_redir_in(&fds, ast_root, i, r));
 	else if (ast_root->cmd->redirs[r].label != REDIR_HEREDOCK)

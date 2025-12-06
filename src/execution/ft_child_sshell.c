@@ -20,7 +20,7 @@ void	ft_child_sshell(t_data *data, char **envp)
 	data->tree = data->tree->body;
 	ft_exec_tree(data, envp);
 	while (data->fds && i < n_cmds && \
-		waitpid(data->fds->c_pids[i], &child_status, 0) > 0)
+waitpid(data->fds->c_pids[i], &child_status, 0) > 0)
 	{
 		if (WIFEXITED(child_status))
 			ft_exit_status(WEXITSTATUS(child_status), 1, 0);

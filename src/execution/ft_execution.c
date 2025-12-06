@@ -13,8 +13,8 @@ int	ft_execution(t_data *data)
 	ft_create_fds(data);
 	ft_exec_tree(data, data->envp);
 	ft_closing_all(&data->fds);
-	i = 0;
-	while (data->fds && i < data->fds->get.n_cmds && data->fds->c_pids)
+	i = -1;
+	while (data->fds && ++i < data->fds->get.n_cmds && data->fds->c_pids)
 	{
 		signal(SIGINT, &handle_sigint_wait);
 		if (waitpid(data->fds->c_pids[i], &child_status, 0) > 0)
@@ -24,7 +24,6 @@ int	ft_execution(t_data *data)
 			else if (WIFSIGNALED(child_status))
 				ft_exit_status(WTERMSIG(child_status) + 128, 1, 0);
 		}
-		i++;
 	}
 	free_data(data);
 	return (0);

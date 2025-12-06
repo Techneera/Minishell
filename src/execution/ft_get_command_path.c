@@ -56,7 +56,7 @@ static void	check_dir(char **arg, t_data *data)
 	if (stat(*arg, &st) == 0 && S_ISDIR(st.st_mode))
 	{
 		if (**arg == '/' || (*arg)[1] == '/' || \
-		(*arg)[ft_strlen((*arg)) - 1] == '/')
+(*arg)[ft_strlen((*arg)) - 1] == '/')
 		{
 			message_error(arg[0], ": Is a directory", 1);
 			secure_exit(data, 126);
