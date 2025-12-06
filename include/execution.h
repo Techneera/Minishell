@@ -4,14 +4,14 @@
 # define CMD_NOT_FOUND 127
 # define FAIL_STATUS 1
 
-#include <signal.h>
-#include <sys/stat.h>
-#include <dirent.h>
-#include <limits.h>
-#include "libshell.h"
-#include "ast.h"
-#include "lexer.h"
-#include "expansion.h"
+# include <signal.h>
+# include <sys/stat.h>
+# include <dirent.h>
+# include <limits.h>
+# include "libshell.h"
+# include "ast.h"
+# include "lexer.h"
+# include "expansion.h"
 
 typedef struct s_env
 {
@@ -21,16 +21,16 @@ typedef struct s_env
 
 typedef struct s_get
 {
-	int	n_files;
-	int	n_cmds;
-	int	n_docs;
+	int		n_files;
+	int		n_cmds;
+	int		n_docs;
 }	t_get;
 
 typedef struct s_pos
 {
-	int	file_id;
-	int	doc_id;
-	int	fork_id;
+	int		file_id;
+	int		doc_id;
+	int		fork_id;
 }	t_pos;
 
 typedef struct s_fds
@@ -50,7 +50,7 @@ typedef struct s_data
 	char	**envp;
 	t_list	*env_list;
 	char	*rl;
-	t_lexer *lexer;
+	t_lexer	*lexer;
 }	t_data;
 
 //---ft_get_command_path.c
@@ -96,8 +96,8 @@ void	no_such_file(char *cmd, char *file);
 void	export_error(char *str);
 
 //---handle_signal
-void    handle_sigstop(int sig);
-void    handle_sigstop_heredoc(int sig);
+void	handle_sigstop(int sig);
+void	handle_sigstop_heredoc(int sig);
 void	handle_sigint_wait(int sig);
 
 //---ft_execute_or
@@ -115,7 +115,7 @@ int		docs_bonus(t_ast *ast_root, t_fds **fds);
 void	ft_child_sshell(t_data *data, char **envp);
 
 //---ft_execute_pipe
-void 	ft_execute_pipe(t_data *data);
+void	ft_execute_pipe(t_data *data);
 
 //---ft_update_position
 void	update_positions(t_data *data);
@@ -134,7 +134,7 @@ int		fill_fd_file(t_data *data, t_ast *ast_root, int i);
 
 //---exec_utils
 void	secure_exit(t_data *data, int status);
-void 	free_data(t_data *data);
+void	free_data(t_data *data);
 void	free_all(void **ptr, size_t rows);
 void	free_fds(t_fds **fds);
 void	free_tree(t_ast **ast_root);
@@ -202,5 +202,10 @@ int		ft_match_wildcard(char *pattern, char *name);
 t_list	*get_wildcard_matches(char *pattern);
 char	**insert_wildcard_args(char **old_args, t_list *files, int index);
 void	unmask_wildcards(char *str);
+
+//--main shell
+int		ft_verify_spaces(char **rl);
+void	cleanup_loop(t_data *data);
+void	increase_shlv(t_data *data);
 
 #endif

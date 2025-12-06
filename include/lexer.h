@@ -1,5 +1,5 @@
 #ifndef LEXER_H
-#define LEXER_H
+# define LEXER_H
 
 # include "libshell.h"
 

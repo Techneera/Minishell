@@ -7,8 +7,6 @@
 // static void			print_indent(int depth);
 // static void 		print_command_members(t_cmd *cmd, int depth);
 // static const char	*redir_map(t_label_redir label);
-void	loop(char **envp);
-int		ft_verify_spaces(char **rl);
 
 int	main(int argc, char **argv, char **envp)
 {
@@ -18,105 +16,49 @@ int	main(int argc, char **argv, char **envp)
 	return (0);
 }
 
-void	increase_shlv(t_data *data)
+static
+int	init_env(t_data *data)
 {
-	char 	*str;
-	char 	*arg[3];
-	char	*level;
-
-	arg[0] = "export";
-	arg[2] = NULL;
-	str = getenv("SHLVL");
-	if (!str)
-		return ;
-	level = ft_itoa(ft_atoi(str) + 1);
-	if (!level)
-		return ;
-	str = ft_strjoin("SHLVL=", level);
-	if (!str)
+	*data = (t_data){0};
+	data->env_list = init_env(envp);
+	data->envp = envlist_to_array(data->env_list);
+	if (!data->envp)
 	{
-		free(level);
-		return ;
+		perror("failled envlist_to_array malloc");
+		free_data(&data);
+		return (1);
 	}
-	arg[1] = str;
-	free(level);
-	ft_export(data->env_list, arg, data);
-	free(str);
+	increase_shlv(data);
+	return (0);
 }
 
+static
 void	loop(char **envp)
 {
 	t_data	data;
 
-	data = (t_data) {0};
-	data.env_list = init_env(envp);
-	data.envp = envlist_to_array(data.env_list);
-	increase_shlv(&data);
-	if (!data.envp)
-	{
-		perror("failled envlist_to_array malloc");
-		free_data(&data);
+	if (init_env(&data))
 		return ;
-	}
-	while(1)
+	while (1)
 	{
 		signal(SIGQUIT, SIG_IGN);
 		signal(SIGINT, &handle_sigstop);
 		signal(SIGPIPE, SIG_IGN);
 		data.rl = readline(PROMPT);
 		if (!data.rl)
-		{
 			ft_exit(&data);
-		}
 		if (ft_verify_spaces(&data.rl))
 			continue ;
 		if (*data.rl != '\0')
 		{
-			add_history(data.rl);
-			data.lexer = ft_state_lexer(data.rl);
-			if (!data.lexer)
-			{
-				free_data(&data);
+			if (!process_rl(&data))
 				break ;
-			}
-			data.root = ft_parser(data.lexer);
-			data.tree = data.root;
-			if (data.root == NULL)
-				fprintf(stderr, "Syntax error AST.\n");
-			else
-			{
-				// print_ast(data.root, 0);
-				// printf("\n\n");
-				ft_execution(&data);
-			}
-			if (data.root)
-				ft_free_ast(data.root);
-			if (data.lexer)
-				free_lexer(data.lexer);
-			data.lexer = NULL;
-			data.root = NULL;
 		}
 		if (data.rl)
 			free(data.rl);
 		data.rl = NULL;
 	}
 	rl_clear_history();
-}
-
-int	ft_verify_spaces(char **rl)
-{
-	int	len;
-	int	i;
-
-	len = ft_strlen(*rl);
-	i = 0;
-	while (i < len)
-	{
-		if (!ft_isspace((*rl)[i]))
-			return (0);
-		i++;
-	}
-	return (1);
 }
 // static
 // void	print_indent(int depth)

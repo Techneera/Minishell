@@ -1,9 +1,9 @@
 #ifndef EXPANSION_H
 # define EXPANSION_H
 
-#include "libshell.h"
+# include "libshell.h"
 
-typedef	enum	s_exp_state
+typedef enum s_exp_state
 {
 	EXP_GENERAL,
 	EXP_SQUOTE,
