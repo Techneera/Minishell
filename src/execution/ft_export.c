@@ -15,7 +15,7 @@ int	ft_export(t_list *list, char **args, t_data *data)
 		return (FAIL_STATUS);
 	n_args = ft_arraylen((void **) args);
 	if (n_args == 1)
-		ft_print_sorted_export(list);
+		return (ft_print_sorted_export(list, data));
 	else
 	{
 		while (++i < n_args)

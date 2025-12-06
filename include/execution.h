@@ -61,20 +61,20 @@ char	**insert_wildcard_args(char **old_args, t_list *files, int index);
 void	unmask_wildcards(char *str);
 
 //---ft_is_builtin
-int	ft_is_builtin(t_data *data, char *arg);
+int		ft_is_builtin(t_data *data, char *arg);
 
 //---ft_getenv.c
 char	*ft_getenv(char **env, char *arg);
 
 //---list_utils.c
-int	exist_in_list(t_env *env, char *arg);
+int		exist_in_list(t_env *env, char *arg);
 
 //---ft_env
-int	ft_env(t_data *data);
+int		ft_env(t_data *data);
 
 //---ft_export
 int		ft_export(t_list *list, char **args, t_data *data);
-void	ft_print_sorted_export(t_list *list);
+int		ft_print_sorted_export(t_list *list, t_data *data);
 
 //---env_utils
 t_list	*init_env(char **env);
@@ -115,7 +115,7 @@ int		docs_bonus(t_ast *ast_root, t_fds **fds);
 void	ft_child_sshell(t_data *data, char **envp);
 
 //---ft_execute_pipe
-void ft_execute_pipe(t_data *data);
+void 	ft_execute_pipe(t_data *data);
 
 //---ft_update_position
 void	update_positions(t_data *data);
@@ -152,7 +152,7 @@ void	secure_close(int *fd);
 char	**ft_realloc_empty(char **args);
 
 //---ft_here_doc
-int	here_doc(char *lim, int **fd);
+int		here_doc(char *lim, int **fd);
 
 //---ft_child_cmd
 void	ft_child_cmd(t_data	*data, char **envp);
