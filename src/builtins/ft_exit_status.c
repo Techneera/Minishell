@@ -1,6 +1,14 @@
 #include "libshell.h"
 #include "execution.h"
 
+static
+void	ft_handle_overflow(t_data *data, int i)
+{
+	ft_exit_status(ft_error(2, data->tree->cmd->args[i], \
+"numeric argument required"), 1, 0);
+	secure_exit(data, 2);
+}
+
 int	ft_exit(t_data *data)
 {
 	char		**args;
@@ -21,10 +29,7 @@ int	ft_exit(t_data *data)
 			secure_exit(data, ft_exit_status(0, 0, 0));
 	}
 	if (!ft_safe_atoll(args[i], &exit_val))
-	{
-		ft_exit_status(ft_error(2, args[i], "numeric argument required"), 1, 0);
-		secure_exit(data, 2);
-	}
+		ft_handle_overflow(data, i);
 	if (args[i + 1])
 		return (ft_error(1, NULL, "too many arguments"));
 	secure_exit(data, (int)(exit_val % 256));
