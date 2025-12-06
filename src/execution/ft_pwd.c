@@ -3,11 +3,16 @@
 int	ft_pwd(t_data *data)
 {
 	char	*path;
+	int		fd;
 
+	fd = ft_target_fd(data);
+	if (fd == -1)
+		return (1);
 	path = ft_getenv(data->envp, "PWD");
 	if (path)
 	{
-		printf("%s\n", ft_getenv(data->envp, "PWD"));
+		ft_putstr_fd(ft_getenv(data->envp, "PWD"), fd);
+		ft_putstr_fd("\n", fd);
 		return (0);
 	}
 	return (FAIL_STATUS);
