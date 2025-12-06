@@ -4,8 +4,6 @@ CFLAGS = -Wall -Werror -Wextra -g -Iinclude -Ilibft -fsanitize=address
 
 NAME = minishell
 
-UNIT = unit_test
-
 EXEC = exec_test
 
 AST_NAME = ast_test
@@ -19,8 +17,6 @@ OBJS_DIR = $(SRC_DIR)/obj
 AST_DIR = $(SRC_DIR)/ast
 
 LEXER_DIR = $(SRC_DIR)/lexer
-
-TESTER_DIR = $(SRC_DIR)/test_module
 
 EXEC_DIR = $(SRC_DIR)/execution
 
@@ -95,14 +91,6 @@ PATH_SRCS_WILDCARD = $(patsubst %,$(WILDCARD_DIR)/%,$(SRCS_WILDCARD))
 
 PATH_OBJS_WILDCARD = $(patsubst %,$(OBJS_DIR)/wildcard/%,$(OBJS_WILDCARD))
 
-#		---TESTER---			#
-
-SRCS_TESTER = unit.c
-
-OBJS_TESTER = $(SRCS_LEXER:.c=.o)
-
-PATH_TESTER = $(patsubst %,$(TESTER_DIR)/%,$(SRCS_TESTER))
-
 #		---STATIC LIBRARIES---		#
 
 LFT = libft/libft.a
@@ -110,9 +98,6 @@ LFT = libft/libft.a
 #		---RULESET---			#
 
 all: $(NAME)
-
-unit: $(PATH_OBJS_LEXER) $(LFT)
-	$(CC) $(CFLAGS)  $(PATH_TESTER) $^ -o $(UNIT)
 
 exec: $(PATH_OBJS_EXEC) $(LFT)
 	$(CC) $(CFLAGS) $(TESTER_DIR)/exec_main.c $^ -o $(EXEC)
@@ -123,11 +108,8 @@ test_parser: $(PATH_OBJS_AST) $(PATH_OBJS_LEXER) $(LFT)
 refactor_parser: $(PATH_OBJS_AST) $(PATH_OBJS_LEXER) $(LFT)
 	$(CC) $(CFLAGS) $(TESTER_DIR)/refactor_parser.c $^ -o $@
 
-$(AST_NAME): $(PATH_OBJS_AST) $(PATH_OBJS_LEXER) $(LFT)
-	$(CC) $(CFLAGS) $(TESTER_DIR)/ast_tester.c $^ -o $@
-
 $(NAME): $(PATH_OBJS_AST) $(PATH_OBJS_LEXER) $(PATH_OBJS_EXEC) $(PATH_OBJS_EXP) $(PATH_OBJS_BUILTINS) $(PATH_OBJS_WILDCARD) $(LFT)
-	$(CC) $(CFLAGS) -lreadline src/test_module/shell.c $^ -o $(NAME)
+	$(CC) $(CFLAGS) -lreadline shell.c $^ -o $(NAME)
 
 $(LFT):
 	$(MAKE) -C libft
@@ -179,15 +161,10 @@ clean:
 fclean: clean
 	$(MAKE) -C libft fclean
 	rm -rf $(NAME)
-	rm -rf $(UNIT)
-	rm -rf $(EXEC)
-	rm -rf $(AST_NAME)
-	rm -rf test_parser
-	rm -rf refactor_parser
 
 re: fclean all
 
 vgr: all
 	valgrind --leak-check=full --show-leak-kinds=all --suppressions=./readline.supp ./$(NAME)
 
-.PHONY: all clean fclean re unit vgr exec test_parser refactor_parser
+.PHONY: all clean fclean re vgr
