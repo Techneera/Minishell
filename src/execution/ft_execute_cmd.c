@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   core.c                                             :+:      :+:    :+:   */
+/*   ft_execute_cmd.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rluis-ya <rluis-ya@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/06 16:41:45 by rluis-ya          #+#    #+#             */
-/*   Updated: 2025/12/06 16:41:45 by rluis-ya         ###   ########.fr       */
+/*   Updated: 2025/12/06 17:38:25 by rluis-ya@stud    ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "execution.h"
@@ -78,5 +78,5 @@ void	ft_handle_empty_quote(void)
 {
 	ft_putstr_fd("\"\"", 2);
 	ft_putstr_fd(": command not found\n", 2);
-	ft_exit_status(127, 1, 1);
+	ft_exit_status(127, 1, 0);
 }
