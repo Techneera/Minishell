@@ -3,11 +3,12 @@
 #include "lexer.h"
 #include "execution.h"
 
-void				loop(char **envp);
 // static void			print_ast(t_ast *node, int depth);
 // static void			print_indent(int depth);
 // static void 		print_command_members(t_cmd *cmd, int depth);
 // static const char	*redir_map(t_label_redir label);
+void	loop(char **envp);
+int		ft_verify_spaces(char **rl);
 
 int	main(int argc, char **argv, char **envp)
 {
@@ -66,8 +67,9 @@ void	loop(char **envp)
 		if (!data.rl)
 		{
 			ft_exit(&data);
-			break ;
 		}
+		if (ft_verify_spaces(&data.rl))
+			continue ;
 		if (*data.rl != '\0')
 		{
 			add_history(data.rl);
@@ -91,12 +93,31 @@ void	loop(char **envp)
 				ft_free_ast(data.root);
 			if (data.lexer)
 				free_lexer(data.lexer);
+			data.lexer = NULL;
+			data.root = NULL;
 		}
 		if (data.rl)
 			free(data.rl);
+		data.rl = NULL;
 	}
+	rl_clear_history();
 }
 
+int	ft_verify_spaces(char **rl)
+{
+	int	len;
+	int	i;
+
+	len = ft_strlen(*rl);
+	i = 0;
+	while (i < len)
+	{
+		if (!ft_isspace((*rl)[i]))
+			return (0);
+		i++;
+	}
+	return (1);
+}
 // static
 // void	print_indent(int depth)
 // {
