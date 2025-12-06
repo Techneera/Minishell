@@ -71,4 +71,5 @@ int	process_rl(t_data *data)
 	else
 		ft_execution(data);
 	cleanup_loop(data);
+	return (1);
 }

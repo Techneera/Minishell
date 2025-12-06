@@ -53,6 +53,9 @@ typedef struct s_data
 	t_lexer	*lexer;
 }	t_data;
 
+//---shell_helpers.c
+int	process_rl(t_data *data);
+
 //---ft_get_command_path.c
 char	*get_command_path(char **arg, char **env, t_data *data);
 

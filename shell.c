@@ -7,6 +7,8 @@
 // static void			print_indent(int depth);
 // static void 		print_command_members(t_cmd *cmd, int depth);
 // static const char	*redir_map(t_label_redir label);
+static
+void	loop(char **envp);
 
 int	main(int argc, char **argv, char **envp)
 {
@@ -17,7 +19,7 @@ int	main(int argc, char **argv, char **envp)
 }
 
 static
-int	init_env(t_data *data)
+int	env_init(t_data *data, char **envp)
 {
 	*data = (t_data){0};
 	data->env_list = init_env(envp);
@@ -25,7 +27,7 @@ int	init_env(t_data *data)
 	if (!data->envp)
 	{
 		perror("failled envlist_to_array malloc");
-		free_data(&data);
+		free_data(data);
 		return (1);
 	}
 	increase_shlv(data);
@@ -37,7 +39,7 @@ void	loop(char **envp)
 {
 	t_data	data;
 
-	if (init_env(&data))
+	if (env_init(&data, envp))
 		return ;
 	while (1)
 	{
