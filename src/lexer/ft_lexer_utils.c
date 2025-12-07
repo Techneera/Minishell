@@ -6,7 +6,7 @@
 /*   By: rluis-ya <rluis-ya@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/06 16:41:45 by rluis-ya          #+#    #+#             */
-/*   Updated: 2025/12/06 16:41:45 by rluis-ya         ###   ########.fr       */
+/*   Updated: 2025/12/07 16:06:53 by rluis-ya         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "libshell.h"
@@ -92,26 +92,12 @@ char	*ft_get_unquoted_str(t_lexer *l)
 	char	*raw_delim;
 	char	*final_delim;
 	int		len;
+	int		in_quote_state;
 
-	start = l->pos;
-	while (l->pos < l->len && !ft_ismeta(l->input[l->pos]) && \
-!ft_isspace(l->input[l->pos]))
-		l->pos++;
+	initialize_and_find_heredoc_delim(&start, &in_quote_state, l);
 	raw_delim = ft_substr(l->input, start, l->pos - start);
 	if (!raw_delim)
 		return (NULL);
 	len = ft_strlen(raw_delim);
-	if (len >= 2 && (raw_delim[0] == '\'' && raw_delim[len - 1] == '\''))
-	{
-		final_delim = ft_substr(raw_delim, 1, len - 2);
-		free(raw_delim);
-		return (final_delim);
-	}
-	if (len >= 2 && (raw_delim[0] == '\"' && raw_delim[len - 1] == '\"'))
-	{
-		final_delim = ft_substr(raw_delim, 1, len - 2);
-		free(raw_delim);
-		return (final_delim);
-	}
-	return (raw_delim);
+	return (ft_heredoc_quotes(&raw_delim, &final_delim, len));
 }

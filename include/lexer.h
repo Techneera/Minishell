@@ -6,7 +6,7 @@
 /*   By: rluis-ya <rluis-ya@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/06 16:41:45 by rluis-ya          #+#    #+#             */
-/*   Updated: 2025/12/06 16:41:45 by rluis-ya         ###   ########.fr       */
+/*   Updated: 2025/12/07 16:07:59 by rluis-ya         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #ifndef LEXER_H
@@ -23,6 +23,9 @@ t_token	*ft_which_redir(t_lexer *l);
 t_token	*ft_handle_word(t_lexer *l);
 t_token	*create_token(t_token_label tok_label, char *str);
 char	*ft_get_unquoted_str(t_lexer *l);
+char	*ft_heredoc_quotes(char **raw_delim, char **final_dleim, int len);
+void	initialize_and_find_heredoc_delim(int *start, \
+int *in_quote_state, t_lexer *l);
 void	add_token_back(t_token **tok_label, t_token *new);
 void	ft_tokens_constructor(t_lexer **lex, t_token **head);
 void	free_token_lst(t_token **tok_label, void (*del)(t_token *));

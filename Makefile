@@ -20,14 +20,14 @@ WILDCARD_DIR = $(SRC_DIR)/wildcard
 # ----------------- SOURCES & OBJECTS ----------------- #
 
 SRCS_AST    = ft_ast.c ft_ast_utils.c core.c guards.c core_utils.c redir_utils.c subshell_utils.c
-SRCS_LEXER  = ft_lexer.c ft_lexer_guards.c ft_lexer_utils.c ft_redir_utils.c
+SRCS_LEXER  = ft_lexer.c ft_lexer_guards.c ft_lexer_utils.c ft_redir_utils.c ft_heredoc_exp.c
 SRCS_EXEC   = add_libft.c exec_tree_utils.c exec_utils.c files_utils.c ft_child_cmd.c ft_exec_tree.c \
-              ft_fill_fds_file.c ft_getters.c ft_here_doc.c here_doc_utils.c ft_closing_all.c ft_create_fds.c \
-              exec_tree_bonus.c ft_execution.c ft_execute_cmd.c ft_execute_sshell.c ft_update_position.c \
-              ft_execute_pipe.c ft_child_sshell.c ft_create_fds_bonus.c utils_bonus.c ft_execute_and.c \
-              ft_execute_or.c handle_signal.c errors_messages.c ft_cd.c ft_pwd.c ft_env.c ft_export.c \
-              env_utils.c error_handler.c ft_print_sorted_export.c list_utils.c ft_getenv.c wildcards_utils.c \
-              ft_is_builtin.c ft_get_command_path.c shell_helpers.c
+			ft_fill_fds_file.c ft_getters.c ft_here_doc.c here_doc_utils.c ft_closing_all.c ft_create_fds.c \
+			exec_tree_bonus.c ft_execution.c ft_execute_cmd.c ft_execute_sshell.c ft_update_position.c \
+			ft_execute_pipe.c ft_child_sshell.c ft_create_fds_bonus.c utils_bonus.c ft_execute_and.c \
+			ft_execute_or.c handle_signal.c errors_messages.c ft_cd.c ft_pwd.c ft_env.c ft_export.c \
+			env_utils.c error_handler.c ft_print_sorted_export.c list_utils.c ft_getenv.c wildcards_utils.c \
+			ft_is_builtin.c ft_get_command_path.c shell_helpers.c
 SRCS_EXP    = args_handle.c args_handle_utils.c general_state.c
 SRCS_BUILTINS = ft_echo.c ft_exit_status.c ft_exit_utils.c ft_unset.c ft_unset_utils.c
 SRCS_WILDCARD = ft_wildcard.c
@@ -43,8 +43,9 @@ PATH_OBJS_BUILTINS= $(patsubst %.c,$(OBJS_DIR)/builtins/%.o,$(SRCS_BUILTINS))
 PATH_OBJS_WILDCARD= $(patsubst %.c,$(OBJS_DIR)/wildcard/%.o,$(SRCS_WILDCARD))
 
 OBJECTS = $(SHELL_OBJ) $(PATH_OBJS_AST) $(PATH_OBJS_LEXER) $(PATH_OBJS_EXEC) \
-          $(PATH_OBJS_EXP) $(PATH_OBJS_BUILTINS) $(PATH_OBJS_WILDCARD)
+		$(PATH_OBJS_EXP) $(PATH_OBJS_BUILTINS) $(PATH_OBJS_WILDCARD)
 
+ASAN_BUILD_FLAGS = $(CFLAGS) $(ASAN_FLAGS)
 # ----------------- STATIC LIBRARIES ----------------- #
 
 LFT = libft/libft.a
@@ -100,11 +101,9 @@ fclean: clean
 
 re: fclean all
 
-vgr: $(LFT)
-	$(CC) $(CFLAGS) -g -lreadline shell.c $^ -o $(NAME)
+vgr: $(OBJECTS) $(LFT)
+	$(CC) $(filter-out $(LFT), $^) $(LFT) -o $(NAME) $(CFLAGS) -lreadline
 	valgrind --leak-check=full --show-leak-kinds=all --suppressions=./readline.supp ./$(NAME)
-
-ASAN_BUILD_FLAGS = $(CFLAGS) $(ASAN_FLAGS)
 
 asan: fclean
 	@echo "======================================================"
