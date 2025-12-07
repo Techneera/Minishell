@@ -34,4 +34,16 @@ void	handle_sigstop_heredoc(int sig)
 	write(STDOUT_FILENO, "\n", 1);
 	close(STDIN_FILENO);
 	ft_exit_status(130, 1, 0);
+	heredoc_status(1, 1);
+}
+
+int	heredoc_status(int state, int write_)
+{
+	static int	to_clear;
+
+	if (!to_clear)
+		to_clear = 0;
+	if (write_ != 0)
+		to_clear = state;
+	return (to_clear);
 }

@@ -46,7 +46,7 @@ int	here_doc(char *lim, int **fd)
 		free(line);
 	close((*fd)[1]);
 	(*fd)[1] = -1;
-	if (ft_exit_status(0, 0, 0) == 130)
+	if (heredoc_status(0, 0))
 	{
 		close((*fd)[1]);
 		(*fd)[0] = -1;
@@ -60,6 +60,7 @@ static int	reciving_string(char **str, char **line, char *new_lim)
 	int					stdin_cpy;
 
 	signal(SIGINT, &handle_sigstop_heredoc);
+	heredoc_status(0, 1);
 	stdin_cpy = dup(STDIN_FILENO);
 	while (1)
 	{
@@ -106,3 +107,4 @@ static char	*my_strjoin(char **s1, char *s2)
 	new_s[i] = '\0';
 	return (new_s);
 }
+

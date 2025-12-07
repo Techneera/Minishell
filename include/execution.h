@@ -113,6 +113,7 @@ void	export_error(char *str);
 void	handle_sigstop(int sig);
 void	handle_sigstop_heredoc(int sig);
 void	handle_sigint_wait(int sig);
+int		heredoc_status(int state, int write_);
 
 //---ft_execute_or
 int		execute_or(t_data	*data, char **envp);
