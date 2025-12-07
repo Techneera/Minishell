@@ -2,6 +2,7 @@ CC = cc
 
 CFLAGS = -Wall -Werror -Wextra -Iinclude -Ilibft
 ASAN_FLAGS = -fsanitize=address -g
+ASAN_BUILD_FLAGS = $(CFLAGS) $(ASAN_FLAGS)
 
 NAME = minishell
 
@@ -45,7 +46,6 @@ PATH_OBJS_WILDCARD= $(patsubst %.c,$(OBJS_DIR)/wildcard/%.o,$(SRCS_WILDCARD))
 OBJECTS = $(SHELL_OBJ) $(PATH_OBJS_AST) $(PATH_OBJS_LEXER) $(PATH_OBJS_EXEC) \
 		$(PATH_OBJS_EXP) $(PATH_OBJS_BUILTINS) $(PATH_OBJS_WILDCARD)
 
-ASAN_BUILD_FLAGS = $(CFLAGS) $(ASAN_FLAGS)
 # ----------------- STATIC LIBRARIES ----------------- #
 
 LFT = libft/libft.a
@@ -101,10 +101,6 @@ fclean: clean
 
 re: fclean all
 
-vgr: $(OBJECTS) $(LFT)
-	$(CC) $(filter-out $(LFT), $^) $(LFT) -o $(NAME) $(CFLAGS) -lreadline
-	valgrind --leak-check=full --show-leak-kinds=all --suppressions=./readline.supp ./$(NAME)
-
 asan: fclean
 	@echo "======================================================"
 	@echo "  Building $(NAME) with AddressSanitizer enabled..."
@@ -117,4 +113,4 @@ asan: fclean
 	@echo "  $(NAME) ready for AddressSanitizer testing."
 	@echo "======================================================"
 
-.PHONY: all clean fclean re vgr asan
+.PHONY: all clean fclean re asan
