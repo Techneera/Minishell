@@ -107,4 +107,3 @@ static char	*my_strjoin(char **s1, char *s2)
 	new_s[i] = '\0';
 	return (new_s);
 }
-

@@ -29,7 +29,7 @@ SRCS_EXEC   = add_libft.c exec_tree_utils.c exec_utils.c files_utils.c ft_child_
 			ft_execute_or.c handle_signal.c errors_messages.c ft_cd.c ft_pwd.c ft_env.c ft_export.c \
 			env_utils.c error_handler.c ft_print_sorted_export.c list_utils.c ft_getenv.c wildcards_utils.c \
 			ft_is_builtin.c ft_get_command_path.c shell_helpers.c
-SRCS_EXP    = args_handle.c args_handle_utils.c general_state.c
+SRCS_EXP    = args_handle.c args_handle_utils.c general_state.c expand_and_purge.c
 SRCS_BUILTINS = ft_echo.c ft_exit_status.c ft_exit_utils.c ft_unset.c ft_unset_utils.c
 SRCS_WILDCARD = ft_wildcard.c
 
