@@ -77,7 +77,7 @@ void	update_doc_in_bonus(t_ast *node, t_data *data)
 		while (i < node->cmd->redir_count)
 		{
 			if (node->cmd->redirs[i].label == REDIR_HEREDOCK)
-				data->fds->get.n_docs++;
+				data->fds->pos.doc_id++;
 			i++;
 		}
 	}

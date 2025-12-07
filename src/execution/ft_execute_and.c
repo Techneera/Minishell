@@ -28,7 +28,6 @@ int	execute_and(t_data	*data, char **envp)
 		ft_execute_cmd(data);
 	if (node->type == NODE_PIPE || node->type == NODE_SUBSHELL)
 		ft_exec_tree(data, envp);
-	closing_files(&data->fds);
 	if (data->fds && data->fds->c_pids)
 		return (wait_bonus(data, data->fds));
 	else

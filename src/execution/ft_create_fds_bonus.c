@@ -23,8 +23,8 @@ void	ft_create_fds_bonus(t_data *data)
 		return ;
 	ast_root = data->tree;
 	fds = data->fds;
-	fds->get = (t_get){0};
-	fds->pos = (t_pos){0};
+	fds->get = (t_get){.n_docs = fds->get.n_docs};
+	fds->pos = (t_pos){.doc_id = fds->pos.doc_id};
 	get_sizes_bonus(ast_root, &fds, 0);
 	if (fds->get.n_cmds > 0)
 	{

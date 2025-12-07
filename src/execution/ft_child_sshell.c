@@ -15,27 +15,31 @@ static int	ft_n_cmds_sshell(t_ast *ast_root, t_fds **fds);
 
 void	ft_child_sshell(t_data *data, char **envp)
 {
-	int		n_cmds;
 	int		child_status;
 	int		i;
 
-	i = 0;
+	i = -1;
 	child_status = 0;
-	n_cmds = ft_n_cmds_sshell(data->tree->body, &data->fds);
+	data->fds->get.n_cmds = ft_n_cmds_sshell(data->tree->body, &data->fds);
 	apply_redirs_subshell(data);
 	if (data->fds->c_pids)
 		free(data->fds->c_pids);
-	data->fds->c_pids = ft_calloc(n_cmds, sizeof(int));
+	data->fds->c_pids = ft_calloc(data->fds->get.n_cmds, sizeof(int));
+	data->fds->pos.fork_id = 0;
 	if (!data->fds->c_pids)
 		secure_exit(data, 0);
 	data->tree = data->tree->body;
 	ft_exec_tree(data, envp);
-	while (data->fds && i < n_cmds && \
-waitpid(data->fds->c_pids[i], &child_status, 0) > 0)
+	ft_closing_all(&data->fds);
+	while (data->fds && ++i < data->fds->get.n_cmds && data->fds->c_pids)
 	{
-		if (WIFEXITED(child_status))
-			ft_exit_status(WEXITSTATUS(child_status), 1, 0);
-		i++;
+		if (waitpid(data->fds->c_pids[i], &child_status, 0) > 0)
+		{
+			if (WIFEXITED(child_status))
+				ft_exit_status(WEXITSTATUS(child_status), 1, 0);
+			else if (WIFSIGNALED(child_status))
+				ft_exit_status(WTERMSIG(child_status) + 128, 1, 0);
+		}
 	}
 	secure_exit(data, ft_exit_status(0, 0, 0));
 }

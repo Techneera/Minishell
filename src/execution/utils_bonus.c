@@ -16,13 +16,18 @@ int	wait_bonus(t_data *data, t_fds *fds)
 	int	i;
 	int	status;
 
-	i = 0;
-	while (i < fds->get.n_cmds && fds->c_pids && \
-waitpid(fds->c_pids[i], &status, 0) > 0)
+	i = -1;
+	ft_closing_all(&data->fds);
+	while (fds && ++i < fds->get.n_cmds && fds->c_pids)
 	{
-		if (WIFEXITED(status))
-			ft_exit_status(WEXITSTATUS(status), 1, 0);
-		i++;
+		signal(SIGINT, &handle_sigint_wait);
+		if (waitpid(data->fds->c_pids[i], &status, 0) > 0)
+		{
+			if (WIFEXITED(status))
+				ft_exit_status(WEXITSTATUS(status), 1, 0);
+			else if (WIFSIGNALED(status))
+				ft_exit_status(WTERMSIG(status) + 128, 1, 0);
+		}
 	}
 	free_fds_bonus(data);
 	return (ft_exit_status(0, 0, 0));

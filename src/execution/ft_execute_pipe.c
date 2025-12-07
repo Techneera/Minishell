@@ -51,7 +51,6 @@ static void	fail_fork(t_data *data, pid_t pfd[2])
 
 static void	child_pipe(t_data *data, int *pfd, t_ast *node)
 {
-	int		n_cmds;
 	int		i;
 	int		child_status;
 
@@ -59,18 +58,26 @@ static void	child_pipe(t_data *data, int *pfd, t_ast *node)
 	close(pfd[0]);
 	close(pfd[1]);
 	data->tree = node;
-	n_cmds = ft_n_cmds_sshell(data->tree, &data->fds);
+	data->fds->get.n_cmds = ft_n_cmds_sshell(data->tree, &data->fds);
 	if (data->fds->c_pids)
 		free(data->fds->c_pids);
-	data->fds->c_pids = ft_calloc(n_cmds, sizeof(int));
-	if (!data->fds->c_pids)
-		secure_exit(data, 0);
+	data->fds->c_pids = ft_calloc(data->fds->get.n_cmds, sizeof(int));
 	data->fds->pos.fork_id = 0;
+	if (!data->fds->c_pids)
+		secure_exit(data, FAIL_STATUS);
 	ft_exec_tree(data, data->envp);
-	while (data->fds && ++i < n_cmds && \
-waitpid(data->fds->c_pids[i], &child_status, 0) > 0)
-		if (WIFEXITED(child_status))
-			ft_exit_status(WEXITSTATUS(child_status), 1, 0);
+	ft_closing_all(&data->fds);
+	while (data->fds && ++i < data->fds->get.n_cmds && data->fds->c_pids)
+	{
+		signal(SIGINT, &handle_sigint_wait);
+		if (waitpid(data->fds->c_pids[i], &child_status, 0) > 0)
+		{
+			if (WIFEXITED(child_status))
+				ft_exit_status(WEXITSTATUS(child_status), 1, 0);
+			else if (WIFSIGNALED(child_status))
+				ft_exit_status(WTERMSIG(child_status) + 128, 1, 0);
+		}
+	}
 	secure_exit(data, ft_exit_status(0, 0, 0));
 }
 

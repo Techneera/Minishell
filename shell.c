@@ -57,7 +57,6 @@ void	loop(char **envp)
 	{
 		signal(SIGQUIT, SIG_IGN);
 		signal(SIGINT, &handle_sigstop);
-		signal(SIGPIPE, SIG_IGN);
 		data.rl = readline(PROMPT);
 		if (!data.rl)
 			ft_exit(&data);

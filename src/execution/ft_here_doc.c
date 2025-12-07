@@ -36,10 +36,7 @@ int	here_doc(char *lim, int **fd)
 	if (!reciving_string(&str, &line, lim))
 		return (0);
 	if (line)
-	{
 		ft_putstr_fd(line, (*fd)[1]);
-		ft_putstr_fd("\n", (*fd)[1]);
-	}
 	if (str)
 		free(str);
 	if (line)
