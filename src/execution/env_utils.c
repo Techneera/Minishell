@@ -54,20 +54,17 @@ static t_list	*no_env(t_list **env_list)
 
 	ft_memset(buff, 0, PATH_MAX);
 	getcwd(buff, PATH_MAX);
-	if (!node_in_list("SHLVL=1", env_list))
-		return (NULL);
+	node_in_list("SHLVL=1", env_list);
 	if (*buff)
 	{
 		str = ft_strjoin("PWD=", buff);
 		if (!str)
-			return (NULL);
-		if (!node_in_list(str, env_list))
-			return (free(str), NULL);
+			return (*env_list);
+		node_in_list(str, env_list);
 		free (str);
 	}
 	else
-		if (!node_in_list("PWD=.", env_list))
-			return (NULL);
+		node_in_list("PWD=.", env_list);
 	return (*env_list);
 }
 
