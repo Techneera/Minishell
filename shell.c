@@ -81,6 +81,7 @@ void	loop(char **envp)
 		if (data.rl)
 			free(data.rl);
 		data.rl = NULL;
+		data.tree = NULL;
 	}
 	rl_clear_history();
 }

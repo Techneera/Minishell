@@ -24,7 +24,6 @@ void	secure_exit(t_data *data, int status)
 	data->envp = NULL;
 	free_lexer(data->lexer);
 	data->lexer = NULL;
-	rl_clear_history();
 	free(data->rl);
 	data->rl = NULL;
 	exit(status);

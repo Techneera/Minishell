@@ -42,7 +42,6 @@ void	increase_shlv(t_data *data)
 
 void	cleanup_loop(t_data *data)
 {
-	rl_clear_history();
 	if (data->root)
 		ft_free_ast(data->root);
 	if (data->lexer)
