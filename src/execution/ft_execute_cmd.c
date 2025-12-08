@@ -12,7 +12,7 @@
 #include "execution.h"
 
 static
-void	ft_handle_empty_quote()
+void	ft_handle_empty_quote(void)
 {
 	ft_putstr_fd("\"\"", 2);
 	ft_putstr_fd(": command not found\n", 2);

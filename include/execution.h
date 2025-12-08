@@ -53,7 +53,6 @@ int		ft_print_sorted_export(t_list *list, t_data *data);
 //---env_utils
 t_list	*init_env(char **env);
 t_list	*create_node_env(char *arg, int has_arg);
-void	to_array_env(t_list *head, char **array);
 char	**envlist_to_array(t_list *list);
 void	ft_free_content(void *content);
 

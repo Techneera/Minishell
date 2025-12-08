@@ -14,6 +14,7 @@
 static void	bubble_sort(char **array, int size_array);
 static int	ft_has_array_size(t_list *lst);
 static int	print_export(char **array, t_data *data);
+static void	to_array_env(t_list *head, char **array);
 
 int	ft_print_sorted_export(t_list *list, t_data *data)
 {
@@ -97,4 +98,21 @@ static int	ft_has_array_size(t_list *lst)
 		lst = lst->next;
 	}
 	return (i);
+}
+
+static void	to_array_env(t_list *head, char **array)
+{
+	int		i;
+	t_list	*tmp;
+	t_env	*redir_to_arr;
+
+	i = 0;
+	tmp = head;
+	while (tmp)
+	{
+		redir_to_arr = (t_env *)tmp->content;
+		array[i] = redir_to_arr->variable;
+		i++;
+		tmp = tmp->next;
+	}
 }

@@ -21,16 +21,12 @@
 // static const char	*redir_map(t_label_redir label);
 
 static void	loop(char **envp);
+char		**envlist_to_array(t_list *list);
 
 int	main(int argc, char **argv, char **envp)
 {
 	(void)argc;
 	(void)argv;
-	if (!(*envp))
-	{
-		ft_putstr_fd("会操你 (>.<)", 2);
-		return (1);
-	}
 	loop(envp);
 	return (0);
 }
@@ -84,6 +80,35 @@ void	loop(char **envp)
 		data.tree = NULL;
 	}
 	rl_clear_history();
+}
+
+char	**envlist_to_array(t_list *list)
+{
+	char	**array;
+	t_list	*tmp;
+	t_env	*redir_to_arr;
+	int		i;
+
+	i = 0;
+	array = ft_calloc(ft_lstsize(list) + 1, sizeof(char *));
+	if (!array)
+		return (NULL);
+	i = 0;
+	tmp = list;
+	while (tmp)
+	{
+		redir_to_arr = (t_env *)tmp->content;
+		if (redir_to_arr->has_arg)
+		{
+			array[i] = ft_strdup(redir_to_arr->variable);
+			if (!array[i])
+				return (ft_free_array(array), NULL);
+			i++;
+		}
+		tmp = tmp->next;
+	}
+	array[i] = NULL;
+	return (array);
 }
 // static
 // void	print_indent(int depth)
