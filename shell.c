@@ -47,6 +47,16 @@ int	env_init(t_data *data, char **envp)
 }
 
 static
+void	ft_sig_and_line(t_data *data)
+{
+	signal(SIGQUIT, SIG_IGN);
+	signal(SIGINT, &handle_sigstop);
+	data->rl = readline(PROMPT);
+	if (!data->rl)
+		ft_exit(data);
+}
+
+static
 void	loop(char **envp)
 {
 	t_data	data;
@@ -55,11 +65,7 @@ void	loop(char **envp)
 		return ;
 	while (1)
 	{
-		signal(SIGQUIT, SIG_IGN);
-		signal(SIGINT, &handle_sigstop);
-		data.rl = readline(PROMPT);
-		if (!data.rl)
-			ft_exit(&data);
+		ft_sig_and_line(&data);
 		if (ft_verify_spaces(&data.rl))
 			continue ;
 		if (*data.rl != '\0')

@@ -42,6 +42,7 @@ void	increase_shlv(t_data *data)
 
 void	cleanup_loop(t_data *data)
 {
+	rl_clear_history();
 	if (data->root)
 		ft_free_ast(data->root);
 	if (data->lexer)
@@ -78,7 +79,11 @@ int	process_rl(t_data *data)
 	data->root = ft_parser(data->lexer);
 	data->tree = data->root;
 	if (data->root == NULL)
-		ft_putstr_fd("Syntax error AST.\n", 2);
+	{
+		ft_putstr_fd("Syntax error\n", 2);
+		rl_clear_history();
+		ft_exit_status(2, 1, 0);
+	}
 	else
 		ft_execution(data);
 	cleanup_loop(data);
