@@ -169,4 +169,13 @@ typedef struct s_data
 	char	*rl;
 	t_lexer	*lexer;
 }	t_data;
+
+typedef struct s_globs
+{
+	char	*dir_prefix;
+	char	*file_pattern;
+	char	*last_slash;
+	char	*full_match;
+}	t_globs;
+
 #endif
