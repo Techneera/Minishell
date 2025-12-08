@@ -26,6 +26,11 @@ int	main(int argc, char **argv, char **envp)
 {
 	(void)argc;
 	(void)argv;
+	if (!(*envp))
+	{
+		ft_putstr_fd("会操你 (>.<)", 2);
+		return (1);
+	}
 	loop(envp);
 	return (0);
 }
