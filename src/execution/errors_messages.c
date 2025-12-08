@@ -42,4 +42,5 @@ void	export_error(char *str)
 	ft_putstr_fd("minishell: export: `", 2);
 	ft_putstr_fd(str, 2);
 	ft_putstr_fd("': not a valid identifier\n", 2);
+	ft_exit_status(FAIL_STATUS, 1, 0);
 }

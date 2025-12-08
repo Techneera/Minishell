@@ -34,13 +34,13 @@ int	ft_export(t_list *list, char **args, t_data *data)
 			if (is_valid(args[i]))
 				insert_in_list(list, args[i]);
 			else
-				return (export_error(args[i]), FAIL_STATUS);
+				export_error(args[i]);
 		}
 		if (data->envp)
 			ft_free_array(data->envp);
 		data->envp = envlist_to_array(data->env_list);
 	}
-	return (0);
+	return (ft_exit_status(0, 0, 0));
 }
 
 int	is_valid(char *arg)
@@ -73,6 +73,7 @@ void	insert_in_list(t_list *list, char *arg)
 	if (!new_arg)
 		return ;
 	ft_lstadd_back(&list, new_arg);
+	ft_exit_status(0, 1, 0);
 	return ;
 }
 
