@@ -13,14 +13,20 @@
 
 static int	ft_n_cmds_sshell(t_ast *ast_root, t_fds **fds);
 
+static
+void	ft_child_sshell_aux(t_data *data, int *i, int *child_status)
+{
+	*i = -1;
+	*child_status = 0;
+	data->fds->get.n_cmds = ft_n_cmds_sshell(data->tree->body, &data->fds);
+}
+
 void	ft_child_sshell(t_data *data, char **envp)
 {
 	int		child_status;
 	int		i;
 
-	i = -1;
-	child_status = 0;
-	data->fds->get.n_cmds = ft_n_cmds_sshell(data->tree->body, &data->fds);
+	ft_child_sshell_aux(data, &i, &child_status);
 	apply_redirs_subshell(data);
 	if (data->fds->c_pids)
 		free(data->fds->c_pids);

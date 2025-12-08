@@ -49,12 +49,9 @@ static void	fail_fork(t_data *data, pid_t pfd[2])
 	secure_exit(data, FAIL_STATUS);
 }
 
-static void	child_pipe(t_data *data, int *pfd, t_ast *node)
+static
+void	ft_child_pipe_aux(t_data *data, int *pfd, t_ast *node)
 {
-	int		i;
-	int		child_status;
-
-	i = -1;
 	close(pfd[0]);
 	close(pfd[1]);
 	data->tree = node;
@@ -65,6 +62,15 @@ static void	child_pipe(t_data *data, int *pfd, t_ast *node)
 	data->fds->pos.fork_id = 0;
 	if (!data->fds->c_pids)
 		secure_exit(data, FAIL_STATUS);
+}
+
+static void	child_pipe(t_data *data, int *pfd, t_ast *node)
+{
+	int		i;
+	int		child_status;
+
+	i = -1;
+	ft_child_pipe_aux(data, pfd, node);
 	ft_exec_tree(data, data->envp);
 	ft_closing_all(&data->fds);
 	while (data->fds && ++i < data->fds->get.n_cmds && data->fds->c_pids)
