@@ -12,11 +12,11 @@
 #include "execution.h"
 
 static
-void	ft_handle_empty_quote(t_data *data)
+void	ft_handle_empty_quote()
 {
 	ft_putstr_fd("\"\"", 2);
 	ft_putstr_fd(": command not found\n", 2);
-	secure_exit(data, ft_exit_status(127, 1, 0));
+	ft_exit_status(127, 1, 0);
 }
 
 void	ft_execute_cmd(t_data *data)
@@ -29,7 +29,7 @@ void	ft_execute_cmd(t_data *data)
 data->tree->cmd->args[0][0] == '\"' && \
 data->tree->cmd->args[0][1] == '\"' && \
 data->tree->cmd->args[0][2] == '\0')
-		return (ft_handle_empty_quote(data));
+		return (ft_handle_empty_quote());
 	expand_args(data);
 	if (data->tree->cmd->args && data->tree->cmd->args[0] && \
 !ft_is_builtin(data, data->tree->cmd->args[0]))
