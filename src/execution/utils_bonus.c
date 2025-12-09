@@ -17,7 +17,6 @@ int	wait_bonus(t_data *data, t_fds *fds)
 	int	status;
 
 	i = -1;
-	ft_closing_all(&data->fds);
 	while (fds && ++i < fds->get.n_cmds && fds->c_pids)
 	{
 		signal(SIGINT, &handle_sigint_wait);
