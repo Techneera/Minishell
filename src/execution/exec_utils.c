@@ -13,6 +13,7 @@
 
 void	secure_exit(t_data *data, int status)
 {
+	rl_clear_history();
 	free_tree(&data->root);
 	data->tree = NULL;
 	ft_closing_all(&data->fds);
