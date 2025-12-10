@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_echo.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rluis-ya <rluis-ya@student.42porto.com>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/12/06 16:41:45 by rluis-ya          #+#    #+#             */
+/*   Updated: 2025/12/06 16:41:45 by rluis-ya         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 #include "libshell.h"
 #include "execution.h"
 
@@ -20,6 +31,18 @@ int	is_valid_n_option(char *arg)
 		i++;
 	}
 	return (1);
+}
+
+static
+void	ft_validate_args(int *i, int *print_newline, char **args)
+{
+	while (args[++(*i)])
+	{
+		if (is_valid_n_option(args[*i]) == 1)
+			*print_newline = 0;
+		else
+			break ;
+	}
 }
 
 int	ft_target_fd(t_data *data)
@@ -62,13 +85,7 @@ int	ft_echo(t_data *data)
 	args = data->tree->cmd->args;
 	print_newline = 1;
 	i = 0;
-	while (args[++i])
-	{
-		if (is_valid_n_option(args[i]) == 1)
-			print_newline = 0;
-		else
-			break ;
-	}
+	ft_validate_args(&i, &print_newline, args);
 	while (args[i])
 	{
 		ft_putstr_fd(args[i], fd);

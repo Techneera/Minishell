@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_lexer.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rluis-ya <rluis-ya@student.42porto.com>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/12/06 16:41:45 by rluis-ya          #+#    #+#             */
+/*   Updated: 2025/12/06 16:41:45 by rluis-ya         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 #include "libshell.h"
 #include "lexer.h"
 
@@ -37,6 +48,7 @@ t_token	*get_next_token(t_lexer *l)
 t_token	*ft_handle_operator(t_lexer *l)
 {
 	char	current;
+
 	current = l->input[l->pos];
 	if (current == '|')
 		return (ft_which_or(l));

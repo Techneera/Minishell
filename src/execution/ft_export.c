@@ -1,21 +1,32 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_export.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rluis-ya <rluis-ya@student.42porto.com>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/12/06 16:41:45 by rluis-ya          #+#    #+#             */
+/*   Updated: 2025/12/06 16:41:45 by rluis-ya         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 #include "execution.h"
 
 static int	has_arg(char *arg);
-void	insert_in_list(t_list *list, char *arg);
-int		insert_if_exist(t_list *list, char *arg);
-int		is_valid(char *arg);
+void		insert_in_list(t_list *list, char *arg);
+int			insert_if_exist(t_list *list, char *arg);
+int			is_valid(char *arg);
 
 int	ft_export(t_list *list, char **args, t_data *data)
 {
 	int		n_args;
-	int 	i;
+	int		i;
 
 	i = 0;
 	if (!list || !args)
 		return (FAIL_STATUS);
 	n_args = ft_arraylen((void **) args);
 	if (n_args == 1)
-		ft_print_sorted_export(list);
+		return (ft_print_sorted_export(list, data));
 	else
 	{
 		while (++i < n_args)
@@ -23,18 +34,13 @@ int	ft_export(t_list *list, char **args, t_data *data)
 			if (is_valid(args[i]))
 				insert_in_list(list, args[i]);
 			else
-			{
-				ft_putstr_fd("minishell: export: `", 2);
-				ft_putstr_fd(args[i], 2);
-				ft_putstr_fd("': not a valid identifier\n", 2);
-				return (FAIL_STATUS);
-			}
+				export_error(args[i]);
 		}
 		if (data->envp)
 			ft_free_array(data->envp);
 		data->envp = envlist_to_array(data->env_list);
 	}
-	return (0);
+	return (ft_exit_status(0, 0, 0));
 }
 
 int	is_valid(char *arg)
@@ -57,7 +63,7 @@ int	is_valid(char *arg)
 
 void	insert_in_list(t_list *list, char *arg)
 {
-	t_list 	*new_arg;
+	t_list	*new_arg;
 
 	if (!arg)
 		return ;
@@ -67,6 +73,7 @@ void	insert_in_list(t_list *list, char *arg)
 	if (!new_arg)
 		return ;
 	ft_lstadd_back(&list, new_arg);
+	ft_exit_status(0, 1, 0);
 	return ;
 }
 

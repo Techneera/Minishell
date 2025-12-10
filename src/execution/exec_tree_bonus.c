@@ -1,5 +1,17 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   exec_tree_bonus.c                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rluis-ya <rluis-ya@student.42porto.com>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/12/06 16:41:45 by rluis-ya          #+#    #+#             */
+/*   Updated: 2025/12/06 16:41:45 by rluis-ya         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 #include "execution.h"
-static void heredoc_subshell(t_cmd *cmd, t_fds **fds, int r);
+
+static void	heredoc_subshell(t_cmd *cmd, t_fds **fds, int r);
 
 void	apply_redirs_subshell(t_data *data)
 {
@@ -30,7 +42,8 @@ void	apply_redirs_subshell(t_data *data)
 	}
 }
 
-static void	heredoc_subshell(t_cmd *cmd, t_fds **fds, int r)
+static
+void	heredoc_subshell(t_cmd *cmd, t_fds **fds, int r)
 {
 	if (cmd->redirs[r].label == REDIR_HEREDOCK)
 	{

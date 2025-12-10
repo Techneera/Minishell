@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_execute_and.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rluis-ya <rluis-ya@student.42porto.com>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/12/06 16:41:45 by rluis-ya          #+#    #+#             */
+/*   Updated: 2025/12/06 16:41:45 by rluis-ya         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 #include "execution.h"
 
 static int	redir_to_or(t_data	*data, char **envp);
@@ -17,12 +28,11 @@ int	execute_and(t_data	*data, char **envp)
 		ft_execute_cmd(data);
 	if (node->type == NODE_PIPE || node->type == NODE_SUBSHELL)
 		ft_exec_tree(data, envp);
-	closing_files(&data->fds);
 	if (data->fds && data->fds->c_pids)
 		return (wait_bonus(data, data->fds));
 	else
 		redir_bonus(data, envp);
-	return (0);
+	return (ft_exit_status(0, 0, 0));
 }
 
 static void	redir_bonus(t_data	*data, char **envp)

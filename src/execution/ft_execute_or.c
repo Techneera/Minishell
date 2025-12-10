@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_execute_or.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rluis-ya <rluis-ya@student.42porto.com>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/12/06 16:41:45 by rluis-ya          #+#    #+#             */
+/*   Updated: 2025/12/06 16:41:45 by rluis-ya         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 #include "execution.h"
 
 static int	redir_to_or(t_data	*data, char **envp);
@@ -22,7 +33,7 @@ int	execute_or(t_data	*data, char **envp)
 		return (wait_bonus(data, data->fds));
 	else
 		redir_bonus(data, envp);
-	return (0);
+	return (ft_exit_status(0, 0, 0));
 }
 
 static void	redir_bonus(t_data	*data, char **envp)
@@ -42,7 +53,6 @@ static void	redir_bonus(t_data	*data, char **envp)
 			return ;
 	}
 }
-
 
 static int	redir_to_and(t_data	*data, char **envp)
 {

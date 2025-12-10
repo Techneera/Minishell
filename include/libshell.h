@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   libshell.h                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rluis-ya <rluis-ya@student.42porto.com>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/12/06 16:41:45 by rluis-ya          #+#    #+#             */
+/*   Updated: 2025/12/06 16:41:45 by rluis-ya         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 #ifndef LIBSHELL_H
 # define LIBSHELL_H
 
@@ -118,5 +129,53 @@ typedef struct s_simp_ctx
 	t_ast	*node;
 	t_redir	*tmp_redir;
 }	t_simp_ctx;
+
+typedef struct s_env
+{
+	int		has_arg;
+	char	*variable;
+}	t_env;
+
+typedef struct s_get
+{
+	int		n_files;
+	int		n_cmds;
+	int		n_docs;
+}	t_get;
+
+typedef struct s_pos
+{
+	int		file_id;
+	int		doc_id;
+	int		fork_id;
+}	t_pos;
+
+typedef struct s_fds
+{
+	int		**heredoc_fds;
+	int		*fd_files;
+	int		*c_pids;
+	t_get	get;
+	t_pos	pos;
+}	t_fds;
+
+typedef struct s_data
+{
+	t_ast	*root;
+	t_ast	*tree;
+	t_fds	*fds;
+	char	**envp;
+	t_list	*env_list;
+	char	*rl;
+	t_lexer	*lexer;
+}	t_data;
+
+typedef struct s_globs
+{
+	char	*dir_prefix;
+	char	*file_pattern;
+	char	*last_slash;
+	char	*full_match;
+}	t_globs;
 
 #endif

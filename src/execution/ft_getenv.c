@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_getenv.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rluis-ya <rluis-ya@student.42porto.com>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/12/06 16:41:45 by rluis-ya          #+#    #+#             */
+/*   Updated: 2025/12/06 16:41:45 by rluis-ya         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 #include "execution.h"
 
 static char	*ft_env_value(char *env);
@@ -33,7 +44,7 @@ static char	*ft_env_value(char *env)
 	i = 0;
 	if (!env)
 		return (NULL);
-	while(env[i] && env[i] != '=')
+	while (env[i] && env[i] != '=')
 		i++;
 	if (env[i] == '=')
 		i++;

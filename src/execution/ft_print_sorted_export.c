@@ -1,10 +1,22 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_print_sorted_export.c                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rluis-ya <rluis-ya@student.42porto.com>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/12/06 16:41:45 by rluis-ya          #+#    #+#             */
+/*   Updated: 2025/12/06 16:41:45 by rluis-ya         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 #include "execution.h"
 
 static void	bubble_sort(char **array, int size_array);
 static int	ft_has_array_size(t_list *lst);
-static void	print_export(char **array);
+static int	print_export(char **array, t_data *data);
+static void	to_array_env(t_list *head, char **array);
 
-void	ft_print_sorted_export(t_list *list)
+int	ft_print_sorted_export(t_list *list, t_data *data)
 {
 	char	**array;
 	int		size_array;
@@ -14,35 +26,41 @@ void	ft_print_sorted_export(t_list *list)
 	if (!array)
 	{
 		perror("Failed calloc in fill_string");
-		return ;
+		return (FAIL_STATUS);
 	}
 	to_array_env(list, array);
 	bubble_sort(array, size_array);
-	print_export(array);
+	if (print_export(array, data))
+		return (FAIL_STATUS);
 	free(array);
+	return (0);
 }
 
-static void	print_export(char **array)
+static int	print_export(char **array, t_data *data)
 {
 	int	i;
 	int	j;
+	int	fd;
 
-	i = 0;
-	j = 0;
-	while (array[i])
+	fd = ft_target_fd(data);
+	if (fd == -1)
+		return (1);
+	i = -1;
+	while (array[++i])
 	{
-		j = 0;
-		printf("declare -x ");
-		while (array[i][j] && array[i][j] != '=')
-		{
-			printf("%c", array[i][j]);
-			j++;
-		}
+		j = -1;
+		ft_putstr_fd("declare -x ", fd);
+		while (array[i][++j] && array[i][j] != '=')
+			ft_putchar_fd(array[i][j], fd);
 		if (array[i][j])
-			printf("=\"%s\"", array[i] + j + 1);
-		printf("\n");
-		i++;
+		{
+			ft_putstr_fd("=\"", fd);
+			ft_putstr_fd(array[i] + j + 1, fd);
+			ft_putstr_fd("\"", fd);
+		}
+		ft_putstr_fd("\n", fd);
 	}
+	return (0);
 }
 
 static void	bubble_sort(char **array, int size_array)
@@ -82,3 +100,19 @@ static int	ft_has_array_size(t_list *lst)
 	return (i);
 }
 
+static void	to_array_env(t_list *head, char **array)
+{
+	int		i;
+	t_list	*tmp;
+	t_env	*redir_to_arr;
+
+	i = 0;
+	tmp = head;
+	while (tmp)
+	{
+		redir_to_arr = (t_env *)tmp->content;
+		array[i] = redir_to_arr->variable;
+		i++;
+		tmp = tmp->next;
+	}
+}

@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   args_handle.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rluis-ya <rluis-ya@student.42porto.com>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/12/06 16:41:45 by rluis-ya          #+#    #+#             */
+/*   Updated: 2025/12/06 16:41:45 by rluis-ya         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 #include "expansion.h"
 #include "libft.h"
 #include "execution.h"
@@ -20,6 +31,7 @@ void	mask_wildcards(char *str)
 char	*ft_strjoin_free_s1(char *s1, char *s2)
 {
 	char	*new_str;
+
 	if (!s1)
 		return (ft_strdup(s2));
 	if (!s2)

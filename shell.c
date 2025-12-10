@@ -1,13 +1,27 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   shell.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rluis-ya <rluis-ya@student.42porto.com>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/12/06 16:57:06 by rluis-ya          #+#    #+#             */
+/*   Updated: 2025/12/06 16:59:09 by rluis-ya         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "libshell.h"
 #include "ast.h"
 #include "lexer.h"
 #include "execution.h"
 
-void				loop(char **envp);
 // static void			print_ast(t_ast *node, int depth);
 // static void			print_indent(int depth);
-// // static void 		print_command_members(t_cmd *cmd, int depth);
-// // static const char	*redir_map(t_label_redir label);
+// static void 		print_command_members(t_cmd *cmd, int depth);
+// static const char	*redir_map(t_label_redir label);
+
+static void	loop(char **envp);
+char		**envlist_to_array(t_list *list);
 
 int	main(int argc, char **argv, char **envp)
 {
@@ -17,85 +31,85 @@ int	main(int argc, char **argv, char **envp)
 	return (0);
 }
 
-void	increase_shlv(t_data *data)
+static
+int	env_init(t_data *data, char **envp)
 {
-	char 	*str;
-	char 	*arg[3];
-	char	*level;
-
-	arg[0] = "export";
-	arg[2] = NULL;
-	str = getenv("SHLVL");
-	if (!str)
-		return ;
-	level = ft_itoa(ft_atoi(str) + 1);
-	if (!level)
-		return ;
-	str = ft_strjoin("SHLVL=", level);
-	if (!str)
+	*data = (t_data){0};
+	data->env_list = init_env(envp);
+	data->envp = envlist_to_array(data->env_list);
+	if (!data->envp)
 	{
-		free(level);
-		return ;
+		perror("failled envlist_to_array malloc");
+		free_data(data);
+		return (1);
 	}
-	arg[1] = str;
-	free(level);
-	ft_export(data->env_list, arg, data);
-	free(str);
+	increase_shlv(data);
+	return (0);
 }
 
+static
+void	ft_sig_and_line(t_data *data)
+{
+	signal(SIGQUIT, SIG_IGN);
+	signal(SIGINT, &handle_sigstop);
+	data->rl = readline(PROMPT);
+	if (!data->rl)
+		ft_exit(data);
+}
+
+static
 void	loop(char **envp)
 {
 	t_data	data;
 
-	signal(SIGQUIT, SIG_IGN);
-	data = (t_data) {0};
-	data.env_list = init_env(envp);
-	data.envp = envlist_to_array(data.env_list);
-	increase_shlv(&data);
-	if (!data.envp)
-	{
-		perror("failled envlist_to_array malloc");
-		free_data(&data);
+	if (env_init(&data, envp))
 		return ;
-	}
-	while(1)
+	while (1)
 	{
-		signal(SIGINT, &handle_sigstop);
-		data.rl = readline(PROMPT);
-		if (!data.rl)
-		{
-			ft_exit(&data);
-			break ;
-		}
+		ft_sig_and_line(&data);
+		if (ft_verify_spaces(&data.rl))
+			continue ;
 		if (*data.rl != '\0')
 		{
-			add_history(data.rl);
-			data.lexer = ft_state_lexer(data.rl);
-			if (!data.lexer)
-			{
-				free_data(&data);
+			if (!process_rl(&data))
 				break ;
-			}
-			data.root = ft_parser(data.lexer);
-			data.tree = data.root;
-			if (data.root == NULL)
-				fprintf(stderr, "Syntax error AST.\n");
-			else
-			{
-				// print_ast(data.root, 0);
-				// printf("\n\n");
-				ft_execution(&data);
-			}
-			if (data.root)
-				ft_free_ast(data.root);
-			if (data.lexer)
-				free_lexer(data.lexer);
 		}
 		if (data.rl)
 			free(data.rl);
+		data.rl = NULL;
+		data.tree = NULL;
 	}
+	rl_clear_history();
 }
 
+char	**envlist_to_array(t_list *list)
+{
+	char	**array;
+	t_list	*tmp;
+	t_env	*redir_to_arr;
+	int		i;
+
+	i = 0;
+	array = ft_calloc(ft_lstsize(list) + 1, sizeof(char *));
+	if (!array)
+		return (NULL);
+	i = 0;
+	tmp = list;
+	while (tmp)
+	{
+		redir_to_arr = (t_env *)tmp->content;
+		if (redir_to_arr->has_arg)
+		{
+			array[i] = ft_strdup(redir_to_arr->variable);
+			if (!array[i])
+				return (ft_free_array(array), NULL);
+			i++;
+		}
+		tmp = tmp->next;
+	}
+	array[i] = NULL;
+	return (array);
+}
 // static
 // void	print_indent(int depth)
 // {

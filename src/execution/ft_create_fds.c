@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_create_fds.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rluis-ya <rluis-ya@student.42porto.com>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/12/06 16:41:45 by rluis-ya          #+#    #+#             */
+/*   Updated: 2025/12/06 16:41:45 by rluis-ya         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 #include "execution.h"
 
 static void	create_files(t_data *data);
@@ -21,8 +32,9 @@ void	ft_create_fds(t_data *data)
 			secure_exit(data, FAIL_STATUS);
 	}
 	data->fds = fds;
+	if (init_heredoc(data) == -1)
+		return ;
 	create_files(data);
-	init_heredoc(data);
 }
 
 static void	create_files(t_data *data)
@@ -37,8 +49,8 @@ static void	create_files(t_data *data)
 		fds->fd_files = ft_calloc(fds->get.n_files, sizeof(int));
 		if (!fds->fd_files)
 			secure_exit(data, FAIL_STATUS);
-		while (++i < fds->get.n_files)		
+		while (++i < fds->get.n_files)
 			fds->fd_files[i] = -1;
 	}
-	fill_fd_file(data, data->tree, 0);	
+	fill_fd_file(data, data->tree, 0);
 }

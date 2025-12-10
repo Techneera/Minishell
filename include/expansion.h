@@ -1,9 +1,23 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   expansion.h                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rluis-ya <rluis-ya@student.42porto.com>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/12/06 16:41:45 by rluis-ya          #+#    #+#             */
+/*   Updated: 2025/12/06 16:41:45 by rluis-ya         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 #ifndef EXPANSION_H
 # define EXPANSION_H
 
-#include "libshell.h"
+# include "libshell.h"
+# include "execution.h"
+# include "ast.h"
+# include "lexer.h"
 
-typedef	enum	s_exp_state
+typedef enum s_exp_state
 {
 	EXP_GENERAL,
 	EXP_SQUOTE,
@@ -32,4 +46,9 @@ void	ft_handle_squote(t_exp_ctx *ctx);
 void	ft_handle_dquote(t_exp_ctx *ctx);
 void	ft_general_dollar_aux(t_exp_ctx *ctx);
 void	ft_general_char_aux(t_exp_ctx *ctx);
+int		has_quotes(char *str);
+void	ft_restore_markers(char **args);
+int		ft_handle_wildcard(t_data *data, int i, char *str);
+int		ft_process_arg(t_data *data, int i);
+void	expand_args(t_data *data);
 #endif

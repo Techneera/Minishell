@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   subshell_utils.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rluis-ya <rluis-ya@student.42porto.com>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/12/06 16:41:45 by rluis-ya          #+#    #+#             */
+/*   Updated: 2025/12/06 16:41:45 by rluis-ya         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 #include "libshell.h"
 #include "ast.h"
 #include "lexer.h"
@@ -78,14 +89,14 @@ t_ast	*ft_parse_subshell(t_parser *parser)
 	{
 		ft_parser_iter(parser);
 		ft_parser_iter(parser);
-		return (fprintf(stderr, "Syntax error near token \")\".\n"), NULL);
+		return (ft_putstr_fd("Syntax error near token \")\".\n", 2), NULL);
 	}
 	ft_parser_iter(parser);
 	body = ft_parse_and_or(parser);
 	if (!body)
-		return (fprintf(stderr, "Error in subshell body.\n"), NULL);
+		return (ft_putstr_fd("Error in subshell body.\n", 2), NULL);
 	if (parser->current_token->tok_label != TOKEN_RIGHT_PAR)
-		return (fprintf(stderr, "Error unclosed parenthese.\n"), \
+		return (ft_putstr_fd("Error unclosed parenthese.\n", 2), \
 ft_free_ast(body), NULL);
 	ft_parser_iter(parser);
 	node_subsh = ft_ast_generic_node(NODE_SUBSHELL);

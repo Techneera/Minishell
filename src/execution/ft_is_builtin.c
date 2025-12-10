@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_exec_tree.c                                     :+:      :+:    :+:   */
+/*   ft_is_builtin.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rluis-ya <rluis-ya@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -11,24 +11,24 @@
 /* ************************************************************************** */
 #include "execution.h"
 
-int	ft_exec_tree(t_data	*data, char **envp)
+int	ft_is_builtin(t_data *data, char *arg)
 {
-	t_fds	*fds;
-	t_ast	*node;
-
-	fds = data->fds;
-	node = data->tree;
-	if (node == NULL || !fds)
+	if (!arg)
 		return (0);
-	if (node->type == NODE_CMD)
-		ft_execute_cmd(data);
-	else if (node->type == NODE_PIPE)
-		ft_execute_pipe(data);
-	else if (node->type == NODE_SUBSHELL)
-		ft_execute_sshell(data, envp);
-	else if (node->type == NODE_AND)
-		execute_and(data, envp);
-	else if (node->type == NODE_OR)
-		execute_or(data, envp);
+	if (ft_strncmp(arg, "echo\0", 5) == 0)
+		return (ft_exit_status(ft_echo(data), 1, 0), 1);
+	if (ft_strncmp(arg, "cd\0", 3) == 0)
+		return (ft_exit_status(ft_cd(data->tree, data->envp, data), 1, 0), 1);
+	if (ft_strncmp(arg, "pwd\0", 4) == 0)
+		return (ft_exit_status(ft_pwd(data), 1, 0), 1);
+	if (ft_strncmp(arg, "export\0", 7) == 0)
+		return (ft_exit_status(ft_export(
+					data->env_list, data->tree->cmd->args, data), 1, 0), 1);
+	if (ft_strncmp(arg, "unset\0", 6) == 0)
+		return (ft_exit_status(ft_unset(data), 1, 0), 1);
+	if (ft_strncmp(arg, "env\0", 4) == 0)
+		return (ft_exit_status(ft_env(data), 1, 0), 1);
+	if (ft_strncmp(arg, "exit\0", 5) == 0)
+		return (ft_exit_status(ft_exit(data), 1, 0), 1);
 	return (0);
 }

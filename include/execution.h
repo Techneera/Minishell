@@ -1,82 +1,58 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   execution.h                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rluis-ya <rluis-ya@student.42porto.com>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/12/06 16:41:45 by rluis-ya          #+#    #+#             */
+/*   Updated: 2025/12/06 16:56:25 by rluis-ya@stud    ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 #ifndef EXECUTION_H
 # define EXECUTION_H
 
 # define CMD_NOT_FOUND 127
 # define FAIL_STATUS 1
 
-#include <signal.h>
-#include <sys/stat.h>
-#include <dirent.h>
-#include <limits.h>
-#include "libshell.h"
-#include "ast.h"
-#include "lexer.h"
-#include "expansion.h"
+# include <signal.h>
+# include <sys/stat.h>
+# include <dirent.h>
+# include <limits.h>
+# include "libshell.h"
+# include "ast.h"
+# include "lexer.h"
+# include "expansion.h"
 
-typedef struct s_env
-{
-	int		has_arg;
-	char	*variable;
-}	t_env;
+//---shell_helpers.c
+int		process_rl(t_data *data);
 
-typedef struct s_get
-{
-	int	n_files;
-	int	n_cmds;
-	int	n_docs;
-}	t_get;
+//---ft_get_command_path.c
+char	*get_command_path(char **arg, char **env, t_data *data);
 
-typedef struct s_pos
-{
-	int	file_id;
-	int	doc_id;
-	int	fork_id;
-}	t_pos;
+//---wildcards_utils.c
+char	**insert_wildcard_args(char **old_args, t_list *files, int index);
+void	unmask_wildcards(char *str);
 
-typedef struct s_fds
-{
-	int		**heredoc_fds;
-	int		*fd_files;
-	int		*c_pids;
-	t_get	get;
-	t_pos	pos;
-}	t_fds;
-
-typedef struct s_data
-{
-	t_ast	*root;
-	t_ast	*tree;
-	t_fds	*fds;
-	char	**envp;
-	t_list	*env_list;
-	char	*rl;
-	t_lexer *lexer;
-}	t_data;
-
-
-//---test_cmds
-t_ast	*ft_cmd1();
-t_ast	*ft_cmd2();
-t_ast	*ft_cmd3();
-t_ast	*bonus_cmd();
+//---ft_is_builtin
+int		ft_is_builtin(t_data *data, char *arg);
 
 //---ft_getenv.c
 char	*ft_getenv(char **env, char *arg);
 
 //---list_utils.c
-int	exist_in_list(t_env *env, char *arg);
+int		exist_in_list(t_env *env, char *arg);
 
 //---ft_env
-int	ft_env(t_data *data);
+int		ft_env(t_data *data);
 
 //---ft_export
-int	ft_export(t_list *list, char **args, t_data *data);
-void	ft_print_sorted_export(t_list *list);
+int		ft_export(t_list *list, char **args, t_data *data);
+int		ft_print_sorted_export(t_list *list, t_data *data);
 
 //---env_utils
 t_list	*init_env(char **env);
 t_list	*create_node_env(char *arg, int has_arg);
-void	to_array_env(t_list *head, char **array);
 char	**envlist_to_array(t_list *list);
 void	ft_free_content(void *content);
 
@@ -90,10 +66,13 @@ int		ft_pwd(t_data *data);
 //---errors_messages
 void	message_error(char	*str, char *file, int type);
 void	no_such_file(char *cmd, char *file);
+void	export_error(char *str);
 
 //---handle_signal
-void    handle_sigstop(int sig);
-void    handle_sigstop_heredoc(int sig);
+void	handle_sigstop(int sig);
+void	handle_sigstop_heredoc(int sig);
+void	handle_sigint_wait(int sig);
+int		heredoc_status(int state, int write_);
 
 //---ft_execute_or
 int		execute_or(t_data	*data, char **envp);
@@ -104,12 +83,13 @@ int		execute_and(t_data	*data, char **envp);
 //---utils_bonus
 int		wait_bonus(t_data *data, t_fds *fds);
 void	free_fds_bonus(t_data	*data);
+int		docs_bonus(t_ast *ast_root, t_fds **fds);
 
 //--ft_child_sshel
 void	ft_child_sshell(t_data *data, char **envp);
 
 //---ft_execute_pipe
-void ft_execute_pipe(t_data *data, char **envp);
+void	ft_execute_pipe(t_data *data);
 
 //---ft_update_position
 void	update_positions(t_data *data);
@@ -127,21 +107,18 @@ int		ft_execution(t_data *data);
 int		fill_fd_file(t_data *data, t_ast *ast_root, int i);
 
 //---exec_utils
-int		is_builtin(t_data *data, char *arg);
 void	secure_exit(t_data *data, int status);
-void 	free_data(t_data *data);
+void	free_data(t_data *data);
 void	free_all(void **ptr, size_t rows);
 void	free_fds(t_fds **fds);
 void	free_tree(t_ast **ast_root);
 int		ft_arraylen(void **ptr);
 int		init_pid(pid_t *pid, t_fds **fds);
-void	get_sizes(t_ast *ast_root, t_fds **fds, int inside_sshell);
-int		docs_bonus(t_ast *ast_root, t_fds **fds);
 
 //---ft_getters
-char	*get_command_path(char **arg, char **env, t_data *data);
 char	**get_paths(char **env);
 void	message_error(char	*str, char *file, int type);
+void	get_sizes(t_ast *ast_root, t_fds **fds, int inside_sshell);
 
 //---add_libft
 int		ft_max(int a, int b);
@@ -149,11 +126,10 @@ void	secure_close(int *fd);
 char	**ft_realloc_empty(char **args);
 
 //---ft_here_doc
-int	here_doc(char *lim, int **fd);
+int		here_doc(char *lim, int **fd);
 
 //---ft_child_cmd
 void	ft_child_cmd(t_data	*data, char **envp);
-void	apply_redirs_dup(t_data *data, t_ast **node);
 
 //--ft_closing_all
 void	ft_closing_all(t_fds **fds);
@@ -170,7 +146,7 @@ void	ft_create_fds_bonus(t_data *data);
 
 int		ft_exec_tree(t_data	*data, char **envp);
 void	ft_closing_all(t_fds **fds);
-void	init_heredoc(t_data *data);
+int		init_heredoc(t_data *data);
 
 //--exec_tree_bonus
 void	apply_redirs_subshell(t_data *data);
@@ -182,9 +158,17 @@ int		ft_target_fd(t_data *data);
 //--ft_exit_status
 int		ft_exit(t_data *data);
 int		ft_exit_status(int state, int write_, int exit_);
+int		ft_error(int err_no, char *arg, char *err_msg);
+void	ft_exit_print(void);
+int		ft_safe_atoll(char *str, long long *out);
 
 //--ft_unset
 int		ft_unset(t_data *data);
+int		ft_is_valid_arguments(char *str);
+int		is_key_match(char *env_var, char *key);
+void	free_env_node(t_list *node);
+void	remove_env_var(t_data *data, char *key);
+void	refresh_env_array(t_data *data);
 
 //--WILDCARD
 int		ft_match_asterisk(char *pattern, char *str);
@@ -192,5 +176,10 @@ int		ft_match_wildcard(char *pattern, char *name);
 t_list	*get_wildcard_matches(char *pattern);
 char	**insert_wildcard_args(char **old_args, t_list *files, int index);
 void	unmask_wildcards(char *str);
+
+//--main shell
+int		ft_verify_spaces(char **rl);
+void	cleanup_loop(t_data *data);
+void	increase_shlv(t_data *data);
 
 #endif

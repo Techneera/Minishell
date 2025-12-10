@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_wildcard.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rluis-ya <rluis-ya@student.42porto.com>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/12/06 16:41:45 by rluis-ya          #+#    #+#             */
+/*   Updated: 2025/12/06 16:41:45 by rluis-ya         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 #include "execution.h"
 
 int	ft_match_asterisk(char *pattern, char *str)
@@ -33,29 +44,72 @@ int	ft_match_wildcard(char *pattern, char *name)
 	return (ft_match_asterisk(pattern, name));
 }
 
-t_list	*get_wildcard_matches(char *pattern)
+static
+int	ft_init_globs(t_globs *g, char *pattern)
 {
-	DIR				*dir;
-	struct dirent	*entry;
-	t_list			*matches;
-	char			*name;
+	g->full_match = NULL;
+	g->last_slash = ft_strrchr(pattern, '/');
+	if (g->last_slash)
+	{
+		g->dir_prefix = ft_substr(pattern, 0, (g->last_slash - pattern) + 1);
+		g->file_pattern = ft_strdup(g->last_slash + 1);
+	}
+	else
+	{
+		g->dir_prefix = NULL;
+		g->file_pattern = ft_strdup(pattern);
+	}
+	if ((!g->dir_prefix && g->last_slash) || !g->file_pattern)
+	{
+		if (g->dir_prefix)
+			free(g->dir_prefix);
+		return (0);
+	}
+	return (1);
+}
 
-	matches = NULL;
-	dir = opendir(".");
-	if (!dir)
-		return (NULL);
+static
+void	ft_collect_matches(DIR *dir, t_globs *g, t_list **matches)
+{
+	struct dirent	*entry;
+
 	while (1)
 	{
 		entry = readdir(dir);
 		if (!entry)
 			break ;
-		if (ft_match_wildcard(pattern, entry->d_name))
+		if (ft_match_wildcard(g->file_pattern, entry->d_name))
 		{
-			name = ft_strdup(entry->d_name);
-			if (name)
-				ft_lstadd_back(&matches, ft_lstnew(name));
+			if (g->dir_prefix)
+				g->full_match = ft_strjoin(g->dir_prefix, entry->d_name);
+			else
+				g->full_match = ft_strdup(entry->d_name);
+			if (g->full_match)
+				ft_lstadd_back(matches, ft_lstnew(g->full_match));
 		}
 	}
-	closedir(dir);
+}
+
+t_list	*get_wildcard_matches(char *pattern)
+{
+	t_globs	g;
+	t_list	*matches;
+	DIR		*dir;
+
+	matches = NULL;
+	if (!ft_init_globs(&g, pattern))
+		return (NULL);
+	if (g.dir_prefix)
+		dir = opendir(g.dir_prefix);
+	else
+		dir = opendir(".");
+	if (dir)
+	{
+		ft_collect_matches(dir, &g, &matches);
+		closedir(dir);
+	}
+	if (g.dir_prefix)
+		free(g.dir_prefix);
+	free(g.file_pattern);
 	return (matches);
 }

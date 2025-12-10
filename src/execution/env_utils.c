@@ -1,36 +1,76 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   env_utils.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rluis-ya <rluis-ya@student.42porto.com>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/12/06 16:41:45 by rluis-ya          #+#    #+#             */
+/*   Updated: 2025/12/06 16:41:45 by rluis-ya         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 #include "execution.h"
 
-t_list	*create_node_env(char *arg, int has_arg);
-void	ft_free_content(void *content);
+t_list			*create_node_env(char *arg, int has_arg);
+void			ft_free_content(void *content);
+static int		node_in_list(char *str, t_list **env_list);
+static t_list	*no_env(t_list **env_list);
 
 t_list	*init_env(char **env)
 {
 	t_list	*env_list;
-	t_list	*node;
 	int		i;
 
-	if (!env)
-		return (NULL);
 	i = 0;
 	env_list = NULL;
-	node = NULL;
-	while (env[i])
+	if (!env || (env && !(*env)))
+		return (no_env(&env_list));
+	while (env && env[i])
 	{
-		node = create_node_env(env[i], 1);
-		if (!node)
-		{
-			ft_lstclear(&env_list, &ft_free_content);
-			return (NULL);
-		}
-		ft_lstadd_back(&env_list, node);
+		node_in_list(env[i], &env_list);
 		i++;
 	}
 	return (env_list);
 }
 
+static int	node_in_list(char *str, t_list **env_list)
+{
+	t_list	*node;
+
+	node = create_node_env(str, 1);
+	if (!node)
+	{
+		ft_lstclear(env_list, &ft_free_content);
+		return (0);
+	}
+	ft_lstadd_back(env_list, node);
+	return (1);
+}
+
+static t_list	*no_env(t_list **env_list)
+{
+	char	buff[PATH_MAX];
+	char	*str;
+
+	ft_memset(buff, 0, PATH_MAX);
+	getcwd(buff, PATH_MAX);
+	node_in_list("SHLVL=1", env_list);
+	if (*buff)
+	{
+		str = ft_strjoin("PWD=", buff);
+		if (!str)
+			return (*env_list);
+		node_in_list(str, env_list);
+		free (str);
+	}
+	else
+		node_in_list("PWD=.", env_list);
+	return (*env_list);
+}
+
 void	ft_free_content(void *content)
 {
-	t_env *env;
+	t_env	*env;
 
 	env = (t_env *) content;
 	if (!env)
@@ -62,50 +102,4 @@ t_list	*create_node_env(char *arg, int has_arg)
 	new_list->content = (void *) new_node;
 	new_list->next = NULL;
 	return (new_list);
-}
-
-void	to_array_env(t_list *head, char **array)
-{
-	int		i;
-	t_list	*tmp;
-	t_env	*redir_to_arr;
-
-	i = 0;
-	tmp = head;
-	while (tmp)
-	{
-		redir_to_arr = (t_env *)tmp->content;
-		array[i] = redir_to_arr->variable;
-		i++;
-		tmp = tmp->next;
-	}
-}
-
-char	**envlist_to_array(t_list *list)
-{
-	char	**array;
-	t_list	*tmp;
-	t_env	*redir_to_arr;
-	int		i;
-
-	i = 0;
-	array = ft_calloc(ft_lstsize(list) + 1, sizeof(char *));
-	if (!array)
-		return (NULL);
-	i = 0;
-	tmp = list;
-	while (tmp)
-	{
-		redir_to_arr = (t_env *)tmp->content;
-		if (redir_to_arr->has_arg)
-		{
-			array[i] = ft_strdup(redir_to_arr->variable);
-			if (!array[i])
-				return (ft_free_array(array), NULL);
-			i++;
-		}
-		tmp = tmp->next;
-	}
-	array[i] = NULL;
-	return (array);
 }
