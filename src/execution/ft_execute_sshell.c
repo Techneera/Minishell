@@ -13,6 +13,14 @@
 
 static void	update_fds_subshell(t_ast *ast_root, t_fds **fds);
 
+/**
+ * \brief Execute a NODE_SUBSHELL node by forking a child process.
+ *
+ * The child calls ft_child_sshell() which applies external redirections
+ * and recursively executes the subshell's body tree.
+ * \param data The shell state; \c tree must point to a NODE_SUBSHELL node.
+ * \param envp The environment array.
+ */
 void	ft_execute_sshell(t_data *data, char **envp)
 {
 	pid_t	pid;

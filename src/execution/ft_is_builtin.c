@@ -11,6 +11,15 @@
 /* ************************************************************************** */
 #include "execution.h"
 
+/**
+ * \brief Identify whether the command is a built-in and execute it in-process.
+ *
+ * Compares \c arg against the seven supported built-in names.
+ * If a match is found the built-in is called and the exit status is updated.
+ * \param data The shell state.
+ * \param arg  The command name (args[0]).
+ * \return 1 if a built-in was dispatched; 0 if the command is external.
+ */
 int	ft_is_builtin(t_data *data, char *arg)
 {
 	if (!arg)

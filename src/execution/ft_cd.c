@@ -15,6 +15,16 @@ static int		is_home(char *argv);
 static void		change_pwd(t_data *data, char *path);
 static int		create_path(char *env, char *env_value, t_data *data);
 
+/**
+ * \brief Built-in `cd`: change the current working directory.
+ *
+ * Handles `cd`, `cd ~`, and `cd /path`.  Updates the PWD and OLDPWD
+ * environment variables after a successful directory change.
+ * \param node  The AST node carrying the cd arguments.
+ * \param envp  The environment array (used to read HOME).
+ * \param data  The shell state (environment is updated).
+ * \return 0 on success, FAIL_STATUS (1) on error.
+ */
 int	ft_cd(t_ast *node, char **envp, t_data *data)
 {
 	int		size;

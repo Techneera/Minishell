@@ -13,6 +13,16 @@
 #include "ast.h"
 #include "lexer.h"
 
+/**
+ * \brief Process one redirection token in a post-parse redir loop.
+ *
+ * Identifies the type, extracts the target filename / delimiter,
+ * appends to \c lst, and advances the parser appropriately.
+ * \param p    The parser state.
+ * \param lst  The accumulating redir linked list.
+ * \param cmd  The command whose \c redir_count is incremented.
+ * \return 1 on success, 0 on failure.
+ */
 int	ft_proc_redir_loop(t_parser *p, t_list **lst, t_cmd *cmd)
 {
 	t_redir			*new_r;
@@ -37,6 +47,11 @@ int	ft_proc_redir_loop(t_parser *p, t_list **lst, t_cmd *cmd)
 	return (1);
 }
 
+/**
+ * \brief Test whether the parser's current token is a redirection operator.
+ * \param parser The parser state.
+ * \return Non-zero if the current token is `<`, `>`, `>>`, or `<<`.
+ */
 int	ft_isredir(t_parser *parser)
 {
 	return (parser->current_token->tok_label == TOKEN_REDIR_IN || \
@@ -45,6 +60,11 @@ parser->current_token->tok_label == TOKEN_REDIR_APPEND || \
 parser->current_token->tok_label == TOKEN_REDIR_HEREDOC);
 }
 
+/**
+ * \brief Consume a TOKEN_WORD and push a copy onto the argument linked list.
+ * \param parser The parser state (current token is consumed).
+ * \param head   Pointer to the accumulating argument list (freed on alloc error).
+ */
 void	ft_parse_args(t_parser *parser, t_list **head)
 {
 	char	*arg_cpy;
@@ -59,6 +79,15 @@ void	ft_parse_args(t_parser *parser, t_list **head)
 	ft_parser_iter(parser);
 }
 
+/**
+ * \brief Drain a linked list of strings into a NULL-terminated \c char** array.
+ *
+ * The list nodes are freed during draining; the string pointers are
+ * transferred to the array (not duplicated).
+ * \param head Pointer to the head of the list (set to NULL on return).
+ * \param size The number of list nodes.
+ * \return Heap-allocated \c char** array, or NULL on failure.
+ */
 char	**ft_lst_to_args(t_list **head, int size)
 {
 	char	**ret;
@@ -80,6 +109,15 @@ char	**ft_lst_to_args(t_list **head, int size)
 	return (ret);
 }
 
+/**
+ * \brief Parse a `( and_or )` subshell expression.
+ *
+ * Consumes the leading `(`, recursively parses the body with
+ * \c ft_parse_and_or(), expects a closing `)`, and wraps the
+ * result in a NODE_SUBSHELL node.
+ * \param parser The parser state positioned at `(`.
+ * \return NODE_SUBSHELL node, or NULL on syntax / allocation error.
+ */
 t_ast	*ft_parse_subshell(t_parser *parser)
 {
 	t_ast	*node_subsh;

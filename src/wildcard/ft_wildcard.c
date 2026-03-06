@@ -11,6 +11,15 @@
 /* ************************************************************************** */
 #include "execution.h"
 
+/**
+ * \brief Recursively match a glob pattern (with `*`) against a string.
+ *
+ * Consecutive `*` characters are collapsed.  A trailing `*` matches
+ * any suffix.  Literal characters must match exactly.
+ * \param pattern The remaining pattern to match.
+ * \param str     The remaining string to test.
+ * \return 1 if the pattern matches \c str; 0 otherwise.
+ */
 int	ft_match_asterisk(char *pattern, char *str)
 {
 	if (*pattern == '*')
@@ -34,6 +43,15 @@ int	ft_match_asterisk(char *pattern, char *str)
 	return (0);
 }
 
+/**
+ * \brief Match a glob pattern against a filesystem entry name.
+ *
+ * Prevents hidden files (names starting with `.`) from matching unless
+ * the pattern itself starts with `.`.  Delegates to ft_match_asterisk().
+ * \param pattern The glob pattern.
+ * \param name    The filesystem entry name to test.
+ * \return 1 if they match; 0 otherwise.
+ */
 int	ft_match_wildcard(char *pattern, char *name)
 {
 	int	i;
@@ -90,6 +108,15 @@ void	ft_collect_matches(DIR *dir, t_globs *g, t_list **matches)
 	}
 }
 
+/**
+ * \brief Collect all directory entries that match the given glob pattern.
+ *
+ * Splits the pattern on the last `/` to find the directory and the
+ * filename pattern, opens the directory, and calls ft_match_wildcard()
+ * on each entry.  Results are returned as a linked list of full paths.
+ * \param pattern The glob pattern (may contain a path prefix).
+ * \return Linked list of heap-allocated matching path strings, or NULL.
+ */
 t_list	*get_wildcard_matches(char *pattern)
 {
 	t_globs	g;
