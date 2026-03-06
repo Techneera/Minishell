@@ -13,6 +13,13 @@
 #include "libft.h"
 #include "execution.h"
 
+/**
+ * \brief Replace all `*` characters in a string with the control byte `\001`.
+ *
+ * Must be called before variable expansion so that literal asterisks
+ * inside quotes survive and are not later treated as glob patterns.
+ * \param str The string to mask in place (safe to call with NULL).
+ */
 void	mask_wildcards(char *str)
 {
 	int	i;
@@ -28,6 +35,12 @@ void	mask_wildcards(char *str)
 	}
 }
 
+/**
+ * \brief Join two strings and free \c s1 immediately afterwards.
+ * \param s1 First string (freed after join; NULL is treated as "").
+ * \param s2 Second string (not freed).
+ * \return Heap-allocated concatenation, or NULL on failure.
+ */
 char	*ft_strjoin_free_s1(char *s1, char *s2)
 {
 	char	*new_str;
@@ -41,6 +54,19 @@ char	*ft_strjoin_free_s1(char *s1, char *s2)
 	return (new_str);
 }
 
+/**
+ * \brief Resolve a `$...` sequence to its expanded string value.
+ *
+ * Handles three cases in order:
+ * - `$?`  → converts the last exit status to a decimal string.
+ * - `$n`  → positional parameter (returns empty string; not supported).
+ * - `$ID` → looks up the variable name in \c envp.
+ * \param s      Pointer into the raw string at the `$` character.
+ * \param envp   The environment array.
+ * \param i      Read index (advanced past the consumed variable name).
+ * \param status The last exit status (for `$?`).
+ * \return Heap-allocated value string, or NULL on failure.
+ */
 char	*ft_get_expanded_value(char *s, char **envp, int *i, int status)
 {
 	if (s[1] == '?')
@@ -56,6 +82,17 @@ char	*ft_get_expanded_value(char *s, char **envp, int *i, int status)
 	return (ft_expand_env_var_aux(s, envp, i));
 }
 
+/**
+ * \brief Expand all variables and strip quotes from a raw word string.
+ *
+ * Drives the FSM through EXP_GENERAL / EXP_SQUOTE / EXP_DQUOTE states.
+ * The raw string (\c raw_str) is duplicated into \c ctx.raw and freed
+ * at the end.
+ * \param raw_str The raw token string (ownership transferred).
+ * \param envp    The environment array.
+ * \param status  The last exit status (for `$?`).
+ * \return Heap-allocated expanded string, or NULL on failure.
+ */
 char	*expand_word(char *raw_str, char **envp, int status)
 {
 	t_exp_ctx	ctx;
@@ -75,6 +112,13 @@ char	*expand_word(char *raw_str, char **envp, int status)
 	return (ctx.final);
 }
 
+/**
+ * \brief Initialise all fields of an expansion context.
+ * \param ctx The context to initialise.
+ * \param raw The raw input string to expand (stored as \c ctx->raw).
+ * \param env The environment array.
+ * \param st  The last exit status.
+ */
 void	ft_init_exp_ctx(t_exp_ctx *ctx, char *raw, char **env, int st)
 {
 	ctx->raw = raw;

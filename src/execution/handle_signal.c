@@ -11,6 +11,13 @@
 /* ************************************************************************** */
 #include "execution.h"
 
+/**
+ * \brief SIGINT handler at the interactive prompt (Ctrl-C).
+ *
+ * Prints a newline, resets the readline line buffer, re-displays
+ * the prompt, and sets the exit status to 130.
+ * \param sig The signal number (unused).
+ */
 void	handle_sigstop(int sig)
 {
 	(void)sig;
@@ -21,6 +28,12 @@ void	handle_sigstop(int sig)
 	ft_exit_status(130, 1, 0);
 }
 
+/**
+ * \brief SIGINT handler while waiting for a child to finish.
+ *
+ * Prints a newline and records exit status 130.
+ * \param sig The signal number (unused).
+ */
 void	handle_sigint_wait(int sig)
 {
 	(void)sig;
@@ -28,6 +41,13 @@ void	handle_sigint_wait(int sig)
 	ft_exit_status(130, 1, 0);
 }
 
+/**
+ * \brief SIGINT handler during heredoc input (Ctrl-C).
+ *
+ * Closes stdin so the heredoc read loop exits, sets exit status 130,
+ * and flags the heredoc as interrupted via heredoc_status().
+ * \param sig The signal number (unused).
+ */
 void	handle_sigstop_heredoc(int sig)
 {
 	(void)sig;
@@ -37,6 +57,12 @@ void	handle_sigstop_heredoc(int sig)
 	heredoc_status(1, 1);
 }
 
+/**
+ * \brief Get or set the heredoc-interrupted flag (static variable).
+ * \param state  New flag value (written only when \c write_ is non-zero).
+ * \param write_ Non-zero to overwrite the stored value; 0 to read only.
+ * \return The current value of the flag.
+ */
 int	heredoc_status(int state, int write_)
 {
 	static int	to_clear;

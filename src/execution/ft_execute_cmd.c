@@ -19,6 +19,13 @@ void	ft_handle_empty_quote(void)
 	ft_exit_status(127, 1, 0);
 }
 
+/**
+ * \brief Execute a NODE_CMD node, forking for external commands.
+ *
+ * Expands arguments, then either dispatches to a built-in (in-process)
+ * or forks a child that calls ft_child_cmd().  Updates fd position counters.
+ * \param data The shell state; \c tree must point to a NODE_CMD node.
+ */
 void	ft_execute_cmd(t_data *data)
 {
 	pid_t	pid;

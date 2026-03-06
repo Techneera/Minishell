@@ -13,6 +13,10 @@
 #include "ast.h"
 #include "lexer.h"
 
+/**
+ * \brief Zero-initialise all fields of a simple-command accumulator context.
+ * \param ctx The context to initialise.
+ */
 void	ft_init_simp_ctx(t_simp_ctx *ctx)
 {
 	ctx->args = NULL;
@@ -22,6 +26,11 @@ void	ft_init_simp_ctx(t_simp_ctx *ctx)
 	ctx->tmp_redir = NULL;
 }
 
+/**
+ * \brief Release all resources held by a simple-command accumulator.
+ * \param ctx The context to free (arg list, redir list, and partial cmd).
+ * \return Always NULL (for use inside return expressions).
+ */
 void	*ft_free_simp_ctx(t_simp_ctx *ctx)
 {
 	if (ctx->args)
@@ -33,6 +42,11 @@ void	*ft_free_simp_ctx(t_simp_ctx *ctx)
 	return (NULL);
 }
 
+/**
+ * \brief Parse a simple command: consume words and redirections until a meta-token.
+ * \param parser The parser state.
+ * \return NODE_CMD AST node, or NULL on error.
+ */
 t_ast	*ft_parse_simple_command(t_parser *parser)
 {
 	t_simp_ctx	ctx;
@@ -54,6 +68,12 @@ t_ast	*ft_parse_simple_command(t_parser *parser)
 	return (ft_finalize_simp_cmd(&ctx));
 }
 
+/**
+ * \brief Push a TOKEN_WORD onto the argument accumulator list.
+ * \param p   The parser state (current token is consumed).
+ * \param ctx The accumulator context whose \c args list is extended.
+ * \return 1 on success, 0 on allocation failure.
+ */
 int	ft_handle_word_token(t_parser *p, t_simp_ctx *ctx)
 {
 	char	*str;
@@ -73,6 +93,12 @@ int	ft_handle_word_token(t_parser *p, t_simp_ctx *ctx)
 	return (1);
 }
 
+/**
+ * \brief Parse one redirection token and push it onto the redir accumulator list.
+ * \param p   The parser state (redir token is consumed).
+ * \param ctx The accumulator context whose \c redirs list is extended.
+ * \return 1 on success, 0 on failure.
+ */
 int	ft_handle_redir_token(t_parser *p, t_simp_ctx *ctx)
 {
 	t_redir	*redir;

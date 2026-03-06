@@ -12,6 +12,11 @@
 #include "libshell.h"
 #include "lexer.h"
 
+/**
+ * \brief Disambiguate `&&` from a bare `&` (which is unsupported).
+ * \param l The lexer state positioned at `&`.
+ * \return TOKEN_AND if the next character is `&`; otherwise TOKEN_ERROR.
+ */
 t_token	*ft_which_and(t_lexer *l)
 {
 	if (l->pos + 1 < l->len && l->input[l->pos + 1] == '&')
@@ -23,6 +28,14 @@ t_token	*ft_which_and(t_lexer *l)
 	return (create_token(TOKEN_ERROR, ft_strdup("Unsuported operator")));
 }
 
+/**
+ * \brief Tokenise a word, respecting quote boundaries.
+ *
+ * Advances the position until whitespace or a meta-character is
+ * found outside of quotes.  Returns TOKEN_ERROR for unclosed quotes.
+ * \param l The lexer state positioned at the first character of the word.
+ * \return TOKEN_WORD token, or TOKEN_ERROR if quotes are unclosed.
+ */
 t_token	*ft_handle_word(t_lexer *l)
 {
 	int		start;
@@ -53,6 +66,13 @@ t_token	*ft_handle_word(t_lexer *l)
 ft_substr(l->input, start, l->pos - start)));
 }
 
+/**
+ * \brief Allocate and initialise a new token node.
+ * \param tok_label The semantic label.
+ * \param str       Heap-allocated string value (ownership is transferred;
+ *                  freed on allocation failure).
+ * \return Heap-allocated \c t_token, or NULL on failure.
+ */
 t_token	*create_token(t_token_label tok_label, char *str)
 {
 	t_token	*t;
@@ -69,6 +89,11 @@ t_token	*create_token(t_token_label tok_label, char *str)
 	return (t);
 }
 
+/**
+ * \brief Append a token to the tail of a token linked list.
+ * \param tok_lst Pointer to the head of the token list.
+ * \param new     The token to append (ignored if NULL).
+ */
 void	add_token_back(t_token **tok_lst, t_token *new)
 {
 	t_token	*ptr;
@@ -86,6 +111,16 @@ void	add_token_back(t_token **tok_lst, t_token *new)
 	ptr->next = new;
 }
 
+/**
+ * \brief Strip quoting characters from a raw heredoc delimiter string.
+ *
+ * Copies every character of \c raw_delim except single and double
+ * quotes into a new string.  Frees \c raw_delim after copying.
+ * \param raw_delim   Pointer to the raw delimiter (freed inside this function).
+ * \param final_dleim Output pointer for the cleaned delimiter.
+ * \param len         Length of the raw delimiter.
+ * \return The cleaned delimiter, or NULL on allocation failure.
+ */
 char	*ft_get_unquoted_str(t_lexer *l)
 {
 	int		start;

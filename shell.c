@@ -23,6 +23,13 @@
 static void	loop(char **envp);
 char		**envlist_to_array(t_list *list);
 
+/**
+ * \brief Shell entry point. Ignores argc/argv and starts the REPL.
+ * \param argc Argument count (ignored).
+ * \param argv Argument vector (ignored).
+ * \param envp The inherited environment from the parent process.
+ * \return Always 0.
+ */
 int	main(int argc, char **argv, char **envp)
 {
 	(void)argc;
@@ -31,6 +38,12 @@ int	main(int argc, char **argv, char **envp)
 	return (0);
 }
 
+/**
+ * \brief Initialise the shell state: build env list, array, and increment SHLVL.
+ * \param data  Output shell state struct (zeroed then populated).
+ * \param envp  The inherited environment array.
+ * \return 0 on success, 1 on allocation failure (state is freed).
+ */
 static
 int	env_init(t_data *data, char **envp)
 {
@@ -47,6 +60,13 @@ int	env_init(t_data *data, char **envp)
 	return (0);
 }
 
+/**
+ * \brief Set up signals and read one line with readline.
+ *
+ * SIGQUIT is ignored; SIGINT is directed to handle_sigstop.
+ * If readline returns NULL (Ctrl-D), ft_exit() is called.
+ * \param data The shell state (rl member is set).
+ */
 static
 void	ft_sig_and_line(t_data *data)
 {
@@ -57,6 +77,10 @@ void	ft_sig_and_line(t_data *data)
 		ft_exit(data);
 }
 
+/**
+ * \brief The main REPL loop: read, lex, parse, expand, execute, repeat.
+ * \param envp The inherited environment array.
+ */
 static
 void	loop(char **envp)
 {
@@ -82,6 +106,14 @@ void	loop(char **envp)
 	rl_clear_history();
 }
 
+/**
+ * \brief Convert the environment linked list to a NULL-terminated string array.
+ *
+ * Only entries with \c has_arg set are included (i.e. variables that
+ * carry a value are exported to child processes).
+ * \param list The environment linked list.
+ * \return Heap-allocated \c char** array suitable for \c execve(), or NULL.
+ */
 char	**envlist_to_array(t_list *list)
 {
 	char	**array;

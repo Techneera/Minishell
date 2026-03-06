@@ -13,6 +13,11 @@
 #include "ast.h"
 #include "lexer.h"
 
+/**
+ * \brief Top-level parser entry: tokenise, build AST, validate EOF.
+ * \param l The lexer for the current input line.
+ * \return Root of the AST, or NULL on parse / allocation error.
+ */
 t_ast	*ft_parser(t_lexer *l)
 {
 	t_ast		*ast_root;
@@ -45,6 +50,14 @@ void	ft_which_logic_op(t_node_type *op, t_parser *parser)
 		*op = NODE_OR;
 }
 
+/**
+ * \brief Parse a logical `&&` / `||` expression (lowest precedence level).
+ *
+ * Builds a left-leaning binary tree: `a && b || c` becomes
+ * `((a && b) || c)`.
+ * \param parser The parser state.
+ * \return AST node for the expression, or NULL on error.
+ */
 t_ast	*ft_parse_and_or(t_parser *parser)
 {
 	t_ast		*node;
@@ -73,6 +86,13 @@ parser->current_token->tok_label == TOKEN_OR)
 	return (l_node);
 }
 
+/**
+ * \brief Parse a pipeline (one or more commands chained with `|`).
+ *
+ * Builds a left-leaning binary tree: `a | b | c` becomes `((a | b) | c)`.
+ * \param parser The parser state.
+ * \return NODE_PIPE or NODE_CMD / NODE_SUBSHELL node, or NULL on error.
+ */
 t_ast	*ft_parse_pipeline(t_parser *parser)
 {
 	t_ast	*node;
@@ -98,6 +118,14 @@ t_ast	*ft_parse_pipeline(t_parser *parser)
 	return (node);
 }
 
+/**
+ * \brief Parse one pipeline grain: either a subshell or a simple command.
+ *
+ * After parsing a subshell, any trailing redirections are consumed and
+ * stored in the subshell node's \c cmd field.
+ * \param parser The parser state.
+ * \return NODE_CMD or NODE_SUBSHELL node, or NULL on error.
+ */
 t_ast	*ft_parse_grain_with_redirs(t_parser *parser)
 {
 	t_ast	*node;

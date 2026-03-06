@@ -20,6 +20,14 @@ void	ft_handle_overflow(t_data *data, int i)
 	secure_exit(data, 2);
 }
 
+/**
+ * \brief Built-in `exit`: exit the shell with an optional numeric status.
+ *
+ * Prints "exit" to stderr, validates the argument count and numeric range,
+ * then calls secure_exit() with the status truncated to 0–255.
+ * \param data The shell state.
+ * \return 1 on "too many arguments"; does not return on success.
+ */
 int	ft_exit(t_data *data)
 {
 	char		**args;
@@ -47,6 +55,18 @@ int	ft_exit(t_data *data)
 	return (0);
 }
 
+/**
+ * \brief Get, set, or act on the shell's last exit status (static variable).
+ *
+ * Serves three purposes depending on the flags:
+ * - Read-only (`write_` = 0, `exit_` = 0): return current status.
+ * - Write (`write_` != 0): update the stored status.
+ * - Exit (`exit_` != 0): call exit() with the current status.
+ * \param state  New status value (applied only when \c write_ is non-zero).
+ * \param write_ Non-zero to store \c state.
+ * \param exit_  Non-zero to call \c exit() immediately.
+ * \return The current (or newly set) exit status.
+ */
 int	ft_exit_status(int state, int write_, int exit_)
 {
 	static int	current_status;

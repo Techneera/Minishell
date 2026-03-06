@@ -15,6 +15,15 @@ static int	redir_to_or(t_data	*data, char **envp);
 static int	redir_to_and(t_data	*data, char **envp);
 static void	redir_bonus(t_data	*data, char **envp);
 
+/**
+ * \brief Execute a NODE_OR node with short-circuit semantics.
+ *
+ * Executes the left subtree; if its exit status is non-zero, executes the right.
+ * Allocates fresh fds via ft_create_fds_bonus() for each step.
+ * \param data  The shell state; \c tree must point to a NODE_OR node.
+ * \param envp  The environment array.
+ * \return Exit status of the branch that ran (0 if left succeeded).
+ */
 int	execute_or(t_data	*data, char **envp)
 {
 	t_ast	*node;
