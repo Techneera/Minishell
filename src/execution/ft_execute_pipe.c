@@ -15,6 +15,14 @@ static int	ft_n_cmds_sshell(t_ast *ast_root, t_fds **fds);
 static void	child_pipe(t_data *data, int *pfd, t_ast *node);
 static void	fail_fork(t_data *data, pid_t pfd[2]);
 
+/**
+ * \brief Execute a NODE_PIPE node by forking two children connected by a pipe.
+ *
+ * Creates a pipe, forks a left child with stdout → pipe write end,
+ * and a right child with stdin ← pipe read end.  Both children execute
+ * their respective subtrees via ft_exec_tree() and wait for any grandchildren.
+ * \param data The shell state; \c tree must point to a NODE_PIPE node.
+ */
 void	ft_execute_pipe(t_data *data)
 {
 	int		pfd[2];

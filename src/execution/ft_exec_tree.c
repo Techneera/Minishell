@@ -11,6 +11,16 @@
 /* ************************************************************************** */
 #include "execution.h"
 
+/**
+ * \brief Dispatch the current AST node in data->tree to the appropriate executor.
+ *
+ * Routes NODE_CMD → ft_execute_cmd(), NODE_PIPE → ft_execute_pipe(),
+ * NODE_SUBSHELL → ft_execute_sshell(), NODE_AND → execute_and(),
+ * NODE_OR → execute_or().
+ * \param data  The shell state; \c tree must point to a valid node.
+ * \param envp  The environment array.
+ * \return 0 (informational only).
+ */
 int	ft_exec_tree(t_data	*data, char **envp)
 {
 	t_fds	*fds;

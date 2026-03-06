@@ -13,6 +13,14 @@
 #include "ast.h"
 #include "lexer.h"
 
+/**
+ * \brief Finalise a simple-command context: build the t_cmd and the AST node.
+ *
+ * Converts the \c args list to a NULL-terminated array and the \c redirs
+ * list to a flat \c t_redir array, then wraps them in a NODE_CMD node.
+ * \param ctx The accumulator context (all lists are consumed).
+ * \return Heap-allocated NODE_CMD node, or NULL on allocation failure.
+ */
 t_ast	*ft_finalize_simp_cmd(t_simp_ctx *ctx)
 {
 	ctx->cmd = ft_create_command(NULL, NULL, 0);
@@ -34,6 +42,11 @@ t_ast	*ft_finalize_simp_cmd(t_simp_ctx *ctx)
 	return (ctx->node);
 }
 
+/**
+ * \brief Map a lexer token label to the corresponding redirection label.
+ * \param label A redirection token label.
+ * \return The matching \c t_label_redir, or REDIR_NONE if not a redirect.
+ */
 t_label_redir	ft_label_map(t_token_label label)
 {
 	if (label == TOKEN_REDIR_IN)
@@ -47,6 +60,14 @@ t_label_redir	ft_label_map(t_token_label label)
 	return (REDIR_NONE);
 }
 
+/**
+ * \brief Parse a single redirection operator and its target into a t_redir.
+ *
+ * For heredocs the delimiter string is taken from the token itself;
+ * for all other types the peek token must be a WORD and is consumed.
+ * \param parser The parser state.
+ * \return Heap-allocated \c t_redir, or NULL on syntax / allocation error.
+ */
 t_redir	*ft_parse_single_redir(t_parser *parser)
 {
 	t_label_redir	label;
@@ -73,6 +94,15 @@ t_redir	*ft_parse_single_redir(t_parser *parser)
 	return (redir);
 }
 
+/**
+ * \brief Parse zero or more trailing redirections into a t_cmd.
+ *
+ * Used after a subshell `( body )` to collect any redirections that
+ * follow the closing parenthesis.
+ * \param parser      The parser state.
+ * \param cmd_to_fill The command whose \c redirs and \c redir_count are filled.
+ * \return true on success, false on syntax / allocation error.
+ */
 int	ft_handle_redirects(t_parser *parser, t_cmd *cmd_to_fill)
 {
 	t_list	*head;
@@ -95,6 +125,15 @@ sizeof(t_redir));
 	return (true);
 }
 
+/**
+ * \brief Extract the filename or delimiter for a redirection.
+ *
+ * For heredocs, duplicates the token's \c str field directly.
+ * For file redirections, duplicates the peek token's \c str.
+ * \param p     The parser state.
+ * \param label The redirection type (used to decide which token holds the name).
+ * \return Heap-allocated \c t_redir, or NULL on allocation failure.
+ */
 t_redir	*ft_extract_redir_info(t_parser *p, t_label_redir label)
 {
 	char	*filename;

@@ -45,6 +45,14 @@ void	ft_validate_args(int *i, int *print_newline, char **args)
 	}
 }
 
+/**
+ * \brief Determine the file descriptor to use for a built-in's output.
+ *
+ * Iterates the command's redirection array looking for the last
+ * REDIR_OUT or REDIR_APPEND entry; falls back to stdout (fd 1).
+ * \param data The shell state.
+ * \return The target fd, or -1 if a redirection file descriptor is invalid.
+ */
 int	ft_target_fd(t_data *data)
 {
 	int	i;
@@ -72,6 +80,14 @@ data->tree->cmd->redirs[j].label == REDIR_APPEND)
 	return (fd);
 }
 
+/**
+ * \brief Built-in `echo`: print arguments to the target fd.
+ *
+ * Consumes leading `-n` / `-nnn…` flags to suppress the trailing newline.
+ * Remaining arguments are printed space-separated to the resolved fd.
+ * \param data The shell state.
+ * \return 0 on success, 1 if the target fd is unavailable.
+ */
 int	ft_echo(t_data *data)
 {
 	char	**args;

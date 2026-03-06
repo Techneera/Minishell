@@ -11,6 +11,14 @@
 /* ************************************************************************** */
 #include "execution.h"
 
+/**
+ * \brief Top-level executor: pre-allocate fds, dispatch AST, wait for children.
+ *
+ * Calls ft_create_fds() to open all redirections and set up heredocs,
+ * then ft_exec_tree() to drive execution, then waitpid() for each child PID.
+ * \param data The shell state with a fully-built AST in \c data->tree.
+ * \return 0 on success, -1 if the tree is empty.
+ */
 int	ft_execution(t_data *data)
 {
 	int	i;
