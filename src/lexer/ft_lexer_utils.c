@@ -112,14 +112,12 @@ void	add_token_back(t_token **tok_lst, t_token *new)
 }
 
 /**
- * \brief Strip quoting characters from a raw heredoc delimiter string.
+ * \brief Extract and unescape the heredoc delimiter from the lexer input.
  *
- * Copies every character of \c raw_delim except single and double
- * quotes into a new string.  Frees \c raw_delim after copying.
- * \param raw_delim   Pointer to the raw delimiter (freed inside this function).
- * \param final_dleim Output pointer for the cleaned delimiter.
- * \param len         Length of the raw delimiter.
- * \return The cleaned delimiter, or NULL on allocation failure.
+ * Delegates to initialize_and_find_heredoc_delim() to locate the raw
+ * delimiter, then calls ft_heredoc_quotes() to strip any quoting characters.
+ * \param l The lexer state positioned after `<<`.
+ * \return Heap-allocated unquoted delimiter string, or NULL on failure.
  */
 char	*ft_get_unquoted_str(t_lexer *l)
 {

@@ -82,7 +82,7 @@ char	*ft_get_unquoted_str(t_lexer *l);
 /**
  * \brief Strip quoting characters from a raw heredoc delimiter.
  * \param raw_delim   Pointer to the raw delimiter string (will be freed).
- * \param final_dleim Output pointer for the cleaned delimiter.
+ * \param final_delim Output pointer for the cleaned delimiter.
  * \param len         Length of the raw delimiter.
  * \return The cleaned delimiter string, or NULL on allocation failure.
  */
