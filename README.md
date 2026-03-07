@@ -211,3 +211,4 @@ Minishell/
 ## Authors
 
 - **rluis-ya** — 42 Porto
+- **nsaraiva** — 42 Porto
