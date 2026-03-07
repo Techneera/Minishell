@@ -37,8 +37,6 @@ The parser constructs a full **Abstract Syntax Tree (AST)**, enabling clean, rec
 of arbitrarily complex command sequences — including pipelines nested inside logical operators
 and subshells. The project is built with strict Norminette compliance and zero memory leaks.
 
-![Architecture overview](screenshots/architecture.png)
-
 ---
 
 ## Features
