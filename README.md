@@ -8,7 +8,7 @@
 > Features a hand-written lexer, recursive-descent parser, AST-based executor, and complete
 > bonus support for `&&`, `||`, `*` wildcards, and `()` subshells.
 
-![Minishell demo](screenshots/demo.png)
+![Minishell demo](screenshots/demo.gif)
 
 ---
 
