@@ -8,7 +8,7 @@
 > Features a hand-written lexer, recursive-descent parser, AST-based executor, and complete
 > bonus support for `&&`, `||`, `*` wildcards, and `()` subshells.
 
-![Minishell demo](screenshots/demo.png)
+![Minishell demo](screenshots/demo.gif)
 
 ---
 
@@ -36,8 +36,6 @@ environment-variable expansion, heredocs, and a robust signal-handling strategy.
 The parser constructs a full **Abstract Syntax Tree (AST)**, enabling clean, recursive execution
 of arbitrarily complex command sequences — including pipelines nested inside logical operators
 and subshells. The project is built with strict Norminette compliance and zero memory leaks.
-
-![Architecture overview](screenshots/architecture.png)
 
 ---
 
@@ -213,3 +211,4 @@ Minishell/
 ## Authors
 
 - **rluis-ya** — 42 Porto
+- **nsaraiva** — 42 Porto

@@ -238,6 +238,7 @@ int		wait_bonus(t_data *data, t_fds *fds);
  * \param data The shell state whose \c fds member is freed and NULLed.
  */
 void	free_fds_bonus(t_data	*data);
+int		docs_bonus(t_ast *ast_root, t_fds **fds);
 
 /**
  * \brief Count heredocs inside a bonus subtree and return the count.
@@ -490,6 +491,9 @@ int		ft_exit(t_data *data);
  * \return The current (or newly set) exit status.
  */
 int		ft_exit_status(int state, int write_, int exit_);
+int		ft_error(int err_no, char *arg, char *err_msg);
+void	ft_exit_print(void);
+int		ft_safe_atoll(char *str, long long *out);
 
 /**
  * \brief Print a formatted error message and return the given error code.
@@ -519,6 +523,11 @@ int		ft_safe_atoll(char *str, long long *out);
  * \return 0 on success, 1 if any argument is invalid.
  */
 int		ft_unset(t_data *data);
+int		ft_is_valid_arguments(char *str);
+int		is_key_match(char *env_var, char *key);
+void	free_env_node(t_list *node);
+void	remove_env_var(t_data *data, char *key);
+void	refresh_env_array(t_data *data);
 
 /**
  * \brief Test whether a string is a valid shell identifier (variable name).
@@ -597,6 +606,11 @@ void	cleanup_loop(t_data *data);
  * \brief Increment the SHLVL environment variable by one.
  * \param data The shell state.
  */
+void	increase_shlv(t_data *data);
+
+//--main shell
+int		ft_verify_spaces(char **rl);
+void	cleanup_loop(t_data *data);
 void	increase_shlv(t_data *data);
 
 #endif

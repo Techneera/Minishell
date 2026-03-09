@@ -46,6 +46,18 @@ PATH_OBJS_WILDCARD= $(patsubst %.c,$(OBJS_DIR)/wildcard/%.o,$(SRCS_WILDCARD))
 OBJECTS = $(SHELL_OBJ) $(PATH_OBJS_AST) $(PATH_OBJS_LEXER) $(PATH_OBJS_EXEC) \
 		$(PATH_OBJS_EXP) $(PATH_OBJS_BUILTINS) $(PATH_OBJS_WILDCARD)
 
+# ----------------- COLORS ----------------- #
+
+BOLD    = $(shell tput bold)
+RESET   = $(shell tput sgr0)
+C1      = $(shell tput setaf 226)  # bright yellow
+C2      = $(shell tput setaf 220)  # gold
+C3      = $(shell tput setaf 214)  # orange
+C4      = $(shell tput setaf 208)  # bright orange
+C5      = $(shell tput setaf 202)  # red-orange
+C6      = $(shell tput setaf 198)  # pinkish red
+CREDIT  = $(shell tput setaf 15)   # bright white
+
 # ----------------- STATIC LIBRARIES ----------------- #
 
 LFT = libft/libft.a
@@ -58,6 +70,18 @@ bonus: $(NAME)
 
 $(NAME): $(OBJECTS) $(LFT)
 	$(CC) $(filter-out $(LFT), $^) $(LFT) -o $(NAME) $(CFLAGS) -lreadline
+	@clear
+	@printf "\n"
+	@printf "$(C1)	███╗   ███╗██╗███╗   ██╗██╗███████╗██╗  ██╗███████╗██╗     ██╗\n"
+	@printf "$(C2)	████╗ ████║██║████╗  ██║██║██╔════╝██║  ██║██╔════╝██║     ██║\n"
+	@printf "$(C3)	██╔████╔██║██║██╔██╗ ██║██║███████╗███████║█████╗  ██║     ██║\n"
+	@printf "$(C4)	██║╚██╔╝██║██║██║╚██╗██║██║╚════██║██╔══██║██╔══╝  ██║     ██║\n"
+	@printf "$(C5)	██║ ╚═╝ ██║██║██║ ╚████║██║███████║██║  ██║███████╗███████╗███████╗\n"
+	@printf "$(C6)	╚═╝     ╚═╝╚═╝╚═╝  ╚═══╝╚═╝╚══════╝╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝\n"
+	@printf "$(RESET)\n"
+	@printf "$(BOLD)$(CREDIT)        \t\t\t\t\t\tBy rluis-ya && nsaraiva $(RESET)\n"
+	@printf "\n"
+	@./minishell
 
 $(LFT):
 	@echo "Building libft..."
